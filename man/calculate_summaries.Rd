@@ -14,7 +14,8 @@ calculate_summaries(con, df_map, insert = FALSE)
 \item{insert}{Should the data be inserted?}
 }
 \description{
-Function to calculate various time-series summaries.
+\code{calculate_summaries} will correctly process wind speed and direction
+with the help of \strong{openair}.
 }
 \author{
 Stuart K. Grange
