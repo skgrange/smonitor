@@ -1,5 +1,7 @@
 # **smonitor**
 
+[![Build Status](https://travis-ci.org/skgrange/smonitor.svg?branch=master)](https://travis-ci.org/skgrange/smonitor)
+
 ## Introduction
 
 **smonitor** is an R package which contains a collection of functions which allow to me maintain air quality monitoring databases. **smonitor** will only work out-of-the-box with a specific, but simple data model (also known as a schema). This data model is best implemented with a SQL database. Although the development reflects the management of air quality data, the functions and data model should be utilitarian enough to be applied to other time-series measurements. 
@@ -12,7 +14,7 @@ The development version:
 devtools::install_github("skgrange/threadr")
 
 # Install gissr
-devtools::install_github("skgrange/gissr")
+devtools::install_github("skgrange/smonitor")
 ```
 
 ## Background
@@ -44,4 +46,4 @@ The current data model is implemented with six tables:
   - `aggregations`: Stores information of aggregation functions and methods.
   - `summaries`: Stores information of what aggregations should be preformed on processes. 
   - `invalidation`: Stores date ranges where a process is considered invalid. An optional component and is used only when source data blatantly contains errors. 
-  - `observations`: Stores the time-series measurement data as well as the aggregations of measurement data. 
+  - `observations`: Stores the time-series measurement data as well as the aggregations of measurement data.
