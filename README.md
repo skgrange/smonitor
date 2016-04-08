@@ -4,6 +4,19 @@
 
 **smonitor** is an R package which contains a collection of functions which allow to me maintain air quality monitoring databases. **smonitor** will only work out-of-the-box with a specific, but simple data model (also known as a schema). This data model is best implemented with a SQL database. Although the development reflects the management of air quality data, the functions and data model should be utilitarian enough to be applied to other time-series measurements. 
 
+## Installation
+
+The development version: 
+```
+# Install dependency
+devtools::install_github("skgrange/threadr")
+
+# Install gissr
+devtools::install_github("skgrange/gissr")
+```
+
+## Background
+
 I have been involved with many projects recently which have seriously complicated the storage and retrieval of simple time-series data. I maintain that time-series data is very simple; at a fundamental level there are observations in time and space which need to be stored. In my experience, most of the complication arises when:
 
   - Many time-series are turned on and off. 
@@ -16,7 +29,7 @@ The primary goals of **smonitor** are:
 
   - Provide a very simple data model for time-series data. 
   - Provide functions to calculate aggregations which can be easily scheduled and be dynamic so they reflect source data changes. 
-  - Provide importing functions so data can be imported easily and conveniently.
+  - Provide importing functions so data can be imported and used easily and conveniently.
 
 ## The data model
 

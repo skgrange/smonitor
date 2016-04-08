@@ -1,0 +1,19 @@
+Package: smonitor
+Type: Package
+Title: Tools to deal with ambient air quality monitoring data when stored with a 
+    normalised data model. 
+Version: 0.0.3
+Date: 2016-04-08
+Author: Stuart K. Grange
+Maintainer: Stuart K. Grange <s.k.grange@gmail.com>
+Description: Tools to deal with ambient air quality monitoring data when stored 
+    with a normalised data model. 
+License: GPL (>= 2)
+Imports:
+    stringr,
+    lubridate,
+    plyr,
+    dplyr,
+    testthat, 
+    threadr
+RoxygenNote: 5.0.1
