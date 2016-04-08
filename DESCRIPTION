@@ -14,8 +14,8 @@ Imports:
     lubridate,
     plyr,
     dplyr,
-    testthat
-Suggests:
+    testthat,
     threadr
+Suggests:
 RoxygenNote: 5.0.1
 
