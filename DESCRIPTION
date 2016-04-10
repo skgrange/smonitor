@@ -18,8 +18,8 @@ Imports:
     testthat,
     threadr,
     jsonlite,
-    openair
-Suggests:
+    openair, 
     sscraper
+Suggests:
 RoxygenNote: 5.0.1
 
