@@ -1,13 +1,19 @@
-#' Functions to import source data from a database. 
+#' Functions to import source data from a \strong{smonitor} database. 
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @param con Database connection. 
+#' 
 #' @param process A process, an integer key. 
+#' 
 #' @param start Start date to import. 
+#' 
 #' @param end End date to import. 
+#' 
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
-#' @param valid Should invalid observations be filted out? Default is \code{FALSE}. 
+#' 
+#' @param valid Should invalid observations be filtered out? Default is 
+#' \code{FALSE}. 
 #' 
 #' @export
 import_source <- function(con, process, start = NA, end = NA, tz = "UTC",
@@ -69,8 +75,7 @@ import_source <- function(con, process, start = NA, end = NA, tz = "UTC",
 }
 
 
-
-#' Function to import hourly means from a database.
+#' Function to import hourly means from a \strong{smonitor} database. 
 #'  
 #' @author Stuart K. Grange
 #' 
@@ -91,6 +96,7 @@ import_hourly_means <- function(con, process, start = NA, end = NA, tz = "UTC") 
   if (lubridate::hour(end) == 0)
     end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
   
+  # For sql
   start <- as.integer(start)
   end <- as.integer(end)
   
@@ -134,7 +140,7 @@ import_hourly_means <- function(con, process, start = NA, end = NA, tz = "UTC") 
 }
 
 
-#' Function to import daily means from a database. 
+#' Function to import daily means from a \strong{smonitor} database. 
 #' 
 #' @author Stuart K. Grange
 #' 
@@ -155,6 +161,7 @@ import_daily_means <- function(con, process, start = NA, end = NA, tz = "UTC") {
   if (lubridate::hour(end) == 0)
     end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
   
+  # For sql
   start <- as.integer(start)
   end <- as.integer(end)
   
@@ -198,7 +205,8 @@ import_daily_means <- function(con, process, start = NA, end = NA, tz = "UTC") {
 }
 
 
-#' Function to import data from an air quality monitoring data. 
+#' Function to import data from an air quality monitoring data with the 
+#' \strong{smonitor} data model.
 #' 
 #' @author Stuart K. Grange
 #' 
@@ -207,7 +215,8 @@ import_daily_means <- function(con, process, start = NA, end = NA, tz = "UTC") {
 #' @param summary A summary, an integer key. 
 #' @param start Start date to import. 
 #' @param end End date to import. 
-#' @param tz Time-zone for the dates to be parsed into. Default is \code{"Etc/GMT-12"}. 
+#' @param tz Time-zone for the dates to be parsed into. Default is 
+#' \code{"Etc/GMT-12"}. 
 #' 
 #' @export
 import_nz <- function(con, process, summary, start = NA, end = NA, tz = "Etc/GMT-12") {
@@ -220,6 +229,7 @@ import_nz <- function(con, process, summary, start = NA, end = NA, tz = "Etc/GMT
   if (lubridate::hour(end) == 0)
     end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
   
+  # For sql
   start <- as.integer(start)
   end <- as.integer(end)
   
@@ -266,11 +276,10 @@ import_nz <- function(con, process, summary, start = NA, end = NA, tz = "Etc/GMT
 }
 
 
-
-#' Function to import process table from database. 
+#' Function to import process table from a \strong{smonitor} database. 
 #' 
 #' @param con Database connection. 
-#' @param extra Return extra data? 
+#' @param extra Return extra data? Default is \code{TRUE}.
 #' 
 #' @export
 import_processes <- function(con, extra = TRUE) {
@@ -293,11 +302,10 @@ import_processes <- function(con, extra = TRUE) {
 }
 
 
-
-#' Function to import aggregation table from database.
+#' Function to import aggregation table from a \strong{smonitor} database. 
 #' 
 #' @param con Database connection. 
-#' @param extra Return extra data? 
+#' @param extra Return extra data? Default is \code{TRUE}.
 #' 
 #' @export
 import_summaries <- function(con, extra = TRUE) {

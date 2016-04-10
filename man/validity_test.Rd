@@ -6,10 +6,20 @@
 \usage{
 validity_test(df, df_look)
 }
+\arguments{
+\item{df}{Data frame to test and add or overwrite a \code{validity} variable.}
+
+\item{df_look}{A look-up data frame containing \code{site}, \code{variable}, 
+\code{date_start}, and \code{date_end} variables.}
+}
 \description{
-Function to add a validity variable to a data frame based on date ranges.
+\code{validity_test} oes not currently handle groups, but will in the future.
+It is recommended that \code{dplyr::do} is used for this task.
 }
 \author{
 Stuart K. Grange.
+}
+\seealso{
+\code{\link{within_range}}
 }
 

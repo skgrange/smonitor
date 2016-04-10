@@ -2,7 +2,7 @@
 % Please edit documentation in R/importing_functions.R
 \name{import_source}
 \alias{import_source}
-\title{Functions to import source data from a database.}
+\title{Functions to import source data from a \strong{smonitor} database.}
 \usage{
 import_source(con, process, start = NA, end = NA, tz = "UTC",
   valid = FALSE)
@@ -18,10 +18,11 @@ import_source(con, process, start = NA, end = NA, tz = "UTC",
 
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
 
-\item{valid}{Should invalid observations be filted out? Default is \code{FALSE}.}
+\item{valid}{Should invalid observations be filtered out? Default is 
+\code{FALSE}.}
 }
 \description{
-Functions to import source data from a database.
+Functions to import source data from a \strong{smonitor} database.
 }
 \author{
 Stuart K. Grange

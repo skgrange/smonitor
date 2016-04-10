@@ -2,7 +2,8 @@
 % Please edit documentation in R/calculate_summaries.R
 \name{calculate_summaries}
 \alias{calculate_summaries}
-\title{Function to calculate various time-series summaries.}
+\title{Function to calculate various time-series summaries for data stored in a 
+\strong{smonitor} database.}
 \usage{
 calculate_summaries(con, df_map, start, end, insert = FALSE)
 }
@@ -16,13 +17,31 @@ variables.}
 
 \item{end}{End date for summaries.}
 
-\item{insert}{Should the data be inserted?}
+\item{insert}{Should the data be inserted? Default is \code{TRUE}.}
 }
 \description{
 \code{calculate_summaries} will correctly process wind speed and direction
-with the help of \strong{openair}.
+with the help of \strong{openair}. \code{calculate_summaries} does not 
+currently handle groups, but will in the future. It is recommended that
+\code{plyr::a_ply} is used for this task.
+}
+\examples{
+\dontrun{
+
+# ... create database connection
+# ... create look-up table
+
+# Calculate all summaries in data_look_up for 2014 and insert them in the 
+# database
+calculate_summaries(con, data_look_up, start = 2014, start = 2014)
+
+}
+
 }
 \author{
 Stuart K. Grange
+}
+\seealso{
+\code{\link{timeAverage}}, \code{\link{dplyr::summarise}}
 }
 

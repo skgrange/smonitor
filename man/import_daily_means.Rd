@@ -2,7 +2,7 @@
 % Please edit documentation in R/importing_functions.R
 \name{import_daily_means}
 \alias{import_daily_means}
-\title{Function to import daily means from a database.}
+\title{Function to import daily means from a \strong{smonitor} database.}
 \usage{
 import_daily_means(con, process, start = NA, end = NA, tz = "UTC")
 }
@@ -18,7 +18,7 @@ import_daily_means(con, process, start = NA, end = NA, tz = "UTC")
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
 }
 \description{
-Function to import daily means from a database.
+Function to import daily means from a \strong{smonitor} database.
 }
 \author{
 Stuart K. Grange

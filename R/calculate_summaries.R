@@ -1,7 +1,12 @@
-#' Function to calculate various time-series summaries.
+#' Function to calculate various time-series summaries for data stored in a 
+#' \strong{smonitor} database. 
 #' 
 #' \code{calculate_summaries} will correctly process wind speed and direction
-#' with the help of \strong{openair}. 
+#' with the help of \strong{openair}. \code{calculate_summaries} does not 
+#' currently handle groups, but will in the future. It is recommended that
+#' \code{plyr::a_ply} is used for this task. 
+#' 
+#' @seealso \code{\link{timeAverage}}, \code{\link{dplyr::summarise}}
 #' 
 #' @author Stuart K. Grange
 #' 
@@ -14,18 +19,30 @@
 #' 
 #' @param end End date for summaries. 
 #' 
-#' @param insert Should the data be inserted? 
+#' @param insert Should the data be inserted? Default is \code{TRUE}. 
 #' 
 #' @import dplyr
 #' @import threadr
+#' 
+#' @examples 
+#' \dontrun{
+#' 
+#' # ... create database connection
+#' # ... create look-up table
+#' 
+#' # Calculate all summaries in data_look_up for 2014 and insert them in the 
+#' # database
+#' calculate_summaries(con, data_look_up, start = 2014, start = 2014)
+#' 
+#' }
 #' 
 #' @export
 calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
   
   # Print what is happening
-  message(jsonlite::toJSON(df_map, pretty = TRUE))
+  message(jsonlite::toJSON(df_map, pretty = FALSE))
   
-  # Demote
+  # Drop tbl_df
   df_map <- threadr::base_df(df_map)
   
   # Get mapping table
@@ -39,7 +56,7 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
   # Different logic for the different aggregation periods
   if (df_look$source == "source" & df_look$period == "hour") {
     
-    # Get observations
+    # Get valid observations
     df <- import_source(con, df_map$process, start = start, end = end,
                         valid = TRUE)
     

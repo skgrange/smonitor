@@ -2,7 +2,8 @@
 % Please edit documentation in R/importing_functions.R
 \name{import_nz}
 \alias{import_nz}
-\title{Function to import data from an air quality monitoring data.}
+\title{Function to import data from an air quality monitoring data with the 
+\strong{smonitor} data model.}
 \usage{
 import_nz(con, process, summary, start = NA, end = NA, tz = "Etc/GMT-12")
 }
@@ -17,10 +18,12 @@ import_nz(con, process, summary, start = NA, end = NA, tz = "Etc/GMT-12")
 
 \item{end}{End date to import.}
 
-\item{tz}{Time-zone for the dates to be parsed into. Default is \code{"Etc/GMT-12"}.}
+\item{tz}{Time-zone for the dates to be parsed into. Default is 
+\code{"Etc/GMT-12"}.}
 }
 \description{
-Function to import data from an air quality monitoring data.
+Function to import data from an air quality monitoring data with the 
+\strong{smonitor} data model.
 }
 \author{
 Stuart K. Grange

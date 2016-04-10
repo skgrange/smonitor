@@ -2,8 +2,8 @@
 % Please edit documentation in R/delete_observations.R
 \name{delete_observations}
 \alias{delete_observations}
-\title{Function to delete observations from an \code{`observations`} table in a 
-database.}
+\title{Function to delete observations from the \code{`observations`} table in a
+\strong{smonitor} database.}
 \usage{
 delete_observations(con, df, match = "between")
 }
@@ -22,7 +22,14 @@ insert so old observations are deleted before a new set of observations are
 inserted. This process avoids duplicate observations which are almost always
 undesirable.
 }
+\details{
+\code{delete_observations} does not currently handle groups, but will in the 
+future. It is recommended that \code{plyr::a_ply} is used for this task.
+}
 \author{
 Stuart K. Grange
+}
+\seealso{
+\link{db_send}
 }
 

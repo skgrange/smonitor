@@ -2,7 +2,8 @@
 % Please edit documentation in R/insert_wunderground_data.R
 \name{insert_wunderground_data}
 \alias{insert_wunderground_data}
-\title{Function to get observations from wunderground and insert them into a database.}
+\title{Function to get observations from wunderground and insert them into a 
+\strong{smonitor} database.}
 \usage{
 insert_wunderground_data(con, site, start, end = NA, validity = FALSE)
 }
@@ -19,7 +20,7 @@ insert_wunderground_data(con, site, start, end = NA, validity = FALSE)
 }
 \description{
 Site-variable combinations need to be present in the database's process table,
-otherwise they will be silently dropped.
+otherwise they will be silently filtered and not be inserted.
 }
 \author{
 Stuart K. Grange

@@ -1,12 +1,17 @@
-#' Function to delete observations from an \code{`observations`} table in a 
-#' database. 
+#' Function to delete observations from the \code{`observations`} table in a
+#' \strong{smonitor} database. 
 #' 
 #' \code{delete_observations} is generally used immediately before a database 
 #' insert so old observations are deleted before a new set of observations are 
 #' inserted. This process avoids duplicate observations which are almost always
 #' undesirable. 
 #' 
+#' \code{delete_observations} does not currently handle groups, but will in the 
+#' future. It is recommended that \code{plyr::a_ply} is used for this task. 
+#' 
 #' @author Stuart K. Grange
+#' 
+#' @seealso \link{db_send}
 #' 
 #' @param con Database connection.
 #' 

@@ -1,7 +1,8 @@
-#' Function to get observations from wunderground and insert them into a database. 
+#' Function to get observations from wunderground and insert them into a 
+#' \strong{smonitor} database. 
 #' 
 #' Site-variable combinations need to be present in the database's process table,
-#' otherwise they will be silently dropped. 
+#' otherwise they will be silently filtered and not be inserted. 
 #' 
 #' @param con Database connection. 
 #' 
@@ -16,6 +17,7 @@
 #' @author Stuart K. Grange
 #' 
 #' @import dplyr
+#' 
 #' @export
 insert_wunderground_data <- function(con, site, start, end = NA, validity = FALSE) {
   
@@ -45,6 +47,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
            summary = 0L)
   
   # To-do
+  # if (validity) {}
   # # Test validity
   # df <- df %>% 
   #   group_by(site,
