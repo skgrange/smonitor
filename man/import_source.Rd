@@ -4,12 +4,21 @@
 \alias{import_source}
 \title{Functions to import source data from a database.}
 \usage{
-import_source(con, process)
+import_source(con, process, start = NA, end = NA, tz = "UTC",
+  valid = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{process}{A process, an integer key.}
+
+\item{start}{Start date to import.}
+
+\item{end}{End date to import.}
+
+\item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
+
+\item{valid}{Should invalid observations be filted out? Default is \code{FALSE}.}
 }
 \description{
 Functions to import source data from a database.

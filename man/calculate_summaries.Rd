@@ -4,12 +4,17 @@
 \alias{calculate_summaries}
 \title{Function to calculate various time-series summaries.}
 \usage{
-calculate_summaries(con, df_map, insert = FALSE)
+calculate_summaries(con, df_map, start, end, insert = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
-\item{df_map}{A mapping table.}
+\item{df_map}{A mapping table containing \code{"process"} and \code{"summary"}
+variables.}
+
+\item{start}{Start date for summaries.}
+
+\item{end}{End date for summaries.}
 
 \item{insert}{Should the data be inserted?}
 }

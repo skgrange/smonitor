@@ -6,6 +6,11 @@
 \usage{
 import_processes(con, extra = TRUE)
 }
+\arguments{
+\item{con}{Database connection.}
+
+\item{extra}{Return extra data?}
+}
 \description{
 Function to import process table from database.
 }

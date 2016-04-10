@@ -6,6 +6,11 @@
 \usage{
 import_summaries(con, extra = TRUE)
 }
+\arguments{
+\item{con}{Database connection.}
+
+\item{extra}{Return extra data?}
+}
 \description{
 Function to import aggregation table from database.
 }

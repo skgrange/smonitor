@@ -4,7 +4,7 @@
 \alias{import_nz}
 \title{Function to import data from an air quality monitoring data.}
 \usage{
-import_nz(con, process, summary)
+import_nz(con, process, summary, start = NA, end = NA, tz = "Etc/GMT-12")
 }
 \arguments{
 \item{con}{Database connection.}
@@ -12,6 +12,12 @@ import_nz(con, process, summary)
 \item{process}{A process, an integer key.}
 
 \item{summary}{A summary, an integer key.}
+
+\item{start}{Start date to import.}
+
+\item{end}{End date to import.}
+
+\item{tz}{Time-zone for the dates to be parsed into. Default is \code{"Etc/GMT-12"}.}
 }
 \description{
 Function to import data from an air quality monitoring data.

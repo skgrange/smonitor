@@ -4,12 +4,18 @@
 \alias{import_daily_means}
 \title{Function to import daily means from a database.}
 \usage{
-import_daily_means(con, process)
+import_daily_means(con, process, start = NA, end = NA, tz = "UTC")
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{process}{A process, an integer key.}
+
+\item{start}{Start date to import.}
+
+\item{end}{End date to import.}
+
+\item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
 }
 \description{
 Function to import daily means from a database.

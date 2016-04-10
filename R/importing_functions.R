@@ -4,9 +4,26 @@
 #' 
 #' @param con Database connection. 
 #' @param process A process, an integer key. 
+#' @param start Start date to import. 
+#' @param end End date to import. 
+#' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
+#' @param valid Should invalid observations be filted out? Default is \code{FALSE}. 
 #' 
 #' @export
-import_source <- function(con, process) {
+import_source <- function(con, process, start = NA, end = NA, tz = "UTC",
+                          valid = FALSE) {
+  
+  # Parse date arguments
+  start <- threadr::parse_date_arguments(start, "start")
+  end <- threadr::parse_date_arguments(end, "end")
+  
+  # Push to last instant in day
+  if (lubridate::hour(end) == 0)
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
+  
+  # For sql
+  start <- as.integer(start)
+  end <- as.integer(end)
   
   # For sql
   process <- stringr::str_c(process, collapse = ",")
@@ -18,6 +35,7 @@ import_source <- function(con, process) {
     observations.value,
     observations.process,
     observations.summary,
+    observations.validity,
     processes.site,
     processes.variable, 
     sites.site_name
@@ -27,9 +45,10 @@ import_source <- function(con, process) {
     LEFT JOIN sites
     ON processes.site = sites.site
     WHERE observations.process IN (", process, ")
-    AND observations.summary = 0
-    AND observations.validity IS NOT 0
-    ORDER BY observations.process, observations.date")
+    AND observations.date BETWEEN ", start, " AND ", end, 
+    " AND observations.summary = 0 OR observations.summary IS NULL
+    ORDER BY observations.process, 
+    observations.date")
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
@@ -37,9 +56,12 @@ import_source <- function(con, process) {
   # Query database
   df <- threadr::db_get(con, sql)
   
+  # Filter invalid observations
+  if (valid) df <- df[is.na(df$validity) | df$validity == 1, ]
+
   # Parse dates
-  df$date <- threadr::parse_unix_time(df$date, "nz")
-  df$date_end <- threadr::parse_unix_time(df$date_end, "nz")
+  df$date <- threadr::parse_unix_time(df$date, tz = tz)
+  df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
   
   # Return
   df
@@ -54,9 +76,23 @@ import_source <- function(con, process) {
 #' 
 #' @param con Database connection. 
 #' @param process A process, an integer key. 
+#' @param start Start date to import. 
+#' @param end End date to import. 
+#' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
 #' @export
-import_hourly_means <- function(con, process) {
+import_hourly_means <- function(con, process, start = NA, end = NA, tz = "UTC") {
+  
+  # Parse date arguments
+  start <- threadr::parse_date_arguments(start, "start")
+  end <- threadr::parse_date_arguments(end, "end")
+  
+  # Push to last instant in day
+  if (lubridate::hour(end) == 0)
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
+  
+  start <- as.integer(start)
+  end <- as.integer(end)
   
   # For sql
   process <- stringr::str_c(process, collapse = ",")
@@ -77,9 +113,10 @@ import_hourly_means <- function(con, process) {
     LEFT JOIN sites
     ON processes.site = sites.site
     WHERE observations.process IN (", process, ")
-    AND observations.summary = 1
-    AND observations.validity IS NOT 0
-    ORDER BY observations.process, observations.date")
+    AND observations.date BETWEEN ", start, " AND ", end, 
+    " AND observations.summary = 1
+    ORDER BY observations.process, 
+    observations.date")
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
@@ -88,8 +125,8 @@ import_hourly_means <- function(con, process) {
   df <- threadr::db_get(con, sql)
   
   # Parse dates
-  df$date <- threadr::parse_unix_time(df$date, "nz")
-  df$date_end <- threadr::parse_unix_time(df$date_end, "nz")
+  df$date <- threadr::parse_unix_time(df$date, tz = tz)
+  df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
   
   # Return
   df
@@ -103,9 +140,23 @@ import_hourly_means <- function(con, process) {
 #' 
 #' @param con Database connection. 
 #' @param process A process, an integer key. 
+#' @param start Start date to import. 
+#' @param end End date to import. 
+#' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
 #' @export
-import_daily_means <- function(con, process) {
+import_daily_means <- function(con, process, start = NA, end = NA, tz = "UTC") {
+  
+  # Parse date arguments
+  start <- threadr::parse_date_arguments(start, "start")
+  end <- threadr::parse_date_arguments(end, "end")
+  
+  # Push to last instant in day
+  if (lubridate::hour(end) == 0)
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
+  
+  start <- as.integer(start)
+  end <- as.integer(end)
   
   # For sql
   process <- stringr::str_c(process, collapse = ",")
@@ -126,9 +177,10 @@ import_daily_means <- function(con, process) {
     LEFT JOIN sites
     ON processes.site = sites.site
     WHERE observations.process IN (", process, ")
-    AND observations.summary = 20
-    AND observations.validity IS NOT 0
-    ORDER BY observations.process, observations.date")
+    AND observations.date BETWEEN ", start, " AND ", end, 
+    " AND observations.summary = 20
+    ORDER BY observations.process, 
+    observations.date")
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
@@ -137,8 +189,8 @@ import_daily_means <- function(con, process) {
   df <- threadr::db_get(con, sql)
   
   # Parse dates
-  df$date <- threadr::parse_unix_time(df$date, "nz")
-  df$date_end <- threadr::parse_unix_time(df$date_end, "nz")
+  df$date <- threadr::parse_unix_time(df$date, tz = tz)
+  df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
   
   # Return
   df
@@ -153,9 +205,23 @@ import_daily_means <- function(con, process) {
 #' @param con Database connection. 
 #' @param process A process, an integer key. 
 #' @param summary A summary, an integer key. 
+#' @param start Start date to import. 
+#' @param end End date to import. 
+#' @param tz Time-zone for the dates to be parsed into. Default is \code{"Etc/GMT-12"}. 
 #' 
 #' @export
-import_nz <- function(con, process, summary) {
+import_nz <- function(con, process, summary, start = NA, end = NA, tz = "Etc/GMT-12") {
+  
+  # Parse date arguments
+  start <- threadr::parse_date_arguments(start, "start")
+  end <- threadr::parse_date_arguments(end, "end")
+  
+  # Push to last instant in day
+  if (lubridate::hour(end) == 0)
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
+  
+  start <- as.integer(start)
+  end <- as.integer(end)
   
   # For sql
   process <- stringr::str_c(process, collapse = ",")
@@ -177,7 +243,8 @@ import_nz <- function(con, process, summary) {
     LEFT JOIN sites
     ON processes.site = sites.site
     WHERE observations.process IN (", process, ")
-    AND observations.summary IN (", summary, ")
+    AND observations.date BETWEEN ", start, " AND ", end, 
+    " AND observations.summary IN (", summary, ")
     AND observations.validity IS NOT 0
     ORDER BY observations.process, 
     observations.summary, 
@@ -190,8 +257,8 @@ import_nz <- function(con, process, summary) {
   df <- threadr::db_get(con, sql)
   
   # Parse dates
-  df$date <- threadr::parse_unix_time(df$date, "nz")
-  df$date_end <- threadr::parse_unix_time(df$date_end, "nz")
+  df$date <- threadr::parse_unix_time(df$date, tz = tz)
+  df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
   
   # Return
   df
@@ -201,6 +268,9 @@ import_nz <- function(con, process, summary) {
 
 
 #' Function to import process table from database. 
+#' 
+#' @param con Database connection. 
+#' @param extra Return extra data? 
 #' 
 #' @export
 import_processes <- function(con, extra = TRUE) {
@@ -225,6 +295,9 @@ import_processes <- function(con, extra = TRUE) {
 
 
 #' Function to import aggregation table from database.
+#' 
+#' @param con Database connection. 
+#' @param extra Return extra data? 
 #' 
 #' @export
 import_summaries <- function(con, extra = TRUE) {
