@@ -4,7 +4,7 @@
 \alias{import_source}
 \title{Functions to import source data from a \strong{smonitor} database.}
 \usage{
-import_source(con, process, start = NA, end = NA, tz = "UTC",
+import_source(con, process, start = 1970, end = NA, tz = "UTC",
   valid = FALSE)
 }
 \arguments{

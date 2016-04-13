@@ -5,7 +5,7 @@
 \title{Function to calculate various time-series summaries for data stored in a 
 \strong{smonitor} database.}
 \usage{
-calculate_summaries(con, df_map, start, end, insert = FALSE)
+calculate_summaries(con, df_map, start, end, tz = "UTC", insert = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -20,10 +20,9 @@ variables.}
 \item{insert}{Should the data be inserted? Default is \code{TRUE}.}
 }
 \description{
-\code{calculate_summaries} will correctly process wind speed and direction
-with the help of \strong{openair}. \code{calculate_summaries} does not 
-currently handle groups, but will in the future. It is recommended that
-\code{plyr::a_ply} is used for this task.
+\code{calculate_summaries} will handle aggregation methods, transformation,
+and updating processes when the \strong{smonitor} databases are complete.
+\code{calculate_summaries} will also correctly aggregate wind direction.
 }
 \examples{
 \dontrun{

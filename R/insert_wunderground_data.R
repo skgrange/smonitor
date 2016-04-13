@@ -14,12 +14,16 @@
 #' 
 #' @param validity Should the validity variable be updated? Not implemented yet. 
 #' 
+#' @param verbose Should the function give messages and be chatty? Default is 
+#' \code{TRUE}. 
+#' 
 #' @author Stuart K. Grange
 #' 
 #' @import dplyr
 #' 
 #' @export
-insert_wunderground_data <- function(con, site, start, end = NA, validity = FALSE) {
+insert_wunderground_data <- function(con, site, start, end = NA, validity = FALSE,
+                                     verbose = TRUE) {
   
   # For dplyr
   site_vector <- site
@@ -33,7 +37,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
   
   # Get observations, every site is done separately
   df <- plyr::ldply(site_vector, function(x) 
-    sscraper::scrape_wunderground(x, start = start, end = end))
+    sscraper::scrape_wunderground(x, start = start, end = end, verbose = verbose))
   
   # Transform and reshape data
   df <- df %>% 

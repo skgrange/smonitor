@@ -16,7 +16,7 @@
 #' \code{FALSE}. 
 #' 
 #' @export
-import_source <- function(con, process, start = NA, end = NA, tz = "UTC",
+import_source <- function(con, process, start = 1970, end = NA, tz = "UTC",
                           valid = FALSE) {
   
   # Parse date arguments
@@ -86,7 +86,7 @@ import_source <- function(con, process, start = NA, end = NA, tz = "UTC",
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
 #' @export
-import_hourly_means <- function(con, process, start = NA, end = NA, tz = "UTC") {
+import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC") {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -151,7 +151,7 @@ import_hourly_means <- function(con, process, start = NA, end = NA, tz = "UTC") 
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
 #' @export
-import_daily_means <- function(con, process, start = NA, end = NA, tz = "UTC") {
+import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC") {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -219,7 +219,7 @@ import_daily_means <- function(con, process, start = NA, end = NA, tz = "UTC") {
 #' \code{"Etc/GMT-12"}. 
 #' 
 #' @export
-import_nz <- function(con, process, summary, start = NA, end = NA, tz = "Etc/GMT-12") {
+import_nz <- function(con, process, summary, start = 1970, end = NA, tz = "Etc/GMT-12") {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")

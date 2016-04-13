@@ -1,10 +1,9 @@
 #' Function to calculate various time-series summaries for data stored in a 
 #' \strong{smonitor} database. 
 #' 
-#' \code{calculate_summaries} will correctly process wind speed and direction
-#' with the help of \strong{openair}. \code{calculate_summaries} does not 
-#' currently handle groups, but will in the future. It is recommended that
-#' \code{plyr::a_ply} is used for this task. 
+#' \code{calculate_summaries} will handle aggregation methods, transformation,
+#' and updating processes when the \strong{smonitor} databases are complete.
+#' \code{calculate_summaries} will also correctly aggregate wind direction.
 #' 
 #' @seealso \code{\link{timeAverage}}, \code{\link{dplyr::summarise}}
 #' 
@@ -37,10 +36,20 @@
 #' }
 #' 
 #' @export
-calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
+calculate_summaries <- function(con, df_map, start, end, tz = "UTC", 
+                                insert = FALSE) {
+  
+  plyr::a_ply(df_map, 1, function(x) 
+    summary_calculator(con, x, start, end, tz = tz, insert))
+  
+}
+  
+
+# No export
+summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   # Print what is happening
-  message(jsonlite::toJSON(df_map, pretty = FALSE))
+  message(jsonlite::toJSON(df_map, pretty = TRUE))
   
   # Drop tbl_df
   df_map <- threadr::base_df(df_map)
@@ -58,7 +67,7 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
     
     # Get valid observations
     df <- import_source(con, df_map$process, start = start, end = end,
-                        valid = TRUE)
+                        tz = tz, valid = TRUE)
     
     # Only if data
     if (nrow(df) > 0) {
@@ -66,7 +75,7 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
       # Message
       message_summary()
       
-      # Alter name for correct wd aggregations
+      # Alter name for correct wd aggregation
       if (df_look$variable == "wd")
         names(df) <- ifelse(names(df) == "value", "wd", names(df))
       
@@ -78,9 +87,9 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
         ungroup() %>%
         factor_coerce()
       
-      # Back to value
+      # Back to 'value' in aggregations
       if (df_look$variable == "wd")
-        names(df) <- ifelse(names(df) == "wd", "value", names(df))
+        names(df_agg) <- ifelse(names(df_agg) == "wd", "value", names(df_agg))
       
       # To-do: catch nas
       if (df_look$aggregation_function == "frequency") {
@@ -118,7 +127,9 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
   if (df_look$source == "hour" & df_look$period == "day") {
     
     # Load
-    df <- import_hourly_means(con, df_map$process, start = start, end = end)
+    df <- import_hourly_means(con, df_map$process, start = start, end = end, 
+                              tz = tz)
+    
     df$date_end <- NULL
     
     # Only if data
@@ -127,13 +138,28 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
       # Message
       message_summary()
       
+      # Alter name for correct wd aggregation
+      if (df_look$variable == "wd")
+        names(df) <- ifelse(names(df) == "value", "wd", names(df))
+      
       # Hourly to daily
       df_agg <- df %>% 
         openair::timeAverage(avg.time = df_look$period,
                              data.thresh = df_look$validity_threshold,
                              statistic = df_look$aggregation_function) %>% 
         ungroup() %>% 
-        factor_coerce() %>% 
+        factor_coerce() 
+      
+      # Back to 'value' in aggregations
+      if (df_look$variable == "wd")
+        names(df_agg) <- ifelse(names(df_agg) == "wd", "value", names(df_agg))
+
+      # Simple data capture
+      if (df_look$aggregation_function == "frequency")
+        df_agg$value <- ifelse(is.na(df_agg$value), 0, df_agg$value / 24)
+      
+      # Transform for database
+      df_agg <- df_agg %>% 
         mutate(date_end = date + hours(23) + minutes(59) + seconds(59),
                date = as.integer(date),
                date_end = as.integer(date_end),
@@ -147,10 +173,6 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
                validity,
                value)
       
-      # Simple
-      if (df_look$aggregation_function == "frequency")
-        df_agg$value <- ifelse(is.na(df_agg$value), 0, df_agg$value / 24)
-      
     } else {
       
       df_agg <- NULL
@@ -163,7 +185,9 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
   if (df_look$source == "day" & df_look$period == "month") {
     
     # Load
-    df <- import_daily_means(con, df_map$process, start = start, end = end)
+    df <- import_daily_means(con, df_map$process, start = start, end = end,
+                             tz = tz)
+    
     df$date_end <- NULL
     
     # Only if data
@@ -172,13 +196,24 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
       # Message
       message_summary()
       
+      # Alter name for correct wd aggregation
+      if (df_look$variable == "wd")
+        names(df) <- ifelse(names(df) == "value", "wd", names(df))
+      
       # Daily to monthly
       df_agg <- df %>% 
         openair::timeAverage(avg.time = df_look$period,
                              data.thresh = df_look$validity_threshold,
                              statistic = df_look$aggregation_function) %>% 
         ungroup() %>% 
-        factor_coerce() %>% 
+        factor_coerce() 
+      
+      # Back to 'value' in aggregations
+      if (df_look$variable == "wd")
+        names(df_agg) <- ifelse(names(df_agg) == "wd", "value", names(df_agg))
+      
+      # Transform for database
+      df_agg <- df_agg %>% 
         mutate(date_end = ceiling_date(date + 1, "month") - 1,
                date = as.integer(date),
                date_end = as.integer(date_end),
@@ -204,7 +239,9 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
   if (df_look$source == "hour" & df_look$period == "year") {
     
     # Load
-    df <- import_hourly_means(con, df_map$process, start = start, end = end)
+    df <- import_hourly_means(con, df_map$process, start = start, end = end,
+                              tz = tz)
+    
     df$date_end <- NULL
     
     # Only if data
@@ -213,13 +250,21 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
       # Message
       message_summary()
       
+      # Alter name for correct wd aggregation
+      if (df_look$variable == "wd")
+        names(df) <- ifelse(names(df) == "value", "wd", names(df))
+      
       # Hourly to annual
       df_agg <- df %>% 
         openair::timeAverage(avg.time = df_look$period,
                              data.thresh = df_look$validity_threshold,
                              statistic = df_look$aggregation_function) %>% 
         ungroup() %>% 
-        factor_coerce() 
+        factor_coerce()
+      
+      # Back to 'value' in aggregations
+      if (df_look$variable == "wd")
+        names(df_agg) <- ifelse(names(df_agg) == "wd", "value", names(df_agg))
       
       # To-do: catch nas
       if (df_look$aggregation_function == "frequency") {
@@ -230,6 +275,7 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
         
       }
       
+      # Transform for database
       df_agg <- df_agg %>% 
         mutate(date_end = ceiling_date(date + 1, "year") - 1,
                date = as.integer(date),
@@ -243,7 +289,7 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
                summary,
                validity,
                value)
-
+      
     } else {
       
       df_agg <- NULL
@@ -256,7 +302,9 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
   if (df_look$source == "day" & df_look$period == "year") {
     
     # Load
-    df <- import_daily_means(con, df_map$process, start = start, end = end)
+    df <- import_daily_means(con, df_map$process, start = start, end = end,
+                             tz = tz)
+    
     df$date_end <- NULL
     
     # Only if data
@@ -265,6 +313,10 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
       # Message
       message_summary()
       
+      # Alter name for correct wd aggregation
+      if (df_look$variable == "wd")
+        names(df) <- ifelse(names(df) == "value", "wd", names(df))
+      
       # Daily to annual
       df_agg <- df %>% 
         openair::timeAverage(avg.time = df_look$period,
@@ -272,6 +324,10 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
                              statistic = df_look$aggregation_function) %>% 
         ungroup() %>% 
         factor_coerce() 
+      
+      # Back to 'value' in aggregations
+      if (df_look$variable == "wd")
+        names(df_agg) <- ifelse(names(df_agg) == "wd", "value", names(df_agg))
       
       if (df_look$aggregation_function == "frequency") {
         
@@ -284,7 +340,7 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
         
       }
       
-      # Transform
+      # Transform for database
       df_agg <- df_agg %>% 
         mutate(date_end = ceiling_date(date + 1, "year") - 1,
                date = as.integer(date),
@@ -324,7 +380,7 @@ calculate_summaries <- function(con, df_map, start, end, insert = FALSE) {
       message("No data inserted...")
       
     }
-
+    
   } else {
     
     # Return

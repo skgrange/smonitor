@@ -5,7 +5,8 @@
 \title{Function to import data from an air quality monitoring data with the 
 \strong{smonitor} data model.}
 \usage{
-import_nz(con, process, summary, start = NA, end = NA, tz = "Etc/GMT-12")
+import_nz(con, process, summary, start = 1970, end = NA,
+  tz = "Etc/GMT-12")
 }
 \arguments{
 \item{con}{Database connection.}
