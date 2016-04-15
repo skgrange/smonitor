@@ -48,5 +48,5 @@ The current data model is implemented with six tables:
   - `sites`: Stores information of monitoring locations/facilities such as names, identifiers, addresses, and coordinates. This table can be a spatial-table. 
   - `aggregations`: Stores information of aggregation functions and methods.
   - `summaries`: Stores information of what aggregations should be preformed on processes. 
-  - `invalidation`: Stores date ranges where a process is considered invalid. An optional component and is used only when source data obviously contains errors. 
+  - `invalidations`: Stores date ranges where a process is considered invalid. An optional component and is used only when source data obviously contains errors. 
   - `observations`: Stores measurement data as well as the aggregations of measurement data.

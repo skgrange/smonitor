@@ -2,6 +2,8 @@
 
 export(calculate_summaries)
 export(delete_observations)
+export(import_aggregations)
+export(import_any)
 export(import_daily_means)
 export(import_hourly_means)
 export(import_nz)

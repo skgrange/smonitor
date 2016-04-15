@@ -2,7 +2,7 @@
 % Please edit documentation in R/importing_functions.R
 \name{import_summaries}
 \alias{import_summaries}
-\title{Function to import aggregation table from a \strong{smonitor} database.}
+\title{Function to import \code{`summaries`} table from a \strong{smonitor} database.}
 \usage{
 import_summaries(con, extra = TRUE)
 }
@@ -12,6 +12,6 @@ import_summaries(con, extra = TRUE)
 \item{extra}{Return extra data? Default is \code{TRUE}.}
 }
 \description{
-Function to import aggregation table from a \strong{smonitor} database.
+Function to import \code{`summaries`} table from a \strong{smonitor} database.
 }
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/importing_functions.R
 \name{import_sites}
 \alias{import_sites}
-\title{Function to import sites table from a \strong{smonitor} database.}
+\title{Function to import \code{`sites`} table from a \strong{smonitor} database.}
 \usage{
 import_sites(con, extra = TRUE)
 }
@@ -12,6 +12,6 @@ import_sites(con, extra = TRUE)
 \item{extra}{Return extra data? Default is \code{TRUE}.}
 }
 \description{
-Function to import sites table from a \strong{smonitor} database.
+Function to import \code{`sites`} table from a \strong{smonitor} database.
 }
 
