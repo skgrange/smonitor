@@ -8,19 +8,35 @@
 #' @param df_look A look-up data frame containing \code{site}, \code{variable}, 
 #' \code{date_start}, and \code{date_end} variables.
 #' 
+#' @param use_process Use \code{"process"} rather than \code{"site"} and 
+#' \code{"variable"}. 
+#' 
 #' @seealso \code{\link{within_range}}
 #' 
 #' @author Stuart K. Grange. 
 #' 
 #' @export
-validity_test <- function(df, df_look) {
+validity_test <- function(df, df_look, use_process = FALSE) {
 
-  # Get identifiers
-  site <- df$site[1]
-  variable <- df$variable[1]
-  
-  # Filter look up table
-  df_look <- df_look[df_look$site == site & df_look$variable == variable, ]
+  # Get keys from table
+  if (use_process) {
+    
+    # Get identifier
+    process <- df$process[1]
+    
+    # Filter look up table
+    df_look <- df_look[df_look$process == process, ]
+    
+  } else {
+    
+    # Get identifiers
+    site <- df$site[1]
+    variable <- df$variable[1]
+    
+    # Filter look up table
+    df_look <- df_look[df_look$site == site & df_look$variable == variable, ]
+    
+  }
   
   if (nrow(df_look) > 0) {
     

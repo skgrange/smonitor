@@ -201,6 +201,7 @@ import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC"
     WHERE observations.process IN (", process, ")
     AND observations.date BETWEEN ", start, " AND ", end, 
     " AND observations.summary = 1
+    AND observations.validity IS NOT 0
     ORDER BY observations.process, 
     observations.date")
   
@@ -266,6 +267,7 @@ import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC")
     WHERE observations.process IN (", process, ")
     AND observations.date BETWEEN ", start, " AND ", end, 
     " AND observations.summary = 20
+    AND observations.validity IS NOT 0
     ORDER BY observations.process, 
     observations.date")
   
@@ -274,7 +276,7 @@ import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC")
   
   # Query
   df <- threadr::db_get(con, sql)
-  
+
   # Parse dates
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
@@ -367,7 +369,9 @@ import_processes <- function(con, extra = TRUE) {
   
   # Get look-up table
   df <- threadr::db_get(con, "SELECT processes.*, 
-                              sites.site_name
+                              sites.site_name, 
+                              sites.region, 
+                              sites.site_type
                               FROM processes
                               LEFT JOIN sites
                               ON processes.site = sites.site
