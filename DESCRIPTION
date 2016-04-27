@@ -2,8 +2,8 @@ Package: smonitor
 Type: Package
 Title: Tools to deal with time-series data when stored with a normalised data-
     model
-Version: 0.0.11
-Date: 2016-04-17
+Version: 0.0.16
+Date: 2016-04-27
 Author: Stuart K. Grange
 Maintainer: Stuart K. Grange <s.k.grange@gmail.com>
 Description: Tools to deal with time-series data when stored with a normalised 
@@ -18,7 +18,8 @@ Imports:
     testthat,
     threadr,
     jsonlite,
-    openair
+    openair,
+    ggplot2
 Suggests:
 RoxygenNote: 5.0.1
 

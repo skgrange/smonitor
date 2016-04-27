@@ -25,8 +25,9 @@ import_source <- function(con, process, start = 1970, end = NA, tz = "UTC",
   
   # Push to last instant in day
   if (lubridate::hour(end) == 0)
-    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
-  
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + 
+    lubridate::seconds(59)
+
   # For sql
   start <- as.integer(start)
   end <- as.integer(end)
@@ -104,7 +105,8 @@ import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC"
   
   # Push to last instant in day
   if (lubridate::hour(end) == 0)
-    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + 
+    lubridate::seconds(59)
   
   # For sql
   start <- as.integer(start)
@@ -174,7 +176,8 @@ import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC"
   
   # Push to last instant in day
   if (lubridate::hour(end) == 0)
-    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + 
+    lubridate::seconds(59)
   
   # For sql
   start <- as.integer(start)
@@ -240,7 +243,8 @@ import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC")
   
   # Push to last instant in day
   if (lubridate::hour(end) == 0)
-    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + 
+    lubridate::seconds(59)
   
   # For sql
   start <- as.integer(start)
@@ -310,7 +314,8 @@ import_nz <- function(con, process, summary, start = 1970, end = NA,
   
   # Push to last instant in day
   if (lubridate::hour(end) == 0)
-    end <- end + lubridate::hours(23) + lubridate::minutes(59) + lubridate::seconds(59)
+    end <- end + lubridate::hours(23) + lubridate::minutes(59) + 
+    lubridate::seconds(59)
   
   # For sql
   start <- as.integer(start)
@@ -457,5 +462,23 @@ import_aggregations <- function(con, extra = TRUE) {
   
   # Return
   df
+  
+}
+
+
+#' Function to import \code{`invalidations`} table from a \strong{smonitor} 
+#' database. 
+#' 
+#' @param con Database connection. 
+#' @param tz What time-zone should the dates be in? Default is \code{"UTC"}. 
+#' 
+#' @import dplyr
+#' 
+#' @export
+import_invalidation <- function(con, tz = "UTC") {
+  
+  threadr::db_read_table(con, "invalidations") %>%
+    mutate(date_start = ymd_hm(date_start, tz = tz),
+           date_end = ymd_hm(date_end, tz = tz))
   
 }

@@ -61,6 +61,10 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   df_look <- df_look[df_look$process == df_map$process & 
                        df_look$summary == df_map$summary, ]
   
+  # Stop if duplicated mappings
+  if (nrow(df_look) > 1) 
+    stop("Duplicate process-summary pairs found in `summaries` table.", call. = FALSE)
+  
   
   # Different logic for the different aggregation periods
   if (df_look$source == "source" & df_look$period == "hour") {
