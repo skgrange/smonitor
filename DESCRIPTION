@@ -19,7 +19,8 @@ Imports:
     threadr,
     jsonlite,
     openair,
-    ggplot2
+    ggplot2,
+    scales
 Suggests:
 RoxygenNote: 5.0.1
 
