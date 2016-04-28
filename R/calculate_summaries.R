@@ -367,6 +367,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     
   }
   
+  
   # What to do with the summary? 
   if (insert) {
     
@@ -377,10 +378,12 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
       delete_observations(con, df_agg, match = "between")
       
       message("Inserting new observations...")
-      threadr::db_insert(con, "observations", df_agg)
+      insert_observations(con, df_agg)
       
     } else {
       
+      # Also add variable here
+      df_agg$date_insert <- threadr::sys_unix_time(integer = TRUE)
       message("No data inserted...")
       
     }

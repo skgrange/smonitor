@@ -50,14 +50,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
            validity = NA,
            summary = 0L)
   
-  # To-do
-  # if (validity) {}
-  # # Test validity
-  # df <- df %>% 
-  #   group_by(site,
-  #            variable) %>% 
-  #   do(validity_test(., data_invalidation)) %>% 
-  #   ungroup()
+  # To-do validity
   
   # Join processes, only processes in table will be kept, then arrange
   df <- df %>% 
@@ -80,7 +73,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
     
     # Insert
     message("Inserting new observations...")
-    threadr::db_insert(con, "observations", df)
+    insert_observations(con, df)
     
   } else {
     
@@ -89,3 +82,5 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
   }
 
 }
+
+

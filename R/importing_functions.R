@@ -118,7 +118,8 @@ import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC"
   
   # Build statement
   sql <- stringr::str_c(
-    "SELECT observations.date,
+    "SELECT observations.date_insert,
+    observations.date,
     observations.date_end,
     observations.value,
     observations.process,
@@ -148,6 +149,7 @@ import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC"
   if (valid) df <- df[is.na(df$validity) | df$validity == 1, ]
 
   # Parse dates
+  df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
   
