@@ -5,7 +5,7 @@
 \title{Function to import source data from a \strong{smonitor} database.}
 \usage{
 import_source(con, process, start = 1970, end = NA, tz = "UTC",
-  valid = FALSE)
+  valid = FALSE, extra = TRUE)
 }
 \arguments{
 \item{con}{Database connection.}

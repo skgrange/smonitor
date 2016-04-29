@@ -6,7 +6,7 @@
 \strong{smonitor} data model.}
 \usage{
 import_nz(con, process, summary, start = 1970, end = NA,
-  tz = "Etc/GMT-12")
+  tz = "Etc/GMT-12", extra = TRUE)
 }
 \arguments{
 \item{con}{Database connection.}

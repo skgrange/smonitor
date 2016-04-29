@@ -17,7 +17,7 @@
 #' 
 #' @export
 import_source <- function(con, process, start = 1970, end = NA, tz = "UTC",
-                          valid = FALSE) {
+                          valid = FALSE, extra = TRUE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -37,7 +37,8 @@ import_source <- function(con, process, start = 1970, end = NA, tz = "UTC",
   
   # Build statement
   sql <- stringr::str_c(
-    "SELECT observations.date,
+    "SELECT observations.date_insert, 
+     observations.date,
     observations.date_end,
     observations.value,
     observations.process,
@@ -67,8 +68,17 @@ import_source <- function(con, process, start = 1970, end = NA, tz = "UTC",
   if (valid) df <- df[is.na(df$validity) | df$validity == 1, ]
 
   # Parse dates
+  df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  
+  # Drop extras
+  if (!extra) {
+    
+    df$date_insert <- NULL
+    df$date_end <- NULL
+    
+  }
   
   # Return
   df
@@ -97,7 +107,7 @@ import_source <- function(con, process, start = 1970, end = NA, tz = "UTC",
 #' 
 #' @export
 import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC",
-                       valid = FALSE) {
+                       valid = FALSE, extra = TRUE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -153,6 +163,14 @@ import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC"
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
   
+  # Drop extras
+  if (!extra) {
+    
+    df$date_insert <- NULL
+    df$date_end <- NULL
+    
+  }
+  
   # Return
   df
   
@@ -170,7 +188,8 @@ import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC"
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
 #' @export
-import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC") {
+import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC", 
+                                extra = TRUE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -190,7 +209,8 @@ import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC"
   
   # Build statement
   sql <- stringr::str_c(
-    "SELECT observations.date,
+    "SELECT observations.date_insert, 
+    observations.date,
     observations.date_end,
     observations.value,
     observations.process,
@@ -217,8 +237,17 @@ import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC"
   df <- threadr::db_get(con, sql)
   
   # Parse dates
+  df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  
+  # Drop extras
+  if (!extra) {
+    
+    df$date_insert <- NULL
+    df$date_end <- NULL
+    
+  }
   
   # Return
   df
@@ -237,7 +266,8 @@ import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC"
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
 #' @export
-import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC") {
+import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC",
+                               extra = TRUE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -257,7 +287,8 @@ import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC")
   
   # Build statement
   sql <- stringr::str_c(
-    "SELECT observations.date,
+    "SELECT observations.date_insert,
+    observations.date,
     observations.date_end,
     observations.value,
     observations.process,
@@ -284,8 +315,17 @@ import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC")
   df <- threadr::db_get(con, sql)
 
   # Parse dates
+  df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  
+  # Drop extras
+  if (!extra) {
+    
+    df$date_insert <- NULL
+    df$date_end <- NULL
+    
+  }
   
   # Return
   df
@@ -308,7 +348,7 @@ import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC")
 #' 
 #' @export
 import_nz <- function(con, process, summary, start = 1970, end = NA, 
-                      tz = "Etc/GMT-12") {
+                      tz = "Etc/GMT-12", extra = TRUE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -329,7 +369,8 @@ import_nz <- function(con, process, summary, start = 1970, end = NA,
   
   # Build statement
   sql <- stringr::str_c(
-    "SELECT observations.date,
+    "SELECT observations.date_insert, 
+    observations.date,
     observations.date_end,
     observations.value,
     observations.process,
@@ -357,8 +398,17 @@ import_nz <- function(con, process, summary, start = 1970, end = NA,
   df <- threadr::db_get(con, sql)
   
   # Parse dates
+  df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  
+  # Drop extras
+  if (!extra) {
+    
+    df$date_insert <- NULL
+    df$date_end <- NULL
+    
+  }
   
   # Return
   df

@@ -5,7 +5,7 @@
 \title{Function to import any observational data from a \strong{smonitor} database.}
 \usage{
 import_any(con, process, summary, start = 1970, end = NA, tz = "UTC",
-  valid = FALSE)
+  valid = FALSE, extra = TRUE)
 }
 \arguments{
 \item{con}{Database connection.}

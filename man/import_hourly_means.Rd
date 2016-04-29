@@ -4,7 +4,8 @@
 \alias{import_hourly_means}
 \title{Function to import hourly means from a \strong{smonitor} database.}
 \usage{
-import_hourly_means(con, process, start = 1970, end = NA, tz = "UTC")
+import_hourly_means(con, process, start = 1970, end = NA, tz = "UTC",
+  extra = TRUE)
 }
 \arguments{
 \item{con}{Database connection.}

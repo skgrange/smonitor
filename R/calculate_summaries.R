@@ -42,6 +42,8 @@ calculate_summaries <- function(con, df_map, start, end, tz = "UTC",
   plyr::a_ply(df_map, 1, function(x) 
     summary_calculator(con, x, start, end, tz = tz, insert))
   
+  # No return
+  
 }
   
 
@@ -71,7 +73,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     
     # Get valid observations
     df <- import_source(con, df_map$process, start = start, end = end,
-                        tz = tz, valid = TRUE)
+                        tz = tz, valid = TRUE, extra = FALSE)
     
     # Only if data
     if (nrow(df) > 0) {
@@ -132,7 +134,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     
     # Load
     df <- import_hourly_means(con, df_map$process, start = start, end = end, 
-                              tz = tz)
+                              tz = tz, extra = FALSE)
     
     df$date_end <- NULL
     
@@ -190,7 +192,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     
     # Load
     df <- import_daily_means(con, df_map$process, start = start, end = end,
-                             tz = tz)
+                             tz = tz, extra = FALSE)
     
     df$date_end <- NULL
     
@@ -244,7 +246,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     
     # Load
     df <- import_hourly_means(con, df_map$process, start = start, end = end,
-                              tz = tz)
+                              tz = tz, extra = FALSE)
     
     df$date_end <- NULL
     
@@ -307,7 +309,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     
     # Load
     df <- import_daily_means(con, df_map$process, start = start, end = end,
-                             tz = tz)
+                             tz = tz, extra = FALSE)
     
     df$date_end <- NULL
     
@@ -398,5 +400,5 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
 }
 
 
-# No exported needed
+# No export needed
 message_summary <- function() message("Aggregating data...")

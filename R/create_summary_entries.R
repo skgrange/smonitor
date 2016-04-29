@@ -46,4 +46,3 @@ create_summary_entries <- function(con, process, type = "standard") {
   df_agg
   
 }
-

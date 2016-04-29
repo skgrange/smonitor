@@ -15,6 +15,7 @@
 update_validity <- function(con, process) {
   
   # Get look-up table
+  message("Querying...")
   df_look <- threadr::db_read_table(con, "invalidations") %>% 
     mutate(date_start = lubridate::ymd_hm(date_start, tz = "UTC"),
            date_end = lubridate::ymd_hm(date_end, tz = "UTC"),
@@ -27,6 +28,7 @@ update_validity <- function(con, process) {
            date_end = as.numeric(date_end))
   
   # Update validity
+  message("Testing validity...")
   df <- validity_test(df, df_look)
   
   # Get variables for insert
@@ -39,10 +41,12 @@ update_validity <- function(con, process) {
            value)
   
   # Delete old observations
+  message("Deleting old observations...")
   delete_observations(con, df, match = "between")
   
   # Insert new observations
-  threadr::db_insert(con, "observations", df)
+  message("Inserting new observations...")
+  insert_observations(con, df)
   
   # No return
   

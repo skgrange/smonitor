@@ -4,7 +4,8 @@
 \alias{import_daily_means}
 \title{Function to import daily means from a \strong{smonitor} database.}
 \usage{
-import_daily_means(con, process, start = 1970, end = NA, tz = "UTC")
+import_daily_means(con, process, start = 1970, end = NA, tz = "UTC",
+  extra = TRUE)
 }
 \arguments{
 \item{con}{Database connection.}

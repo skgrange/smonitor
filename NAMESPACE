@@ -3,6 +3,7 @@
 export(calculate_summaries)
 export(create_summary_entries)
 export(delete_observations)
+export(delete_process)
 export(import_aggregations)
 export(import_any)
 export(import_daily_means)
