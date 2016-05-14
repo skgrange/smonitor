@@ -82,5 +82,3 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
   }
 
 }
-
-

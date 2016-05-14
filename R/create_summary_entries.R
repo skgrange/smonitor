@@ -4,7 +4,9 @@
 #' @author Stuart K. Grange
 #' 
 #' @param con Database connection. 
+#' 
 #' @param process Process integer. 
+#' 
 #' @param type Type of entries to create. Only \code{"standard"} is supported 
 #' currently. 
 #' 
@@ -41,6 +43,10 @@ create_summary_entries <- function(con, process, type = "standard") {
            summary_name) %>% 
     mutate(validity_threshold = 75L) %>% 
     arrange(process)
+  
+  # Drop nonsense wind direction summaries
+  df_agg <- df_agg %>% 
+    filter(!(variable == "wd" & grepl("_max|_min", summary_name)))
   
   # Return
   df_agg
