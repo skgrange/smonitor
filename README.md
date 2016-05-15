@@ -10,8 +10,9 @@
 
 The development version: 
 ```
-# Install dependency
+# Install dependencies
 devtools::install_github("skgrange/threadr")
+devtools::install_github("davidcarslaw/worldmet")
 
 # Install smonitor
 devtools::install_github("skgrange/smonitor")

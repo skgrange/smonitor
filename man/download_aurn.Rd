@@ -8,13 +8,11 @@ Rural Network (AURN) with \code{openair}.}
 download_aurn(site, start = 1990, end = NA)
 }
 \arguments{
-\item{site}{Site code.}
+\item{site}{Site code, for example \code{"yk11"}.}
 
 \item{start}{Start year.}
 
 \item{end}{End year.}
-
-\item{site}{Site code.}
 }
 \description{
 Function to get observations from the United Kingdom's Automatic Urban and 

@@ -20,6 +20,7 @@ Imports:
     threadr,
     jsonlite,
     openair,
+    worldmet,
     ggplot2,
     scales
 Suggests:

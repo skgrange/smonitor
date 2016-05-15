@@ -595,7 +595,6 @@ import_uk <- function(con, site, start = 1970, end = NA, tz = "UTC",
              -summary) %>%
       spread(variable, value)
     
-    
     if (heathrow) {
       
       # Cast without site identifiers
@@ -613,18 +612,22 @@ import_uk <- function(con, site, start = 1970, end = NA, tz = "UTC",
       
     }
     
+    # Pad time-series
+    df <- df %>% 
+      threadr::time_pad(interval = "hour", by = c("site", "site_name"))
+    
   } else {
     
     if (heathrow) {
       
-      #Just bind
+      # Just bind
       df <- df %>%
         bind_rows(df_heathrow)
       
     }
     
   }
-  
+
   # Return
   df
   
