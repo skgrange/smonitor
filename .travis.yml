@@ -9,5 +9,5 @@ r_binary_packages:
 # Install development package
 r_github_packages:
   - skgrange/threadr
-
+  - davidcarslaw/worldmet
 

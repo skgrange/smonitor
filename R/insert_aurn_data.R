@@ -21,9 +21,7 @@
 #' 
 #' @export
 insert_aurn_data <- function(con, site, start, end = NA, verbose = TRUE) {
-  
-  # site <- c("my1", "hea")
-  
+
   if (is.na(end)) end <- lubridate::year(Sys.Date())
   
   # Build look-up table
