@@ -183,7 +183,9 @@ download_noaa <- function(site, start = 1990, end = NA) {
   if (is.na(end)) end <- lubridate::year(Sys.Date())
   
   # Download
-  df <- worldmet::importNOAA(code = site, year = start:end, hourly = TRUE)
+  # importNOAA is not vectorised over site
+  df <- plyr::ldply(site, worldmet::importNOAA, year = start:end, hourly = TRUE)
+  # df <- worldmet::importNOAA(code = site, year = start:end, hourly = TRUE)
   
   # Just in case, may not be needed
   closeAllConnections()

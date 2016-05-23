@@ -582,7 +582,7 @@ import_uk <- function(con, site, start = 1970, end = NA, tz = "UTC",
   # Filter to site input
   df_processes <- df_processes[df_processes$site %in% site, ]
   
-  # site data
+  # Get sites' data
   df <- import_hourly_means(con, df_processes$process, start, end, tz,
                             extra = TRUE)
   
@@ -611,6 +611,10 @@ import_uk <- function(con, site, start = 1970, end = NA, tz = "UTC",
         left_join(df_heathrow, by = c("date", "date_end"))
       
     }
+    
+    if (nrow(df) < 1) 
+      stop("Database has been queried but no data has been returned.",
+           call. = FALSE)
     
     # Pad time-series
     df <- df %>% 

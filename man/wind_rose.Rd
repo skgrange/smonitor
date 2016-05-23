@@ -4,19 +4,32 @@
 \alias{wind_rose}
 \title{Function to plot wind roses.}
 \usage{
-wind_rose(df, ws = "ws", wd = "wd", ws_breaks = seq(0, 10, 2),
-  wd_width = 30)
+wind_rose(data, spd = "ws", dir = "wd", spdres = 2, dirres = 30,
+  spdmin = 2, spdmax = 20, spdseq = NULL, palette = "YlGnBu",
+  countmax = NA, debug = 0)
 }
 \arguments{
-\item{df}{Data frame.}
+\item{data}{Data frame.}
 
-\item{ws}{Wind speed variable.}
+\item{spd}{Wind speed variable. Default is \code{"ws"}.}
 
-\item{wd}{Wind direction variable}
+\item{dir}{Wind direction variable. Default is \code{"wd"}.}
 
-\item{ws_breaks}{Breaks for wind speed binning.}
+\item{spdres}{Wind speed resolution. Default is \code{2}.}
 
-\item{wd_width}{Width of breaks for wind direction binning.}
+\item{dirres}{Wind direction resolution. Default is \code{30}.}
+
+\item{spdmin}{Wind speed minimum. Default is \code{2}.}
+
+\item{spdmax}{Wind speed maximum. Default is \code{20}.}
+
+\item{spdseq}{Wind speed sequence. An override.}
+
+\item{palette}{Colour palette to use. Default is \code{"YlGnBu"}.}
+
+\item{countmax}{An adjustment override for the wind speed scale.}
+
+\item{debug}{Show debug messages. Use \code{0} or \code{1}, not logicals.}
 }
 \description{
 \code{wind_rose} uses \strong{ggplot2} and is a stacked bar chart with
@@ -24,9 +37,9 @@ polar coordinates. \code{wind_rose} bins wind speed and direction then
 aggregates to find counts.
 }
 \author{
-Stuart K. Grange
+Andy Clifton with a few changes by Stuart K. Grange
 }
 \seealso{
-\code{\link{windRose}}
+\code{\link{windRose}} \href{http://stackoverflow.com/questions/17266780/wind-rose-with-ggplot-r}{stackoverflow.com}
 }
 
