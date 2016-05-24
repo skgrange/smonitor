@@ -4,7 +4,7 @@
 
 ## Introduction
 
-**smonitor** is an R package which contains a collection of functions which allows maintenance of air quality monitoring data. **smonitor** is both a specific, but simple data model (also known as a schema) and a collection of functions which operate with this data model. The data model is implemented with a SQL database. Although the development reflects the management of air quality data, the functions and data model should be utilitarian enough to be applied to other time-series measurements. 
+**smonitor** is an R package which contains a collection of functions which allows maintenance of air quality monitoring data. **smonitor** refers to both, a specific but simple data model (also known as a schema) and a collection of functions which operate with this data model. The data model is implemented with a SQL database. Although the development reflects the management of air quality data, the functions and data model should be utilitarian enough to be applied to other time-series measurements. 
 
 ## Installation
 
@@ -21,7 +21,9 @@ install_github("davidcarslaw/worldmet")
 install_github("skgrange/smonitor")
 ```
 
-## Background
+A minimal SQLite example of the database can be found at `inst/extdata/smonitor_example.db`. The addition of other variables/columns/fields in the tables should not be a problem, but the removal of the core variables is not recommended if the R functions within this package are to be used without modification. 
+
+### Background
 
 I have been involved with many projects recently which have seriously complicated the storage and retrieval of simple time-series data, an example can be found [here](https://wiki.52north.org/bin/view/SensorWeb/SosDataModeling). I believe that time-series data is very simple; at a fundamental level there are observations in time and space which need to be stored. In my experience, most of the complication arises when:
 
@@ -31,12 +33,12 @@ I have been involved with many projects recently which have seriously complicate
   
 **smonitor** attempts to provide a framework and functions so these things can be dealt with easily and getting data into and out of a database is simple and fast. 
 
-### Goals
+## Objectives
 
-The primary goals of **smonitor** are: 
+The primary objectives of **smonitor** are: 
 
   - Provide a simple data model for time-series data. The data model should also allow for extensions.
-  - Provide functions to calculate aggregations which can be easily scheduled and be dynamic so they reflect source data changes. 
+  - Provide functions to insert data and calculate aggregations which can be easily scheduled and be dynamic so they reflect source data changes. 
   - Provide importing functions so data can be imported and used easily and conveniently for analysis. 
     - This is the end-goal and the key reason why this development was started, accessing data should be easy! 
 
@@ -51,7 +53,7 @@ The current data model is implemented with six tables:
   - `invalidations`: Stores date ranges where a process is considered invalid. An optional component and is used only when source data obviously contains errors. 
   - `observations`: Stores measurement data as well as the aggregations of measurement data.
   
-An example of the variables which can be used can be found in the `inst/extdata/smonitor_example.db` SQLite database. 
+An example of the variables which can be used can be found in the `inst/extdata/smonitor_example.db` SQLite database.
 
 ### A `process`
 
