@@ -10,12 +10,15 @@
 
 The development version: 
 ```
+# Load package
+library(devtools)
+
 # Install dependencies
-devtools::install_github("skgrange/threadr")
-devtools::install_github("davidcarslaw/worldmet")
+install_github("skgrange/threadr")
+install_github("davidcarslaw/worldmet")
 
 # Install smonitor
-devtools::install_github("skgrange/smonitor")
+install_github("skgrange/smonitor")
 ```
 
 ## Background
@@ -39,10 +42,6 @@ The primary goals of **smonitor** are:
 
 ## The data model
 
-### A `process`
-
-The **smonitor**'s data model uses generic nouns and verbs to keep things portable. The primary identifier for a location-variable pair is called the `process`. A `process` is best described as an unique, and usually, a mostly un-interrupted time-series. For example, a temperature sensor at a monitoring site for several years would represent a single process. If relative humidity and pressure were also monitored at the same location, they would also form other processes. Other variables at other monitoring sites/locations would also be additional processes. However, if the original temperature sensor failed and was replaced, the replacement would be a new process. Changes in instrumentation would usually give cause to create a new process, but if instrumentation contains consumables, such as BAMs (beta attenuation monitors) with their filter-tape, new processes could be used to represent these changes too; but only if this was desired. A process can be as granular or specific as a user needs it to be. 
-
 The current data model is implemented with six tables: 
 
   - `processes`: Stores information of unique time-series. `processes` contains keys to join all other tables together and is the main mapping table. 
@@ -51,3 +50,16 @@ The current data model is implemented with six tables:
   - `summaries`: Stores information of what aggregations should be preformed on processes. 
   - `invalidations`: Stores date ranges where a process is considered invalid. An optional component and is used only when source data obviously contains errors. 
   - `observations`: Stores measurement data as well as the aggregations of measurement data.
+  
+An example of the variables which can be used can be found in the `inst/extdata/smonitor_example.db` SQLite database. 
+
+### A `process`
+
+The **smonitor**'s data model uses generic nouns and verbs to keep things portable. The primary identifier for a location-variable pair is called the `process`. A `process` is best described as an unique, and usually, a mostly un-interrupted time-series. For example, a temperature sensor at a monitoring site for several years would represent a single process. If relative humidity and pressure were also monitored at the same location, they would also form other processes. Other variables at other monitoring sites/locations would also be additional processes. However, if the original temperature sensor failed and was replaced, the replacement would be a new process. Changes in instrumentation would usually give cause to create a new process, but if instrumentation contains consumables, such as BAMs (beta attenuation monitors) with their filter-tape, new processes could be used to represent these changes too; but only if this was desired. A process can be as granular or specific as a user needs it to be. 
+
+## Uses
+
+The smonitor database is used for many pieces of my work including: 
+
+  - My personal homepage ([here](http://skgrange.github.io/temperature_plots.html) and [here](http://skgrange.github.io/air_quality_plots.html))
+
