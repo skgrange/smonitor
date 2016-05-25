@@ -13,9 +13,9 @@ insert_observations(con, df)
 \item{df}{Data frame to be inserted.}
 }
 \description{
-\code{insert_observations} will handle the variable order, the date 
-conversions, add a \code{"date_insert"} variable, and the insert for a 
-\strong{smonitor} database.
+\code{insert_observations} will handle the variable/column order, the date 
+conversions, add a \code{"date_insert"} variable, and the database insert for 
+a \strong{smonitor} database.
 }
 \examples{
 \dontrun{

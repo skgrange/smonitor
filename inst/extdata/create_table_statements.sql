@@ -1,4 +1,4 @@
-/* Create all tables */
+/* Create tables */
 
 CREATE TABLE aggregations (
   "summary" integer,
