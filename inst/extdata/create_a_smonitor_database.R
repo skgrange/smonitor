@@ -1,16 +1,13 @@
 library(threadr)
 
+# Create SQLite database
 con <- db_connect("smonitor_example.db", config = FALSE)
 
-sql <- readLines("create_table_statements.sql")
-sql <- str_c(sql, collapse = "")
-sql <- str_trim_many_spaces(sql)
-sql <- str_split(sql, ";")
-sql <- unlist(sql)
-sql <- sql[!ifelse(sql == "", TRUE, FALSE)]
+# Use SQL script to create an smonitor database
+db_use_sql(con, "create_table_statements_core.sql")
 
-l_ply(sql, function(x) db_send(con, x))
-
+# Check
 db_list_tables(con)
 
+# Close
 db_disconnect(con)

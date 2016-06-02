@@ -1,13 +1,13 @@
 Package: smonitor
 Type: Package
-Title: Tools to deal with time-series data when stored with a normalised data-
-    model
-Version: 0.0.22
-Date: 2016-05-25
+Title: A framework and functions to store, manage, and maintain air quality 
+    monitoring data
+Version: 0.0.23
+Date: 2016-06-02
 Authors@R: person("Stuart", "Grange", email = "s.k.grange@gmail.com", 
     role = c("cre", "aut"))
-Description: Tools to deal with time-series data when stored with a normalised 
-    data-model
+Description: A framework and functions to store, manage, and maintain air quality 
+    monitoring data
 License: GPL (>= 2)
 ByteCompile: true
 Imports:
