@@ -377,7 +377,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
       
       # Delete old observations
       message("Deleting old observations...")
-      delete_observations(con, df_agg, match = "between")
+      delete_observations(con, df_agg, match = "between", progress = "none")
       
       message("Inserting new observations...")
       insert_observations(con, df_agg)
