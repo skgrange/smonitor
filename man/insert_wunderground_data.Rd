@@ -6,7 +6,7 @@
 \strong{smonitor} database.}
 \usage{
 insert_wunderground_data(con, site, start, end = NA, validity = FALSE,
-  verbose = TRUE)
+  verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -19,12 +19,13 @@ insert_wunderground_data(con, site, start, end = NA, validity = FALSE,
 
 \item{validity}{Should the validity variable be updated? Not implemented yet.}
 
-\item{verbose}{Should the function give messages and be chatty? Default is 
-\code{TRUE}.}
+\item{verbose}{Should the function give messages? Default is \code{FALSE}.}
 }
 \description{
 Site-variable combinations need to be present in the database's process table,
-otherwise they will be silently filtered and not be inserted.
+otherwise they will be silently filtered and not be inserted. New, downloaded
+observations will take priority over those stored in the database and old 
+observations are deleted with this function.
 }
 \author{
 Stuart K. Grange

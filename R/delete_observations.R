@@ -6,23 +6,52 @@
 #' inserted. This process avoids duplicate observations which are almost always
 #' undesirable. 
 #' 
-#' \code{delete_observations} does not currently handle groups, but will in the 
-#' future. It is recommended that \code{plyr::a_ply} is used for this task. 
+#' \code{delete_observations} does allow the use of groups based on the input 
+#' data frame.
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @seealso \link{db_send}
+#' @seealso \code{\link{db_send}}, \code{\link{insert_observations}}
 #' 
 #' @param con Database connection.
 #' 
 #' @param df Data frame; usually an object which is about to be inserted into 
-#' a database table. 
+#' a database table. \code{delete_observations} uses this as a mapping table to
+#' know what to send the database in the delete statement.
+#' 
+#' @param groups Groups in \code{df} to apply the deleting function to. Default 
+#' is \code{c("process", "summary")} and should not need changing. 
 #' 
 #' @param match Type of match to use for dates. Currently only \code{"between"}
 #' is supported. 
 #' 
+#' @param convert Should dates be coverted to integers for the unix time/date 
+#' match for the database? Default is \code{TRUE} but is not nessassary if dates 
+#' in \code{df} are already in unix time format. 
+#' 
+#' @param progress Type of progress bar to display. Default is \code{"time"}. 
+#' 
 #' @export
-delete_observations <- function(con, df, match = "between") {
+delete_observations <- function(con, df, groups = c("process", "summary"), 
+                                match = "between", convert = TRUE, 
+                                progress = "time") {
+  
+  # Check data frame input
+  if (!all(groups %in% names(df))) 
+    stop("Data frame must contain 'group' variables.", call. = TRUE)
+  
+  # Delete observations by groups
+  plyr::d_ply(df, groups, function(x) 
+    delete_observations_worker(con, x, match = match, convert = convert), 
+    .progress = "time")
+  
+  # No return
+  
+}
+
+
+# No export
+delete_observations_worker <- function(con, df, match, convert) {
   
   # Drop tbl_df
   df <- threadr::base_df(df)
@@ -36,6 +65,14 @@ delete_observations <- function(con, df, match = "between") {
     # Get dates, to-do: is avoiding nas ok? 
     date_min <- min(df$date, na.rm = TRUE)
     date_max <- max(df$date, na.rm = TRUE)
+    
+    # Convert if needed
+    if (convert) {
+      
+      date_min <- as.integer(date_min)
+      date_max <- as.integer(date_max)
+      
+    }
     
     # Build statement
     sql <- stringr::str_c(

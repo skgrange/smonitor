@@ -5,7 +5,7 @@
 \title{Function to calculate various time-series summaries for data stored in a 
 \strong{smonitor} database.}
 \usage{
-calculate_summaries(con, df_map, start, end, tz = "UTC", insert = FALSE)
+calculate_summaries(con, df_map, start, end, tz = "UTC", insert = TRUE)
 }
 \arguments{
 \item{con}{Database connection.}

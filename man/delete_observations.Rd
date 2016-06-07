@@ -5,16 +5,27 @@
 \title{Function to delete observations from the \code{`observations`} table in a
 \strong{smonitor} database.}
 \usage{
-delete_observations(con, df, match = "between")
+delete_observations(con, df, groups = c("process", "summary"),
+  match = "between", convert = TRUE, progress = "time")
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{df}{Data frame; usually an object which is about to be inserted into 
-a database table.}
+a database table. \code{delete_observations} uses this as a mapping table to
+know what to send the database in the delete statement.}
+
+\item{groups}{Groups in \code{df} to apply the deleting function to. Default 
+is \code{c("process", "summary")} and should not need changing.}
 
 \item{match}{Type of match to use for dates. Currently only \code{"between"}
 is supported.}
+
+\item{convert}{Should dates be coverted to integers for the unix time/date 
+match for the database? Default is \code{TRUE} but is not nessassary if dates 
+in \code{df} are already in unix time format.}
+
+\item{progress}{Type of progress bar to display. Default is \code{"time"}.}
 }
 \description{
 \code{delete_observations} is generally used immediately before a database 
@@ -23,13 +34,13 @@ inserted. This process avoids duplicate observations which are almost always
 undesirable.
 }
 \details{
-\code{delete_observations} does not currently handle groups, but will in the 
-future. It is recommended that \code{plyr::a_ply} is used for this task.
+\code{delete_observations} does allow the use of groups based on the input 
+data frame.
 }
 \author{
 Stuart K. Grange
 }
 \seealso{
-\link{db_send}
+\code{\link{db_send}}, \code{\link{insert_observations}}
 }
 

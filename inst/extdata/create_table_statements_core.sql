@@ -71,6 +71,17 @@ CREATE TABLE invalidations (
   notes TEXT
 );
 
+CREATE TABLE calibrations (
+  process INTEGER REFERENCES processes(process),
+  site TEXT,
+  variable TEXT,
+  slope REAL,
+  intercept REAL,
+  method TEXT,
+  notes TEXT
+);
+
+
 -- Create indices for observations table, slows insersion and bloats size but
 -- makes queries fast
 CREATE INDEX index_observations_process ON observations(process);
