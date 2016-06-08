@@ -4,7 +4,7 @@
 
 ## Introduction
 
-**smonitor** is both a framework and a collection of functions which operate on this framework to allow for maintenance of air quality monitoring data. **smonitor** is an R package which services the specific, but simple data model (also known as a schema) implemented with a SQL database. Although the development reflects the management of air quality monitoring data, the functions and data model are utilitarian enough to be applied to other time-series measurements. 
+**smonitor** is both a framework, and a collection of functions which operate on this framework to allow for maintenance of air quality monitoring data. **smonitor** is an R package which services the specific, but simple **smonitor**  data model (also known as a schema) implemented with a SQL database. Although the development reflects the management of air quality monitoring data, the functions and data model are utilitarian enough to be applied to other time-series measurements. 
 
 ## Installation
 
@@ -30,6 +30,7 @@ I have been involved with many projects recently which have seriously complicate
   - Many time-series are turned on and off. 
   - There are introductions of temporally overlapping time-series. This occurs when multiple sensors monitoring the same variable are located at a single monitoring site. For example for a season, a number of NO<sub>x</sub> analysers operate at the same monitoring site. 
   - A number of aggregations need to be calculated. Aggregations often have dependence on other aggregations and although the majority of aggregations are simple, there are a few which are rather tricky. 
+  - Time-series are almost never static. Observations in the past are often altered and new observations become available constantly. The growth and dynamic nature of time-series needs management to ensure all updates and inserts can be handled easily and quickly. 
   
 **smonitor** attempts to provide a framework and functions so these things can be dealt with easily and getting data into and out of a database is simple and fast. 
 
@@ -44,20 +45,21 @@ The primary objectives of **smonitor** are:
 
 ## The data model
 
-The current data model is implemented with six tables: 
+The current data model is implemented with seven tables: 
 
   - `processes`: Stores information of unique time-series. `processes` contains keys to join all other tables together and is the main mapping table. 
   - `sites`: Stores information of monitoring locations/facilities such as names, identifiers, addresses, and coordinates. This table can be a spatial-table. 
   - `aggregations`: Stores information of aggregation functions and methods.
   - `summaries`: Stores information of what aggregations should be preformed on processes. 
   - `invalidations`: Stores date ranges where a process is considered invalid. An optional component and is used only when source data obviously contains errors. 
+  - `calibrations`: Stores calibration coefficients for processes. An optional component. 
   - `observations`: Stores measurement data as well as the aggregations of measurement data.
 
 An entity-relationship diagram of the core data model looks like this:
 
 ![**smonitor**'s core data model](inst/extdata/smonitor_entity_relationship_diagram.png)
 
-The data model has some constraints, but by design they have been used sparingly.
+The data model has some constraints, but by design they have been used sparingly. The **smonitor** data-model contains a bit of replication regarding `site` and `variable` variables. These variables are usually unneeded, but are included to help when building look-up tables and to help decode the integer keys.  
 
 ### A `process`
 
@@ -68,4 +70,7 @@ The **smonitor**'s data model uses generic nouns and verbs to keep things portab
 The **smonitor** database is used for many pieces of my work including: 
 
   - My personal homepage ([here](http://skgrange.github.io/temperature_plots.html) and [here](http://skgrange.github.io/air_quality_plots.html))
-
+  - Personal database containing New Zealand's air quality monitoring data. 
+  - Personal database containing United Kingdom's AURN (Automatic Urban and Rural Network) data and meteorological data sourced from NOAA's integrated Surface Database
+(ISD). 
+  - Personal database containing many EU member state's AirBase and e-Reporting observations. 
