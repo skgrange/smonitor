@@ -85,4 +85,4 @@ CREATE TABLE calibrations (
 -- Create indices for observations table, slows insersion and bloats size but
 -- makes queries fast
 CREATE INDEX index_observations_process ON observations(process);
-CREATE INDEX index_observations_summary ON observations(summary);
+-- CREATE INDEX index_observations_summary ON observations(summary);
