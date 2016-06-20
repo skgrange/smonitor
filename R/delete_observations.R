@@ -43,7 +43,7 @@ delete_observations <- function(con, df, groups = c("process", "summary"),
   # Delete observations by groups
   plyr::d_ply(df, groups, function(x) 
     delete_observations_worker(con, x, match = match, convert = convert), 
-    .progress = "time")
+    .progress = progress)
   
   # No return
   

@@ -71,7 +71,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
     
     # Does the grouping
     delete_observations(con, df, match = "between", convert = FALSE, 
-                        progress = "time")
+                        progress = "none")
     
     # Insert
     message("Inserting new observations...")
@@ -129,9 +129,9 @@ insert_wunderground_data_frame <- function(con, df) {
     # Delete observations
     message("Deleting old observations...")
     
-    # Grouping
-    plyr::d_ply(df, c("process", "summary"), function(x) 
-      delete_observations(con, x, match = "between"), .progress = "time")
+    # Does the grouping
+    delete_observations(con, df, match = "between", convert = FALSE, 
+                        progress = "none")
     
     # Insert
     message("Inserting new observations...")

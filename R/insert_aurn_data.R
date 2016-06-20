@@ -105,9 +105,9 @@ insert_aurn_data <- function(con, site, start, end = NA, verbose = TRUE) {
     # Delete observations
     message("Deleting old observations...")
     
-    # Grouping
-    plyr::d_ply(df, c("process", "summary"), function(x) 
-      delete_observations(con, x, match = "between"), .progress = "time")
+    # Does the grouping
+    delete_observations(con, df, match = "between", convert = FALSE, 
+                        progress = "none")
     
     # Insert
     message("Inserting new observations...")
