@@ -7,6 +7,7 @@ CREATE TABLE sites (
   elevation REAL,
   address TEXT,
   region TEXT,
+  country TEXT,
   site_type TEXT,
   operator TEXT,
   notes TEXT
