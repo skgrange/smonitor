@@ -47,6 +47,11 @@ insert_observations <- function(con, df) {
   # Add variable
   df$date_insert <- threadr::sys_unix_time(integer = TRUE)
   
+  # Do some checking
+  if (any(is.na(df$process))) warning("Missing processes detected...", call. = FALSE)
+  if (any(is.na(df$summary))) warning("Missing summaries detected...", call. = FALSE)
+  if (any(is.na(df$date))) warning("Missing dates detected...", call. = FALSE)
+  
   # Insert
   threadr::db_insert(con, "observations", df)
   

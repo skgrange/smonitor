@@ -10,7 +10,8 @@ CREATE TABLE sites (
   country TEXT,
   site_type TEXT,
   operator TEXT,
-  notes TEXT
+  notes TEXT,
+  geom TEXT
 );
 
 CREATE TABLE processes (

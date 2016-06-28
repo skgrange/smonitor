@@ -6,10 +6,12 @@
 #' @export
 import_processes <- function(con, extra = TRUE) {
   
-  # Get look-up table
-  df <- tryCatch({
+  
+  if (extra) {
     
-    threadr::db_get(con, "SELECT processes.*, 
+    df <- tryCatch({
+      
+      threadr::db_get(con, "SELECT processes.*, 
                           sites.site_name, 
                           sites.region, 
                           sites.country,
@@ -18,11 +20,11 @@ import_processes <- function(con, extra = TRUE) {
                           LEFT JOIN sites
                           ON processes.site = sites.site
                           ORDER BY processes.process")
-    
-  }, error = function(e) {
-    
-    # No country here, a temp measure
-    threadr::db_get(con, "SELECT processes.*, 
+      
+    }, error = function(e) {
+      
+      # No country here, a temp measure
+      threadr::db_get(con, "SELECT processes.*, 
                           sites.site_name, 
                           sites.region, 
                           sites.site_type
@@ -30,12 +32,30 @@ import_processes <- function(con, extra = TRUE) {
                           LEFT JOIN sites
                           ON processes.site = sites.site
                           ORDER BY processes.process")
+      
+    })
     
-  })
+  } else {
+    
+    df <- threadr::db_get(con, "SELECT processes.process, 
+                                processes.site,
+                                processes.variable,
+                                processes.period,
+                                processes.group_code,
+                                processes.data_source,
+                                sites.site_name, 
+                                sites.region, 
+                                sites.site_type
+                                FROM processes 
+                                LEFT JOIN sites
+                                ON processes.site = sites.site
+                                ORDER BY process")
+    
+  }
   
-  # Only a few variables
-  if (!extra)
-    df <- df[, c("process", "site_name", "site", "variable", "period")]
+  # # Only a few variables
+  # if (!extra)
+  #   df <- df[, c("process", "site_name", "site", "variable", "period")]
   
   # Return
   df

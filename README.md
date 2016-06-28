@@ -33,7 +33,7 @@ I have been involved with many projects recently which have seriously complicate
   - A number of aggregations need to be calculated. Aggregations often have dependence on other aggregations and although the majority of aggregations are simple, there are a few which are rather tricky. 
   - Time-series are almost never static. Observations in the past are often altered and new observations become available constantly. The growth and dynamic nature of time-series needs management to ensure all updates and inserts can be handled easily and quickly. 
   
-**smonitor** attempts to provide a framework and functions so these things can be dealt with easily and getting data into and out of a database is simple and fast. 
+**smonitor** attempts to provide a framework and functions so these things can be dealt with easily which leads to getting data into and out of a database to be simple and fast. 
 
 ## Objectives
 
@@ -46,7 +46,7 @@ The primary objectives of **smonitor** are:
 
 ## The data model
 
-The current data model is implemented with seven tables: 
+The current data model is implemented with seven tables and uses generic nouns and verbs to keep things portable. The tables are:
 
   - `processes`: Stores information of unique time-series. `processes` contains keys to join all other tables together and is the main mapping table. 
   - `sites`: Stores information of monitoring locations/facilities such as names, identifiers, addresses, and coordinates. This table can be a spatial-table. 
@@ -60,19 +60,22 @@ An entity-relationship diagram of the core data model looks like this:
 
 ![**smonitor**'s core data model](inst/extdata/smonitor_entity_relationship_diagram.png)
 
-The data model has some constraints, but by design they have been used sparingly. The **smonitor** data-model contains a bit of replication regarding `site` and `variable` variables. These variables are usually unneeded outside the `processes` table, but are included to help when building look-up tables and to help with decoding of the integer keys.
+The data model has some constraints, but by design they have been used sparingly. The **smonitor** data-model contains a bit of replication regarding `site` and `variable` variables. These variables are unneeded outside the `processes` table, but are included to help when building look-up tables and to help with the decoding of the integer keys.
 
 ### A `process`
 
-The **smonitor**'s data model uses generic nouns and verbs to keep things portable. The primary identifier for a location-variable pair is called the `process`. A `process` is best described as an unique, and usually, an un-interrupted time-series. For example, a temperature sensor at a monitoring site for several years would represent a single process. If relative humidity and pressure were also monitored at the same location, they would form other processes. Other variables at other monitoring sites/locations would also be additional processes. However, if the original temperature sensor failed and was replaced, the replacement would be a new process. Changes in instrumentation would usually give cause to create a new process, but if instrumentation contains consumables, such as BAMs (beta attenuation monitors) with their filter-tape, new processes could be used to represent these changes too; but only if this was desired. A process can be as granular or specific as a user needs it to be. Processes are defined in space via the `sites` table and by time by their entries in the `observations` table. 
+The primary identifier for a location-variable pair is called the `process`. A `process` is best described as an unique, and usually, an uninterrupted time-series. For example, a temperature sensor at a monitoring site for several years would represent a single process. If relative humidity and pressure were also monitored at the same location, they would form other processes. Other variables at other monitoring sites/locations would also be additional processes. However, if the original temperature sensor failed and was replaced, the replacement would be a new process. Changes in instrumentation would usually give cause to create a new process, but if instrumentation contains consumables, such as BAMs (beta attenuation monitors) with their filter-tape, new processes could be used to represent these changes too; but only if this was desired. A process can be as granular or specific as a user needs it to be. Processes are defined in space via the `sites` table and by time by their entries in the `observations` table. 
+
+### A `summary`
+
+The **smonitor** data model allows *n* number of summaries to be associated with a process. A summary would usually represent an aggregation method such as a daily mean or a daily maximum. For example, a temperature sensor at a location is set to log data every minute and this is retrieved and stored in a database as a single `process`. Perhaps one-minute data are not useful for most people and hourly means wish to be reported. The process will remain the same, but the hourly aggregated observations would represent a different summary. The same situation would occur for other summaries such as daily averages, daily minimums, and daily maximums. **smonitor** also contains functions which enable these aggregations to be done on processes once they have been inserted into the `observation` table. 
 
 ## Uses
 
-The **smonitor** database is used for many pieces of my work including: 
+**smonitor** is used for many pieces of my work including: 
 
-  - My personal homepage ([here](http://skgrange.github.io/temperature_plots.html) and [here](http://skgrange.github.io/air_quality_plots.html))
+  - My personal homepage ([here](http://skgrange.github.io/temperature_plots.html) and [here](http://skgrange.github.io/air_quality_plots.html)). 
   - Personal database containing New Zealand's air quality monitoring data. 
-  - Personal database containing United Kingdom's AURN (Automatic Urban and Rural Network) data and meteorological data sourced from NOAA's integrated Surface Database
-(ISD). 
-  - A database containing all of EU member state's [AirBase](http://www.eea.europa.eu/data-and-maps/data/airbase-the-european-air-quality-database-8) and [e-Reporting](http://www.eionet.europa.eu/aqportal/Drep1) observations.
-  
+  - Personal database containing United Kingdom's [AURN](https://uk-air.defra.gov.uk/) (Automatic Urban and Rural Network) data and meteorological data sourced from NOAA's integrated Surface Database ([ISD](https://www.ncdc.noaa.gov/isd)). 
+  - A database containing European Economic Area (EEA) member state's [AirBase](http://www.eea.europa.eu/data-and-maps/data/airbase-the-european-air-quality-database-8) and [e-Reporting](http://www.eionet.europa.eu/aqportal/Drep1) air quality observations. This database represents a very large amount of work by many of the European states and contains 9 100 sites, 140 000 processes, and about 2 500 000 000 time-series observations! The database technology used for this application is [PostgreSQL](https://www.postgresql.org/). The only extensions required to **smonitor** for this project was to add a dozen new variables to the `sites` table and a few to the `processes` table. The other deviation is that every aggregation period forms its own process which makes the database "flatter". 
+
