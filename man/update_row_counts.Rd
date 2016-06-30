@@ -4,10 +4,13 @@
 \alias{update_row_counts}
 \title{Function to get row counts and insert as a table in a database.}
 \usage{
-update_row_counts(con, read = FALSE)
+update_row_counts(con, estimate = FALSE, read = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
+
+\item{estimate}{Should the row counts be estimated rather than counted? Only
+works for PostgreSQL databases.}
 
 \item{read}{Should the table be immediately read after being updated? Default
 is \code{FALSE}.}
@@ -17,5 +20,8 @@ Function to get row counts and insert as a table in a database.
 }
 \author{
 Stuart K. Grange
+}
+\seealso{
+\code{\link{db_count_rows}}
 }
 
