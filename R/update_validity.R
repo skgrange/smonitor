@@ -16,7 +16,7 @@ update_validity <- function(con, process) {
   
   # Get look-up table
   message("Querying...")
-  df_look <- threadr::db_read_table(con, "invalidations") %>% 
+  df_look <- databaser::db_read_table(con, "invalidations") %>% 
     mutate(date_start = lubridate::ymd_hm(date_start, tz = "UTC"),
            date_end = lubridate::ymd_hm(date_end, tz = "UTC"),
            date_start = as.numeric(date_start),

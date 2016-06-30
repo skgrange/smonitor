@@ -5,15 +5,16 @@
 #' 
 #' @param con Database connection. 
 #' 
-#' @param process Process integer. 
+#' @param process A process integer. 
 #' 
-#' @param type Type of entries to create. Only \code{"standard"} is supported 
-#' currently. 
+#' @param type Type of entries to create. Only \code{"standard"} and 
+#' \code{"extended"} are supported currently. 
 #' 
 #' @import dplyr
 #' 
 #' @export
-create_summary_entries <- function(con, process, type = "standard") {
+create_summary_entries <- function(con, process, type = "standard", 
+                                   validity_threshold = 0L) {
   
   # Query and select
   df_processes <- import_processes(con) %>% 
@@ -32,6 +33,14 @@ create_summary_entries <- function(con, process, type = "standard") {
     
   }
   
+  if (type == "extended") {
+    
+    df_agg <- import_aggregations(con) %>% 
+      filter(summary %in% c(1, 4, 20, 21, 22, 23, 40, 41, 42, 43)) %>% 
+      threadr::replicate_rows(length(process))
+    
+  }
+  
   # Will be recycled
   df_agg$process <- process
   
@@ -41,7 +50,7 @@ create_summary_entries <- function(con, process, type = "standard") {
            site,
            variable,
            summary_name) %>% 
-    mutate(validity_threshold = 75L) %>% 
+    mutate(validity_threshold = validity_threshold) %>% 
     arrange(process)
   
   # Drop nonsense wind direction summaries

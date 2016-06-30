@@ -6,4 +6,4 @@
 #' 
 #' @export
 get_latest_process_integer <- function(con)
-  threadr::db_get(con, "SELECT MAX(process) AS process FROM processes")$process
+  databaser::db_get(con, "SELECT MAX(process) AS process FROM processes")$process

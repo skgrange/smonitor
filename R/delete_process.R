@@ -24,7 +24,7 @@ delete_process <- function(con, process) {
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Use statement to kill observations
-  threadr::db_send(con, sql)
+  databaser::db_send(con, sql)
   
   # No return
   

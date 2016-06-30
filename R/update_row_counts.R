@@ -10,13 +10,13 @@
 update_row_counts <- function(con, read = FALSE) {
   
   # Get counts of all tables
-  df <- threadr::db_count_rows(con, table = NA)
+  df <- databaser::db_count_rows(con, table = NA)
   
   # Insert and always overwrite
-  threadr::db_insert(con, "row_counts", df, append = FALSE, overwrite = TRUE)
+  databaser::db_insert(con, "row_counts", df, append = FALSE, overwrite = TRUE)
   
   # Reassign df
-  if (read) df <- threadr::db_read_table(con, "row_counts")
+  if (read) df <- databaser::db_read_table(con, "row_counts")
 
   # Return
   if (read) df else invisible()

@@ -29,17 +29,17 @@
 import_by_site <- function(con, site, start = 1970, end = NA, period = "hour", 
                            valid = TRUE, pad = TRUE, tz = "UTC", extra = TRUE) {
   
-  # site = "ididcot3"; start = 1970; end = NA; tz = "UTC"; period = "hour"; 
-  # valid = TRUE
-  
   # Check arguments
   if (length(period) > 1) stop("'period' can only take one value", call. = FALSE)
+  
+  # 
+  site <- stringr::str_trim(site)
   
   # Get process table
   df_processes <- import_processes(con)
   
   # Filter to site input
-  df_processes <- df_processes[df_processes$site %in% site & df_processes$period == period, ]
+  df_processes <- df_processes[df_processes$site %in% site, ]
   
   # message(jsonlite::toJSON(df_processes, pretty = TRUE))
   
@@ -47,7 +47,7 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
   summary <- ifelse(period == "hour", 1, NA)
   summary <- ifelse(summary == "day", 20, summary)
   summary <- ifelse(summary == "week", 90, summary)
-  summary <- ifelse(summary %in% c("variable", "var"), 91, summary)
+  summary <- ifelse(summary %in% c("variable", "var", "other"), 91, summary)
   summary <- ifelse(summary == "month", 92, summary)
   summary <- ifelse(summary == "fortnight", 93, summary)
   

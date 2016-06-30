@@ -16,6 +16,7 @@ library(devtools)
 
 # Install dependencies
 install_github("skgrange/threadr")
+install_github("skgrange/databaser")
 install_github("davidcarslaw/worldmet")
 
 # Install smonitor
@@ -77,5 +78,6 @@ The **smonitor** data model allows *n* number of summaries to be associated with
   - My personal homepage ([here](http://skgrange.github.io/temperature_plots.html) and [here](http://skgrange.github.io/air_quality_plots.html)). 
   - Personal database containing New Zealand's air quality monitoring data. 
   - Personal database containing United Kingdom's [AURN](https://uk-air.defra.gov.uk/) (Automatic Urban and Rural Network) data and meteorological data sourced from NOAA's integrated Surface Database ([ISD](https://www.ncdc.noaa.gov/isd)). 
+  - A database which only contains a few sites which is serviced by [envirologgerr](https://github.com/skgrange/envirologgerr). 
   - A database containing European Economic Area (EEA) member state's [AirBase](http://www.eea.europa.eu/data-and-maps/data/airbase-the-european-air-quality-database-8) and [e-Reporting](http://www.eionet.europa.eu/aqportal/Drep1) air quality observations. This database represents a very large amount of work by many of the European states and contains 9 100 sites, 140 000 processes, and about 2 500 000 000 time-series observations! The database technology used for this application is [PostgreSQL](https://www.postgresql.org/). The only extensions required to **smonitor** for this project was to add a dozen new variables to the `sites` table and a few to the `processes` table. The other deviation is that every aggregation period forms its own process which makes the database "flatter". 
 

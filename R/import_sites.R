@@ -7,9 +7,9 @@
 import_sites <- function(con, extra = TRUE) {
   
   # Get look-up table
-  df <- threadr::db_get(con, "SELECT sites.*
-                              FROM sites 
-                              ORDER BY site")
+  df <- databaser::db_get(con, "SELECT sites.*
+                                FROM sites 
+                                ORDER BY site")
   
   # Only a few variables
   if (!extra)

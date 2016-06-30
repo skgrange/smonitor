@@ -85,7 +85,7 @@ delete_observations_worker <- function(con, df, match, convert) {
     sql <- threadr::str_trim_many_spaces(sql)
     
     # Use statement
-    threadr::db_send(con, sql)
+    databaser::db_send(con, sql)
     
   }
   

@@ -21,8 +21,8 @@ variables.}
 }
 \description{
 \code{calculate_summaries} will handle aggregation methods, transformation,
-and updating processes when the \strong{smonitor} databases are complete.
-\code{calculate_summaries} will also correctly aggregate wind direction.
+and updating processes when the \strong{smonitor} tables are complete.
+\code{calculate_summaries} will correctly aggregate wind direction.
 }
 \examples{
 \dontrun{

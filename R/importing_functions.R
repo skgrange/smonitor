@@ -62,7 +62,7 @@ import_source <- function(con, process, start = 1970, end = NA, tz = "UTC",
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Query database
-  df <- threadr::db_get(con, sql)
+  df <- databaser::db_get(con, sql)
   
   # Filter invalid observations
   if (valid) df <- df[is.na(df$validity) | df$validity == 1, ]
@@ -143,7 +143,7 @@ import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC"
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Query
-  df <- threadr::db_get(con, sql)
+  df <- databaser::db_get(con, sql)
   
   # Parse dates
   df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
@@ -221,7 +221,7 @@ import_daily_means <- function(con, process, start = 1970, end = NA, tz = "UTC",
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Query
-  df <- threadr::db_get(con, sql)
+  df <- databaser::db_get(con, sql)
 
   # Parse dates
   df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
@@ -304,7 +304,7 @@ import_nz <- function(con, process, summary, start = 1970, end = NA,
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Query
-  df <- threadr::db_get(con, sql)
+  df <- databaser::db_get(con, sql)
   
   # Parse dates
   df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
@@ -337,13 +337,13 @@ import_nz <- function(con, process, summary, start = 1970, end = NA,
 import_summaries <- function(con, extra = TRUE) {
   
   # Get look-up table
-  df <- threadr::db_get(con, "SELECT summaries.*,
-                              sites.site_name
-                              FROM summaries
-                              LEFT JOIN sites
-                              ON summaries.site = sites.site
-                              ORDER BY summaries.process, 
-                              summaries.summary")
+  df <- databaser::db_get(con, "SELECT summaries.*,
+                                sites.site_name
+                                FROM summaries
+                                LEFT JOIN sites
+                                ON summaries.site = sites.site
+                                ORDER BY summaries.process, 
+                                summaries.summary")
   
   # Only a few variables
   if (!extra)
@@ -366,8 +366,8 @@ import_summaries <- function(con, extra = TRUE) {
 import_aggregations <- function(con, extra = TRUE) {
   
   # Get look-up table
-  df <- threadr::db_get(con, "SELECT aggregations.*
-                              FROM aggregations")
+  df <- databaser::db_get(con, "SELECT aggregations.*
+                                FROM aggregations")
   
   # Only a few variables
   if (!extra) df <- df[, c("summary", "summary_name")]
@@ -389,7 +389,7 @@ import_aggregations <- function(con, extra = TRUE) {
 #' @export
 import_invalidation <- function(con, tz = "UTC") {
   
-  threadr::db_read_table(con, "invalidations") %>%
+  databaser::db_read_table(con, "invalidations") %>%
     mutate(date_start = ymd_hm(date_start, tz = tz),
            date_end = ymd_hm(date_end, tz = tz))
   

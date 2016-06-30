@@ -11,11 +11,11 @@
 integrity_check <- function(con) {
   
   # Check processes in `observations`
-  processes_process <- threadr::db_get(con, "SELECT DISTINCT process 
-                                       FROM processes")$process
+  processes_process <- databaser::db_get(con, "SELECT DISTINCT process 
+                                               FROM processes")$process
   
-  observations_process <- threadr::db_get(con, "SELECT DISTINCT process 
-                                          FROM observations")$process
+  observations_process <- databaser::db_get(con, "SELECT DISTINCT process 
+                                                  FROM observations")$process
   
   process_difference <- observations_process %in% processes_process
   
@@ -31,11 +31,11 @@ integrity_check <- function(con) {
   
   
   # Check sites in `processes`
-  sites_site <- threadr::db_get(con, "SELECT DISTINCT site 
-                                      FROM sites")$site
+  sites_site <- databaser::db_get(con, "SELECT DISTINCT site 
+                                        FROM sites")$site
   
-  processes_site <- threadr::db_get(con, "SELECT DISTINCT site 
-                                          FROM processes")$site
+  processes_site <- databaser::db_get(con, "SELECT DISTINCT site 
+                                            FROM processes")$site
   
   site_difference <- processes_site %in% sites_site
   
@@ -51,11 +51,11 @@ integrity_check <- function(con) {
   
   
   # Check summaries in `aggregations`
-  aggregations_summary <- threadr::db_get(con, "SELECT DISTINCT summary
-                                                FROM aggregations")$summary
+  aggregations_summary <- databaser::db_get(con, "SELECT DISTINCT summary
+                                                  FROM aggregations")$summary
   
-  observations_summary <- threadr::db_get(con, "SELECT DISTINCT summary
-                                                FROM observations")$summary
+  observations_summary <- databaser::db_get(con, "SELECT DISTINCT summary
+                                                  FROM observations")$summary
   
   summary_difference <- observations_summary %in% aggregations_summary
   
@@ -70,4 +70,3 @@ integrity_check <- function(con) {
   }
   
 }
-

@@ -25,7 +25,7 @@ insert_observations <- function(con, df) {
   df <- threadr::base_df(df)
   
   # Get variables in database table
-  variables <- threadr::db_list_variables(con, "observations")
+  variables <- databaser::db_list_variables(con, "observations")
   
   # Drop variables which are not in table
   index <- ifelse(names(df) %in% variables, TRUE, FALSE)
@@ -53,6 +53,6 @@ insert_observations <- function(con, df) {
   if (any(is.na(df$date))) warning("Missing dates detected...", call. = FALSE)
   
   # Insert
-  threadr::db_insert(con, "observations", df)
+  databaser::db_insert(con, "observations", df)
   
 }

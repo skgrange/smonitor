@@ -5,15 +5,16 @@
 \title{Function to create entries for the \code{`summary`} table in a 
 \strong{smonitor} database.}
 \usage{
-create_summary_entries(con, process, type = "standard")
+create_summary_entries(con, process, type = "standard",
+  validity_threshold = 0L)
 }
 \arguments{
 \item{con}{Database connection.}
 
-\item{process}{Process integer.}
+\item{process}{A process integer.}
 
-\item{type}{Type of entries to create. Only \code{"standard"} is supported 
-currently.}
+\item{type}{Type of entries to create. Only \code{"standard"} and 
+\code{"extended"} are supported currently.}
 }
 \description{
 Function to create entries for the \code{`summary`} table in a 

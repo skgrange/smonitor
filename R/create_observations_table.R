@@ -12,18 +12,19 @@
 create_observations_table <- function(con, index = TRUE) {
   
   # Create new table
-  db_send(con, "CREATE TABLE observations(
-                date_insert INTEGER,
-                date INTEGER,
-                date_end INTEGER,
-                process INTEGER,
-                summary INTEGER,
-                validity INTEGER,
-                value REAL)")
+  databaser::db_send(con, "CREATE TABLE observations(
+                           date_insert INTEGER,
+                           date INTEGER,
+                           date_end INTEGER,
+                           process INTEGER,
+                           summary INTEGER,
+                           validity INTEGER,
+                           value REAL)")
   
   # Add index
   if (index)
-    db_send(con, "CREATE INDEX index_observations_process ON observations(process)")
+    databaser::db_send(con, "CREATE INDEX index_observations_process 
+                             ON observations(process)")
   
   # No return
   

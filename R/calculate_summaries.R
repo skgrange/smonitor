@@ -2,8 +2,8 @@
 #' \strong{smonitor} database. 
 #' 
 #' \code{calculate_summaries} will handle aggregation methods, transformation,
-#' and updating processes when the \strong{smonitor} databases are complete.
-#' \code{calculate_summaries} will also correctly aggregate wind direction.
+#' and updating processes when the \strong{smonitor} tables are complete.
+#' \code{calculate_summaries} will correctly aggregate wind direction.
 #' 
 #' @seealso \code{\link{timeAverage}}, \code{\link{dplyr::summarise}}
 #' 
@@ -71,7 +71,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   # Different logic for the different aggregation periods
   if (df_look$source == "source" & df_look$period == "hour") {
     
-    # Get valid observations
+    # Get valid observations, i.e. not 0
     df <- import_source(con, df_map$process, start = start, end = end,
                         tz = tz, valid = TRUE, extra = FALSE)
     

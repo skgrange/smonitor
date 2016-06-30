@@ -65,7 +65,7 @@ import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC"
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Query database
-  df <- threadr::db_get(con, sql)
+  df <- databaser::db_get(con, sql)
   
   # Filter invalid observations
   if (valid) df <- df[is.na(df$validity) | df$validity == 1, ]
