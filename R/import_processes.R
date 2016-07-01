@@ -1,62 +1,59 @@
 #' Function to import \code{`processes`} table from a \strong{smonitor} database. 
 #' 
-#' @param con Database connection. 
-#' @param extra Return extra data? Default is \code{TRUE}.
+#' @param con A \strong{smonitor} database connection. 
+#' @param type Type of query to run; either \code{"full"} or \code{"minimal"}. 
+#' 
+#' @author Stuart K. Grange
+#' 
+#' @import stringr
 #' 
 #' @export
-import_processes <- function(con, extra = TRUE) {
+import_processes <- function(con, type = "full") {
   
+  # Check
+  types_allowed <- c("full", "minimal")
   
-  if (extra) {
+  if (!type %in% types_allowed)
+    stop("'type' not recognised.", call. = FALSE)
+  
+  # Different queries
+  if (type == "full") {
     
-    df <- tryCatch({
-      
-      databaser::db_get(con, "SELECT processes.*, 
-                              sites.site_name, 
-                              sites.region, 
-                              sites.country,
-                              sites.site_type
-                              FROM processes
-                              LEFT JOIN sites
-                              ON processes.site = sites.site
-                              ORDER BY processes.process")
-      
-    }, error = function(e) {
-      
-      # No country here, a temp measure
-      databaser::db_get(con, "SELECT processes.*, 
-                              sites.site_name, 
-                              sites.region, 
-                              sites.site_type
-                              FROM processes
-                              LEFT JOIN sites
-                              ON processes.site = sites.site
-                              ORDER BY processes.process")
-      
-    })
-    
-  } else {
-    
-    df <- databaser::db_get(con, "SELECT processes.process, 
-                                  processes.site,
-                                  processes.variable,
-                                  processes.period,
-                                  processes.group_code,
-                                  processes.data_source,
-                                  sites.site_name, 
-                                  sites.region, 
-                                  sites.site_type
-                                  FROM processes 
-                                  LEFT JOIN sites
-                                  ON processes.site = sites.site
-                                  ORDER BY process")
+    # Get everything from processes and things from sites
+    sql <- str_c("SELECT processes.*, 
+                  sites.site_name, 
+                  sites.region, 
+                  sites.country,
+                  sites.site_type
+                  FROM processes
+                  LEFT JOIN sites
+                  ON processes.site = sites.site
+                  ORDER BY processes.process")
     
   }
   
-  # # Only a few variables
-  # if (!extra)
-  #   df <- df[, c("process", "site_name", "site", "variable", "period")]
+  if (type == "minimal") {
+    
+    # Minimal things
+    sql <- str_c("SELECT processes.process, 
+                 processes.site,
+                 processes.variable,
+                 processes.period,
+                 sites.site_name, 
+                 sites.site_type
+                 FROM processes 
+                 LEFT JOIN sites
+                 ON processes.site = sites.site
+                 ORDER BY processes.process")
+    
+  }
   
+  # Clean
+  sql <- threadr::str_trim_many_spaces(sql)
+  
+  # Query
+  df <- databaser::db_get(con, sql)
+    
   # Return
   df
   

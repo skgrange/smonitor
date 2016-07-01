@@ -4,14 +4,17 @@
 \alias{import_processes}
 \title{Function to import \code{`processes`} table from a \strong{smonitor} database.}
 \usage{
-import_processes(con, extra = TRUE)
+import_processes(con, type = "full")
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{A \strong{smonitor} database connection.}
 
-\item{extra}{Return extra data? Default is \code{TRUE}.}
+\item{type}{Type of query to run; either \code{"full"} or \code{"minimal"}.}
 }
 \description{
 Function to import \code{`processes`} table from a \strong{smonitor} database.
+}
+\author{
+Stuart K. Grange
 }
 

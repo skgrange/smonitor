@@ -17,6 +17,8 @@ import_hourly_means(con, process, start = 1970, end = NA, tz = "UTC",
 \item{end}{End date to import.}
 
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
+
+\item{extra}{Should extra data be returned? Default is \code{TRUE}.}
 }
 \description{
 Function to import hourly means from a \strong{smonitor} database.

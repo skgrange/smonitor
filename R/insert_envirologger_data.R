@@ -78,7 +78,7 @@ insert_envirologger_data <- function(con, user, key, station, server,
     
     # Does the grouping
     delete_observations(con, df, match = "between", convert = FALSE, 
-                        progress = "none")
+                        progress = "time")
     
     # Insert
     message("Inserting new observations...")

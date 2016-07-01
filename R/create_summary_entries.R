@@ -7,8 +7,8 @@
 #' 
 #' @param process A process integer. 
 #' 
-#' @param type Type of entries to create. Only \code{"standard"} and 
-#' \code{"extended"} are supported currently. 
+#' @param type Type of entries to create. Can be either \code{"standard"} or
+#' \code{"extended"}.
 #' 
 #' @import dplyr
 #' 

@@ -21,14 +21,15 @@
 #' 
 #' @export
 insert_aurn_data <- function(con, site, start, end = NA, verbose = TRUE) {
-
+  
+  # Ceiling round
   if (is.na(end)) end <- lubridate::year(Sys.Date())
   
   # Build look-up table
   df_sites <- import_sites(con) %>% 
     select(site,
            site_code, 
-           source)
+           data_source)
   
   # Join site info needed for logic determining which function to use for input
   df_processes <- import_processes(con) %>% 
@@ -36,15 +37,15 @@ insert_aurn_data <- function(con, site, start, end = NA, verbose = TRUE) {
   
   # Filter and select
   df_processes <- df_processes[df_processes$site %in% site, 
-    c("process", "site", "variable", "source", "site_code")]
+    c("process", "site", "variable", "data_source", "site_code")]
   
   # openair processes
   df_processes_openair <- df_processes %>% 
-    filter(source == "openair")
+    filter(data_source == "openair")
   
   # worldmet processes
   df_processes_worldmet <- df_processes %>% 
-    filter(source == "worldmet")
+    filter(data_source == "worldmet")
   
   # Smaller look-up table for site_code to site
   df_processes_worldmet_sites <- df_processes_worldmet %>% 
@@ -96,8 +97,8 @@ insert_aurn_data <- function(con, site, start, end = NA, verbose = TRUE) {
            date_end = as.integer(date_end),
            summary = 1L,
            validity = NA) %>% 
-    inner_join(df_processes, c("site", "variable")) %>% 
-    select(-source, 
+    inner_join(df_processes, by = c("site", "variable")) %>% 
+    select(-data_source, 
            -site_code)
   
   if (nrow(df) > 0) {

@@ -95,6 +95,7 @@ import_source <- function(con, process, start = 1970, end = NA, tz = "UTC",
 #' @param start Start date to import. 
 #' @param end End date to import. 
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
+#' @param extra Should extra data be returned? Default is \code{TRUE}. 
 #' 
 #' @export
 import_hourly_means <- function(con, process, start = 1970, end = NA, tz = "UTC", 

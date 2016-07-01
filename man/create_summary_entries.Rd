@@ -13,8 +13,8 @@ create_summary_entries(con, process, type = "standard",
 
 \item{process}{A process integer.}
 
-\item{type}{Type of entries to create. Only \code{"standard"} and 
-\code{"extended"} are supported currently.}
+\item{type}{Type of entries to create. Can be either \code{"standard"} or
+\code{"extended"}.}
 }
 \description{
 Function to create entries for the \code{`summary`} table in a 

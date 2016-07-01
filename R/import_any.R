@@ -1,12 +1,13 @@
-#' Function to import any observational data from a \strong{smonitor} database. 
+#' Function to import observational data from a \strong{smonitor} database. 
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @param con Database connection. 
+#' @param con A \strong{smonitor} database connection. 
 #' 
 #' @param process A process, an integer key. 
 #' 
-#' @param summary A summary, an integer key. 
+#' @param summary A summary, an integer key. If summary is \code{NA}, then only 
+#' the \code{process} will be used in the \code{WHERE} clause. 
 #' 
 #' @param start Start date to import. 
 #' 
@@ -14,12 +15,12 @@
 #' 
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
-#' @param valid Should invalid observations be filtered out? Default is 
-#' \code{FALSE}. 
+#' @param valid_only Should invalid observations be filtered out? Default is 
+#' \code{TRUE}. 
 #' 
 #' @export
-import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC",
-                       valid = FALSE, extra = TRUE) {
+import_any <- function(con, process, summary = NA, start = 1970, end = NA, 
+                       tz = "UTC", valid_only = TRUE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -33,33 +34,61 @@ import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC"
   # For sql
   start <- as.integer(start)
   end <- as.integer(end)
-  
-  # For sql
   process <- stringr::str_c(process, collapse = ",")
-  summary <- stringr::str_c(summary, collapse = ",")
   
-  # Build statement
-  sql <- stringr::str_c(
-    "SELECT observations.date_insert,
-    observations.date,
-    observations.date_end,
-    observations.value,
-    observations.process,
-    observations.summary,
-    observations.validity,
-    processes.site,
-    processes.variable, 
-    sites.site_name
-    FROM observations 
-    LEFT JOIN processes 
-    ON observations.process = processes.process
-    LEFT JOIN sites
-    ON processes.site = sites.site
-    WHERE observations.process IN (", process, ")
-    AND observations.date BETWEEN ", start, " AND ", end, 
-    " AND observations.summary IN (", summary, ")
-    ORDER BY observations.process, 
-    observations.date")
+  if (is.na(summary)) {
+    
+    # Build statement
+    sql <- stringr::str_c(
+      "SELECT observations.date_insert,
+      observations.date,
+      observations.date_end,
+      observations.value,
+      observations.process,
+      observations.summary,
+      observations.validity,
+      processes.site,
+      processes.variable, 
+      sites.site_name
+      FROM observations 
+      LEFT JOIN processes 
+      ON observations.process = processes.process
+      LEFT JOIN sites
+      ON processes.site = sites.site
+      WHERE observations.process IN (", process, ")
+      AND observations.date BETWEEN ", start, " AND ", end, 
+      " ORDER BY observations.process, 
+      observations.date")
+    
+  } else {
+    
+  # For sql
+    summary <- stringr::str_c(summary, collapse = ",")
+    
+    # Build statement
+    sql <- stringr::str_c(
+      "SELECT observations.date_insert,
+      observations.date,
+      observations.date_end,
+      observations.value,
+      observations.process,
+      observations.summary,
+      observations.validity,
+      processes.site,
+      processes.variable, 
+      sites.site_name
+      FROM observations 
+      LEFT JOIN processes 
+      ON observations.process = processes.process
+      LEFT JOIN sites
+      ON processes.site = sites.site
+      WHERE observations.process IN (", process, ")
+      AND observations.date BETWEEN ", start, " AND ", end, 
+      " AND observations.summary IN (", summary, ")
+      ORDER BY observations.process, 
+      observations.date")
+    
+  }
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
@@ -67,21 +96,13 @@ import_any <- function(con, process, summary, start = 1970, end = NA, tz = "UTC"
   # Query database
   df <- databaser::db_get(con, sql)
   
-  # Filter invalid observations
-  if (valid) df <- df[is.na(df$validity) | df$validity == 1, ]
+  # Filter invalid observations, not 0, may move to sql at some point
+  if (valid_only) df <- df[is.na(df$validity) | df$validity == 1, ]
   
   # Parse dates
   df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
-  
-  # Drop extras
-  if (!extra) {
-    
-    df$date_insert <- NULL
-    df$date_end <- NULL
-    
-  }
   
   # Return
   df

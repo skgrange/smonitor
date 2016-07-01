@@ -5,10 +5,11 @@
 \title{Function to import data from an \code{smonitor} database based on sites.}
 \usage{
 import_by_site(con, site, start = 1970, end = NA, period = "hour",
-  valid = TRUE, pad = TRUE, tz = "UTC", extra = TRUE)
+  valid_only = FALSE, pad = TRUE, tz = "UTC", spread = FALSE,
+  europe = FALSE)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{A \strong{smonitor} database connection.}
 
 \item{site}{A site code such as \code{"my1"}.}
 
@@ -16,17 +17,20 @@ import_by_site(con, site, start = 1970, end = NA, period = "hour",
 
 \item{end}{End date to import.}
 
-\item{period}{Averaging period.}
+\item{period}{Averaging period. Default is \code{"hour"}}
 
-\item{valid}{Should only valid data be returned?}
+\item{valid_only}{Should only valid data be returned? Default is \code{FALSE}.}
 
 \item{pad}{Should the time-series be padded to ensure all dates in the 
-observation period are present?}
+observation period are present? Default is \code{TRUE}.}
 
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
 
-\item{extra}{Should the data frame contain extra variables? Default is 
-\code{FALSE}.}
+\item{spread}{Should the data frame take the wider format resulting from
+spreading the data? Default is \code{FALSE}.}
+
+\item{europe}{Should \code{import_processes_europe} be used rather than
+\code{import_processes}?}
 }
 \description{
 Function to import data from an \code{smonitor} database based on sites.

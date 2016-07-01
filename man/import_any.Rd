@@ -2,17 +2,18 @@
 % Please edit documentation in R/import_any.R
 \name{import_any}
 \alias{import_any}
-\title{Function to import any observational data from a \strong{smonitor} database.}
+\title{Function to import observational data from a \strong{smonitor} database.}
 \usage{
-import_any(con, process, summary, start = 1970, end = NA, tz = "UTC",
-  valid = FALSE, extra = TRUE)
+import_any(con, process, summary = NA, start = 1970, end = NA,
+  tz = "UTC", valid_only = TRUE)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{A \strong{smonitor} database connection.}
 
 \item{process}{A process, an integer key.}
 
-\item{summary}{A summary, an integer key.}
+\item{summary}{A summary, an integer key. If summary is \code{NA}, then only 
+the \code{process} will be used in the \code{WHERE} clause.}
 
 \item{start}{Start date to import.}
 
@@ -20,11 +21,11 @@ import_any(con, process, summary, start = 1970, end = NA, tz = "UTC",
 
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
 
-\item{valid}{Should invalid observations be filtered out? Default is 
-\code{FALSE}.}
+\item{valid_only}{Should invalid observations be filtered out? Default is 
+\code{TRUE}.}
 }
 \description{
-Function to import any observational data from a \strong{smonitor} database.
+Function to import observational data from a \strong{smonitor} database.
 }
 \author{
 Stuart K. Grange
