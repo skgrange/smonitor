@@ -5,12 +5,14 @@
 \title{Function to update validity variable in a \code{`observations`} table in a 
 \strong{smonitor} database.}
 \usage{
-update_validity(con, process)
+update_validity(con, process, tz = "UTC", progress = "time")
 }
 \arguments{
 \item{con}{Database connection.}
 
-\item{process}{Process, an integer key.}
+\item{process}{A vector of processes.}
+
+\item{progress}{Progress bar type. Default is \code{"time"}.}
 }
 \description{
 \code{update_validity} does not really update the validity variable, it queries

@@ -45,22 +45,30 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
     # Get filtered mapping table
     df_processes <- import_processes_europe(con, country_code)
     
+    # Europe has no summaries, therefore period can be used
+    df_processes <- df_processes[df_processes$site %in% site & 
+                                   df_processes$period %in% period, ]
+    
+    summary <- NA
+    
   } else {
     
     # Standard mapping table
     df_processes <- import_processes(con)
     
+    # Filter to site and period input
+    df_processes <- df_processes[df_processes$site %in% site, ]
+    
+    # Switch period to integer
+    summary <- ifelse(period == "hour", 1, period)
+    
   }
-  
-  # Filter to site and period input
-  df_processes <- df_processes[df_processes$site %in% site & 
-                                 df_processes$period %in% period, ]
   
   #
   # message(jsonlite::toJSON(df_processes, pretty = TRUE))
   
   # Query database to get sites' data
-  df <- import_any(con, process = df_processes$process, summary = NA, 
+  df <- import_any(con, process = df_processes$process, summary = summary, 
                    start = start, end = end, tz = tz, valid_only = valid_only)
   
   if (nrow(df) == 0)
@@ -84,12 +92,26 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
       
     }, error = function(e) {
       
+      # # Raise warning
+      # warning("Variable names were manipulated for reshaping.", call. = FALSE)
+      # 
+      # df %>%
+      #   mutate(process = stringr::str_pad(process, width = 6, pad = "0"),
+      #          variable = stringr::str_c(variable, "_", process)) %>% 
+      #   select(-date_insert,
+      #          -process,
+      #          -summary,
+      #          -validity) %>%
+      #   tidyr::spread(variable, value)
+      
       # Raise warning
-      warning("Variable names were manipulated for reshaping.", call. = FALSE)
+      warning("Data has been removed for reshaping...", call. = FALSE)
       
       df %>%
-        mutate(process = stringr::str_pad(process, width = 6, pad = "0"),
-               variable = stringr::str_c(variable, "_", process)) %>% 
+        distinct(date,
+                 site,
+                 variable, 
+                 .keep_all = TRUE) %>% 
         select(-date_insert,
                -process,
                -summary,

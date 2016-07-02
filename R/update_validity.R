@@ -8,45 +8,50 @@
 #' @author Stuart K. Grange
 #' 
 #' @param con Database connection. 
-#' @param process Process, an integer key. 
+#' @param process A vector of processes. 
+#' @param progress Progress bar type. Default is \code{"time"}. 
 #' 
 #' @import dplyr
 #' @export
-update_validity <- function(con, process) {
+update_validity <- function(con, process, tz = "UTC", progress = "time") {
   
   # Get look-up table
-  message("Querying...")
-  df_look <- databaser::db_read_table(con, "invalidations") %>% 
-    mutate(date_start = lubridate::ymd_hm(date_start, tz = "UTC"),
-           date_end = lubridate::ymd_hm(date_end, tz = "UTC"),
-           date_start = as.numeric(date_start),
+  df_look <- import_invalidation(con, tz = tz) %>% 
+    mutate(date_start = as.numeric(date_start),
            date_end = as.numeric(date_end))
   
+  # Do for every process
+  plyr::l_ply(process, function(x) update_validity_worker(con, x, df_look), 
+              .progress = progress)
+  
+  # No return
+  
+}
+
+
+# No exported needed
+# 
+update_validity_worker <- function(con, process, df_look) {
+  
   # Get observations
-  df <- import_source(con, process, start = 1970, end = 2020, valid = FALSE) %>% 
+  df <- import_any(con, process, summary = 0, start = 1970, end = 2020, 
+                   valid_only = FALSE) %>% 
     mutate(date = as.numeric(date),
            date_end = as.numeric(date_end))
   
-  # Update validity
-  message("Testing validity...")
-  df <- validity_test(df, df_look)
-  
-  # Get variables for insert
-  df <- df %>% 
-    select(date,
-           date_end,
-           process, 
-           summary,
-           validity,
-           value)
-  
-  # Delete old observations
-  message("Deleting old observations...")
-  delete_observations(con, df, match = "between")
-  
-  # Insert new observations
-  message("Inserting new observations...")
-  insert_observations(con, df)
+  if (nrow(df) != 0) {
+    
+    # Update validity, look up table is filtered in function
+    df <- validity_test(df, df_look)
+    
+    # Delete old observations
+    delete_observations(con, df, match = "between", convert = FALSE, 
+                        progress = "none")
+    
+    # Insert new observations
+    insert_observations(con, df)
+    
+  }
   
   # No return
   

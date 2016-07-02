@@ -4,20 +4,20 @@
 \alias{validity_test}
 \title{Function to add a validity variable to a data frame based on date ranges.}
 \usage{
-validity_test(df, df_look, use_process = FALSE)
+validity_test(df, df_look, valid_value = NA)
 }
 \arguments{
 \item{df}{Data frame to test and add or overwrite a \code{validity} variable.}
 
-\item{df_look}{A look-up data frame containing \code{site}, \code{variable}, 
+\item{df_look}{A look-up data frame containing \code{process}, 
 \code{date_start}, and \code{date_end} variables.}
 
-\item{use_process}{Use \code{"process"} rather than \code{"site"} and 
-\code{"variable"}.}
+\item{valid_value}{For values which are not invalid, \emph{i.e.} they fail 
+the date range test, what value should they take? Default is \code{NA}, but
+\code{1} could be appropriate too.}
 }
 \description{
-\code{validity_test} oes not currently handle groups, but will in the future.
-It is recommended that \code{dplyr::do} is used for this task.
+Function to add a validity variable to a data frame based on date ranges.
 }
 \author{
 Stuart K. Grange.

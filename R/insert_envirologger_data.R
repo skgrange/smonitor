@@ -42,7 +42,7 @@ insert_envirologger_data <- function(con, user, key, station, server,
            label = envirologger_label,
            sensor = variable_long)
   
-  # Get observations with an API
+  # Get observations with API
   message("Getting new observations...")
   
   df <- envirologgerr::get_envirologger_data(
