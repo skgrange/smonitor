@@ -1,26 +1,49 @@
 #' Function to import observational data from a \strong{smonitor} database. 
 #' 
-#' @author Stuart K. Grange
+#' \code{import_any} is considered the primary data importer for 
+#' \strong{smonitor}. 
 #' 
 #' @param con A \strong{smonitor} database connection. 
 #' 
-#' @param process A process, an integer key. 
+#' @param process A vector of processes.
 #' 
-#' @param summary A summary, an integer key. If summary is \code{NA}, then only 
-#' the \code{process} will be used in the \code{WHERE} clause. 
+#' @param summary A vector of summaries. If summary is \code{NA} (the default), 
+#' then only the \code{process} will be used in the \code{WHERE} clause. 
 #' 
-#' @param start Start date to import. 
+#' @param start What is the start date of data to be returned? Ideally, the 
+#' date format should be \code{yyyy-mm-dd}, but the UK locale convention of 
+#' \code{dd/mm/yyyy} will also work. Years as strings or integers work too and
+#' will floor-rounded. 
 #' 
-#' @param end End date to import. 
+#' @param end What is the end date of data to be returned? Ideally, the 
+#' date format should be \code{yyyy-mm-dd}, but the UK locale convention of 
+#' \code{dd/mm/yyyy} will also work. Years as strings or integers work too and 
+#' will be ceiling-rounded. 
 #' 
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
 #' @param valid_only Should invalid observations be filtered out? Default is 
-#' \code{TRUE}. 
+#' \code{TRUE}. Valid observations are considered to be those with the validity
+#' variable being \code{1} or missing (\code{NULL} or \code{NA}).  
+#' 
+#' @param date_end Should the return include the \code{date_end} variable? 
+#' Default is \code{TRUE}. 
+#' 
+#' @param date_insert Should the return include the \code{date_insert} variable? 
+#' Default is \code{TRUE}. 
+#' 
+#' @param site_name Should the return include the \code{site_name} variable? 
+#' Default is \code{TRUE}. 
+#' 
+#' @return Data frame containing decoded observataion data with correct data 
+#' types. 
+#' 
+#' @author Stuart K. Grange
 #' 
 #' @export
 import_any <- function(con, process, summary = NA, start = 1970, end = NA, 
-                       tz = "UTC", valid_only = TRUE) {
+                       tz = "UTC", valid_only = TRUE, date_end = TRUE, 
+                       date_insert = TRUE, site_name = TRUE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -90,19 +113,45 @@ import_any <- function(con, process, summary = NA, start = 1970, end = NA,
     
   }
   
-  # Clean
+  # Drop date_insert
+  if (!date_end)
+    sql <- stringr::str_replace(sql, "observations.date_end,", "")
+  
+  # Drop date_insert
+  if (!date_insert)
+    sql <- stringr::str_replace(sql, "observations.date_insert,", "")
+  
+  # Drop site_name, watch the lack of comma here, therefore another catch is 
+  # needed
+  if (!site_name) {
+    
+    sql <- stringr::str_replace(sql, "sites.site_name", "")
+    sql <- stringr::str_replace(sql, "processes.variable,", "processes.variable")
+    
+  }
+  
+  # Clean statement
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Query database
   df <- databaser::db_get(con, sql)
   
+  # Check
+  if (nrow(df) == 0)
+    stop("Database has been queried but no data has been returned.", call. = FALSE)
+  
   # Filter invalid observations, not 0, may move to sql at some point
   if (valid_only) df <- df[is.na(df$validity) | df$validity == 1, ]
   
   # Parse dates
-  df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
+  # Inserted date
+  if (date_insert) 
+    df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
+  
+  if (date_end) 
+    df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
-  df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
   
   # Return
   df

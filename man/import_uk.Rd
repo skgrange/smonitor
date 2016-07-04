@@ -12,9 +12,15 @@ import_uk(con, site, start = 1970, end = NA, tz = "UTC", extra = FALSE,
 
 \item{site}{A site code such as \code{"my1"}.}
 
-\item{start}{Start date to import.}
+\item{start}{What is the start date of data to be returned? Ideally, the 
+date format should be \code{yyyy-mm-dd}, but the UK locale convention of 
+\code{dd/mm/yyyy} will also work. Years as strings or integers work too and
+will floor-rounded.}
 
-\item{end}{End date to import.}
+\item{end}{What is the end date of data to be returned? Ideally, the 
+date format should be \code{yyyy-mm-dd}, but the UK locale convention of 
+\code{dd/mm/yyyy} will also work. Years as strings or integers work too and 
+will be ceiling-rounded.}
 
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
 

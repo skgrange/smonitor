@@ -8,7 +8,7 @@
 #' 
 #' @param end End date to import. 
 #' 
-#' @param period Averaging period. Default is \code{"hour"}
+#' @param period Averaging period. Default is \code{"hour"}. 
 #' 
 #' @param valid_only Should only valid data be returned? Default is \code{FALSE}. 
 #' 
@@ -23,6 +23,15 @@
 #' @param europe Should \code{import_processes_europe} be used rather than
 #' \code{import_processes}? 
 #' 
+#' @param date_end Should the return include the \code{date_end} variable? 
+#' Default is \code{TRUE}. 
+#' 
+#' @param date_insert Should the return include the \code{date_insert} variable? 
+#' Default is \code{TRUE}. 
+#' 
+#' @param date_insert Should the return include the \code{site_name} variable? 
+#' Default is \code{TRUE}. 
+#' 
 #' @import dplyr
 #' 
 #' @author Stuart K. Grange
@@ -30,7 +39,8 @@
 #' @export
 import_by_site <- function(con, site, start = 1970, end = NA, period = "hour", 
                            valid_only = FALSE, pad = TRUE, tz = "UTC", 
-                           spread = FALSE, europe = FALSE) {
+                           spread = FALSE, europe = FALSE, date_end = TRUE, 
+                           date_insert = TRUE, site_name = TRUE) {
   
   # Parse arguments
   site <- stringr::str_trim(site)
@@ -49,6 +59,7 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
     df_processes <- df_processes[df_processes$site %in% site & 
                                    df_processes$period %in% period, ]
     
+    # Summary is not used
     summary <- NA
     
   } else {
@@ -61,18 +72,15 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
     
     # Switch period to integer
     summary <- ifelse(period == "hour", 1, period)
+    summary <- ifelse(period == "day", 20, period)
     
   }
   
-  #
-  # message(jsonlite::toJSON(df_processes, pretty = TRUE))
-  
   # Query database to get sites' data
   df <- import_any(con, process = df_processes$process, summary = summary, 
-                   start = start, end = end, tz = tz, valid_only = valid_only)
-  
-  if (nrow(df) == 0)
-    stop("Database has been queried but no data has been returned.", call. = FALSE)
+                   start = start, end = end, tz = tz, valid_only = valid_only,
+                   date_end = date_end, date_insert = date_insert, 
+                   site_name = site_name)
   
   # Drop all NAs for padding and reshaping
   df <- df %>% 
@@ -80,12 +88,17 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
   
   if (spread) {
     
+    # Drop
+    if (date_insert) df$date_insert <- NULL
+    
+    # For time-padding
+    if (site_name) site <- c("site", "site_name") else site <- "site"
+    
     # Cast data
     df <- tryCatch({
       
       df %>%
-        select(-date_insert,
-               -process,
+        select(-process,
                -summary,
                -validity) %>%
         tidyr::spread(variable, value)
@@ -112,8 +125,7 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
                  site,
                  variable, 
                  .keep_all = TRUE) %>% 
-        select(-date_insert,
-               -process,
+        select(-process,
                -summary,
                -validity) %>%
         tidyr::spread(variable, value)
@@ -124,7 +136,7 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
       
       # Pad time-series
       df <- df %>% 
-        threadr::time_pad(interval = period, by = c("site", "site_name"))
+        threadr::time_pad(interval = period, by = site)
       
     }
     
@@ -135,7 +147,7 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
       # Pad time-series
       df <- df %>% 
         threadr::time_pad(interval = period, 
-          by = c("process", "summary", "site", "site_name", "variable"))
+          by = c("process", "summary", site, "variable"))
       
     }
     

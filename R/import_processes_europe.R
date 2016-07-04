@@ -6,8 +6,10 @@
 #' up the retreval of processes because the table is larger than normal. 
 #' 
 #' @param con A \strong{smonitor} database connection. 
-#' @param country_code A two didget ISO country code used for a regular
+#' @param country_code A two digit ISO country code used for a regular
 #' expression \code{WHERE} clause. This will usually be parsed from site codes. 
+#' If \code{country_code} is \code{NA}, all ISO country codes in the database 
+#' will be used. 
 #' 
 #' @seealso \code{\link{import_processes}}
 #' 
@@ -16,7 +18,14 @@
 #' @import stringr
 #' 
 #' @export
-import_processes_europe <- function(con, country_code) {
+import_processes_europe <- function(con, country_code = NA) {
+  
+  if (is.na(country_code)) {
+    
+    # Use all codes in database
+    country_code <- import_country_codes(con)$country_code
+    
+  }
   
   # Ensure some things
   country_code <- str_to_lower(country_code)

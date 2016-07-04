@@ -5,13 +5,15 @@
 \title{Function to import \code{`processes`} table from the European 
 \strong{smonitor} database.}
 \usage{
-import_processes_europe(con, country_code)
+import_processes_europe(con, country_code = NA)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
 
-\item{country_code}{A two didget ISO country code used for a regular
-expression \code{WHERE} clause. This will usually be parsed from site codes.}
+\item{country_code}{A two digit ISO country code used for a regular
+expression \code{WHERE} clause. This will usually be parsed from site codes. 
+If \code{country_code} is \code{NA}, all ISO country codes in the database 
+will be used.}
 }
 \description{
 \code{import_processes_europe} is an optimised version of 

@@ -71,6 +71,8 @@ insert_envirologger_data <- function(con, user, key, station, server,
            validity,
            value)
   
+  # df_2 <- duplicate_rows(df, c("date", "process", "summary", "validity", "value"))
+  
   if (nrow(df) > 0) {
     
     # Delete observations

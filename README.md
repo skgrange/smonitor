@@ -30,11 +30,8 @@ A minimal SQLite example of the database can be found at `inst/extdata/smonitor_
 I have been involved with many projects recently which have seriously complicated the storage and retrieval of simple time-series data, an example can be found [here](https://wiki.52north.org/bin/view/SensorWeb/SosDataModeling#The_52_North_SOS_standard_data_m). I believe that time-series data is very simple; at a fundamental level there are observations in time and space which need to be stored and most data models complicate this too much. In my experience, most of the complication arises when:
 
   - Many time-series are turned on and off. 
-  
   - There are introductions of temporally overlapping time-series. This occurs when multiple sensors monitoring the same variable are located at a single monitoring site. For example for a season, a number of NO<sub>x</sub> analysers operate at the same monitoring site. 
-  
   - A number of aggregations need to be calculated. Aggregations often have dependence on other aggregations and although the majority of aggregations are simple, there are a few which are rather tricky. 
-  
   - Time-series are almost never static. Observations in the past are often altered and new observations become available constantly. The growth and dynamic nature of time-series needs management to ensure all updates and inserts can be handled easily and quickly. 
   
 **smonitor** attempts to provide a framework and functions so these things can be dealt with easily which leads to getting data into and out of a database to be simple and fast. 
@@ -44,11 +41,8 @@ I have been involved with many projects recently which have seriously complicate
 The primary objectives of **smonitor** are: 
 
   - Provide a simple core data model for time-series data. The data model should allow for extensions for specific uses. 
-  
   - Provide functions to insert data and calculate aggregations which can be easily scheduled and be dynamic. This allows the database to reflect source data changes which occurs constantly with time-series measurements. 
-  
   - Provide importing functions so data can be imported and used easily and conveniently for analysis and data delivery. 
-  
     - This is the end-goal and the key reason why this development was started, accessing good quality data should be easy! 
 
 ## The data model
@@ -56,17 +50,11 @@ The primary objectives of **smonitor** are:
 The current data model is implemented with seven tables and uses generic nouns and verbs to keep things portable. The tables are:
 
   - `processes`: Stores information of unique time-series. `processes` contains keys to join all other tables together and is the main mapping table. 
-  
   - `sites`: Stores information of monitoring locations/facilities such as names, identifiers, addresses, and coordinates. This table can be a spatial-table. 
-  
   - `aggregations`: Stores information of aggregation functions and methods.
-  
   - `summaries`: Stores information of what aggregations should be preformed on processes. 
-  
   - `invalidations`: Stores date ranges where a process is considered invalid. An optional component and is only really used when source data obviously contains errors. 
-  
   - `calibrations`: Stores calibration coefficients for processes. An optional component which has not be formally integrated yet. 
-  
   - `observations`: Stores measurement data as well as the aggregations of measurement data.
 
 An entity-relationship diagram of the core data model looks like this:
@@ -87,12 +75,8 @@ The **smonitor** data model allows *n* number of summaries to be associated with
 
 **smonitor** is used for many pieces of my work including: 
 
-  - My personal homepage ([here](http://skgrange.github.io/temperature_plots.html) and [here](http://skgrange.github.io/air_quality_plots.html)). 
-  
+  - Data which is served with my personal homepage ([here](http://skgrange.github.io/temperature_plots.html) and [here](http://skgrange.github.io/air_quality_plots.html)). 
   - Personal database containing New Zealand's air quality monitoring data. 
-  
   - Personal database containing United Kingdom's [AURN](https://uk-air.defra.gov.uk/) (Automatic Urban and Rural Network) data and meteorological data sourced from NOAA's integrated Surface Database ([ISD](https://www.ncdc.noaa.gov/isd)). 
-  
   - A database which contains a handful of sites which is serviced by the [**envirologgerr**](https://github.com/skgrange/envirologgerr) API.
-  
-  - A database containing European Economic Area (EEA) member state's [AirBase](http://www.eea.europa.eu/data-and-maps/data/airbase-the-european-air-quality-database-8) and [e-Reporting](http://www.eionet.europa.eu/aqportal/Drep1) air quality observations. This database represents a very large amount of work by many of the European states and contains 9 100 sites, 130 000 processes, and 2 600 000 000 time-series observations! The database technology used for this application is [PostgreSQL](https://www.postgresql.org/). The only extensions required to **smonitor** for this project was to add a dozen new variables to the `sites` table and a few to the `processes` table. The other deviation is that every aggregation period forms its own process. Therefore, there are no summaries calculated from processes which makes the database "flatter" and simpler. This in turn helps with getting the large amount of data into the database. 
+  - A database containing European Economic Area (EEA) member state's [AirBase](http://www.eea.europa.eu/data-and-maps/data/airbase-the-european-air-quality-database-8) and [e-Reporting](http://www.eionet.europa.eu/aqportal/Drep1) air quality observations. This database represents a very large amount of work by many of the European states and contains 9 100 sites, 130 000 processes, and 2 600 000 000 time-series observations! The database technology used for this application is [PostgreSQL](https://www.postgresql.org/). The only extensions required to **smonitor** for this project was to add a dozen new variables to the `sites` table and a few to the `processes` table. The other deviation is that every aggregation period forms its own process. Therefore, there are no summaries calculated from processes which makes the database "flatter" and simpler. However, this change required some modification of the importing functions to get data out of the database after it has been inserted. 

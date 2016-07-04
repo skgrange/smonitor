@@ -6,7 +6,7 @@
 \usage{
 import_by_site(con, site, start = 1970, end = NA, period = "hour",
   valid_only = FALSE, pad = TRUE, tz = "UTC", spread = FALSE,
-  europe = FALSE)
+  europe = FALSE, date_end = TRUE, date_insert = TRUE, site_name = TRUE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -17,7 +17,7 @@ import_by_site(con, site, start = 1970, end = NA, period = "hour",
 
 \item{end}{End date to import.}
 
-\item{period}{Averaging period. Default is \code{"hour"}}
+\item{period}{Averaging period. Default is \code{"hour"}.}
 
 \item{valid_only}{Should only valid data be returned? Default is \code{FALSE}.}
 
@@ -31,6 +31,15 @@ spreading the data? Default is \code{FALSE}.}
 
 \item{europe}{Should \code{import_processes_europe} be used rather than
 \code{import_processes}?}
+
+\item{date_end}{Should the return include the \code{date_end} variable? 
+Default is \code{TRUE}.}
+
+\item{date_insert}{Should the return include the \code{date_insert} variable? 
+Default is \code{TRUE}.}
+
+\item{date_insert}{Should the return include the \code{site_name} variable? 
+Default is \code{TRUE}.}
 }
 \description{
 Function to import data from an \code{smonitor} database based on sites.
