@@ -51,7 +51,7 @@ import_europe <- function(con, process = NA, site = NA, start = 1969, end = NA,
     stop("'process' or 'site' must be used", call. = FALSE)
   
   # Use different functions for importing
-  if (!is.na(process)) {
+  if (!is.na(process) & is.na(site)) {
     
     df <- import_any(con, process, summary = NA, start = start, end = end,
                      tz = tz, valid_only = valid_only, date_end = date_end, 
@@ -59,7 +59,7 @@ import_europe <- function(con, process = NA, site = NA, start = 1969, end = NA,
     
   }
   
-  if (is.na(site)) {
+  if (!is.na(site) & is.na(process)) {
     
     df <- import_by_site(con, site, start = start, end = end, period = period,
                          valid_only = valid_only, pad = pad, tz = tz, 

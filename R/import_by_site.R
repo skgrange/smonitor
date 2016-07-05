@@ -45,6 +45,8 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
   # Parse arguments
   site <- stringr::str_trim(site)
   
+  if (period %in% c("all", "any")) pad <- FALSE
+  
   # Get process table
   if (europe) {
     
@@ -55,11 +57,20 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
     # Get filtered mapping table
     df_processes <- import_processes_europe(con, country_code)
     
-    # Europe has no summaries, therefore period can be used
-    df_processes <- df_processes[df_processes$site %in% site & 
-                                   df_processes$period %in% period, ]
+    if (period %in% c("all", "any")) {
+      
+      # No filtering on period
+      df_processes <- df_processes[df_processes$site %in% site, ]
+      
+    } else {
+      
+      # Europe has no summaries, therefore period can be used here
+      df_processes <- df_processes[df_processes$site %in% site & 
+                                     df_processes$period %in% period, ]
+      
+    }
     
-    # Summary is not used
+    # Summary is not used in Europe database
     summary <- NA
     
   } else {
@@ -76,6 +87,10 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
     
   }
   
+  # Check mapping table
+  if (nrow(df_processes) == 0) 
+    stop("Mapping table contains no entries. Do you need to check the 'site' and 'period' arguments?", call. = FALSE)
+  
   # Query database to get sites' data
   df <- import_any(con, process = df_processes$process, summary = summary, 
                    start = start, end = end, tz = tz, valid_only = valid_only,
@@ -86,13 +101,13 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
   df <- df %>% 
     filter(!is.na(value))
   
+  # For time-padding
+  if (site_name) site_variables <- c("site", "site_name") else site_variables <- "site"
+  
   if (spread) {
     
     # Drop
     if (date_insert) df$date_insert <- NULL
-    
-    # For time-padding
-    if (site_name) site <- c("site", "site_name") else site <- "site"
     
     # Cast data
     df <- tryCatch({
@@ -136,7 +151,7 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
       
       # Pad time-series
       df <- df %>% 
-        threadr::time_pad(interval = period, by = site)
+        threadr::time_pad(interval = period, by = site_variables)
       
     }
     
@@ -147,7 +162,7 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
       # Pad time-series
       df <- df %>% 
         threadr::time_pad(interval = period, 
-          by = c("process", "summary", site, "variable"))
+          by = c("process", "summary", site_variables, "variable"))
       
     }
     
