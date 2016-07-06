@@ -5,7 +5,7 @@
 \title{Function to get observations from the Envirologger API and insert them into a 
 \strong{smonitor} database.}
 \usage{
-insert_envirologger_data(con, user, key, station, server, start, end = NA)
+insert_envirologger_data(con, user, key, server, station, start, end = NA)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -14,9 +14,9 @@ insert_envirologger_data(con, user, key, station, server, start, end = NA)
 
 \item{key}{An Envirologger API key for \code{user}.}
 
-\item{station}{A vector of station codes to download.}
-
 \item{server}{An Envirologger API server code to use for download.}
+
+\item{station}{A vector of station codes to download.}
 
 \item{start}{Start date to download and insert.}
 

@@ -139,8 +139,10 @@ download_aurn <- function(site, start = 1990, end = NA) {
   if (is.na(end)) end <- lubridate::year(Sys.Date())
   
   suppressWarnings(
-    quiet(
-      df <- openair::importAURN(site, year = start:end)
+    suppressMessages(
+      quiet(
+        df <- openair::importAURN(site, year = start:end)
+      )
     )
   )
   

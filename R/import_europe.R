@@ -23,7 +23,7 @@
 #' observation period are present? Default is \code{TRUE}. 
 #' 
 #' @param spread Should the data frame take the wider format resulting from
-#' spreading the data? Default is \code{FALSE}. 
+#' spreading the data? Default is \code{TRUE}. 
 #' 
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
@@ -47,11 +47,11 @@ import_europe <- function(con, process = NA, site = NA, start = 1969, end = NA,
                           date_insert = FALSE, site_name = TRUE) {
   
   
-  if (is.na(process) & is.na(site)) 
+  if (is.na(process[1]) & is.na(site[1])) 
     stop("'process' or 'site' must be used", call. = FALSE)
   
   # Use different functions for importing
-  if (!is.na(process) & is.na(site)) {
+  if (!is.na(process[1]) & is.na(site[1])) {
     
     df <- import_any(con, process, summary = NA, start = start, end = end,
                      tz = tz, valid_only = valid_only, date_end = date_end, 
@@ -59,7 +59,7 @@ import_europe <- function(con, process = NA, site = NA, start = 1969, end = NA,
     
   }
   
-  if (!is.na(site) & is.na(process)) {
+  if (!is.na(site[1]) & is.na(process[1])) {
     
     df <- import_by_site(con, site, start = start, end = end, period = period,
                          valid_only = valid_only, pad = pad, tz = tz, 

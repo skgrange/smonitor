@@ -12,9 +12,9 @@
 #' 
 #' @param key An Envirologger API key for \code{user}. 
 #' 
-#' @param station A vector of station codes to download.
-#' 
 #' @param server An Envirologger API server code to use for download.
+#' 
+#' @param station A vector of station codes to download.
 #' 
 #' @param start Start date to download and insert. 
 #' 
@@ -25,7 +25,7 @@
 #' @import dplyr
 #' 
 #' @export
-insert_envirologger_data <- function(con, user, key, station, server, 
+insert_envirologger_data <- function(con, user, key, server, station, 
                                      start, end = NA) {
   
   # Load look-up tables
@@ -46,7 +46,7 @@ insert_envirologger_data <- function(con, user, key, station, server,
   message("Getting new observations...")
   
   df <- envirologgerr::get_envirologger_data(
-    user = user, key = key, station = station, server = server, start = start, 
+    user = user, key = key, server = server, station = station, start = start, 
     end = end, clean = TRUE)
   
   # Site, not station bitte
@@ -70,8 +70,6 @@ insert_envirologger_data <- function(con, user, key, station, server,
            summary,
            validity,
            value)
-  
-  # df_2 <- duplicate_rows(df, c("date", "process", "summary", "validity", "value"))
   
   if (nrow(df) > 0) {
     

@@ -33,7 +33,7 @@ will be ceiling-rounded.}
 observation period are present? Default is \code{TRUE}.}
 
 \item{spread}{Should the data frame take the wider format resulting from
-spreading the data? Default is \code{FALSE}.}
+spreading the data? Default is \code{TRUE}.}
 
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
 
