@@ -27,7 +27,7 @@ A minimal SQLite example of the database can be found at `inst/extdata/smonitor_
 
 ### Background
 
-I have been involved with many projects recently which have seriously complicated the storage and retrieval of simple time-series data, an example can be found [here](https://wiki.52north.org/bin/view/SensorWeb/SosDataModeling#The_52_North_SOS_standard_data_m). I believe that time-series data is very simple; at a fundamental level there are observations in time and space which need to be stored and most data models complicate this too much. In my experience, most of the complication arises when:
+I have been involved with many projects recently which have seriously complicated the storage and retrieval of simple time-series data, an example can be found [here](https://wiki.52north.org/SensorWeb/SensorObservationServiceDatabaseModel#Core_database_model). I believe that time-series data is very simple; at a fundamental level there are observations in time and space which need to be stored and most data models complicate this too much. In my experience, most of the complication arises when:
 
   - Many time-series are turned on and off. 
   - There are introductions of temporally overlapping time-series. This occurs when multiple sensors monitoring the same variable are located at a single monitoring site. For example for a season, a number of NO<sub>x</sub> analysers operate at the same monitoring site. 

@@ -5,11 +5,15 @@
 #' \code{import_processes} which includes a regular expression filter to speed
 #' up the retreval of processes because the table is larger than normal. 
 #' 
-#' @param con A \strong{smonitor} database connection. 
+#' @param con A \strong{smonitor} database connection.
+#'  
 #' @param country_code A two digit ISO country code used for a regular
 #' expression \code{WHERE} clause. This will usually be parsed from site codes. 
 #' If \code{country_code} is \code{NA}, all ISO country codes in the database 
 #' will be used. 
+#' 
+#' @param minimal Should a bare-minimum SQL be run? This statment is small as 
+#' possible to make it fast when used within other functions. 
 #' 
 #' @seealso \code{\link{import_processes}}
 #' 
@@ -18,40 +22,47 @@
 #' @import stringr
 #' 
 #' @export
-import_processes_europe <- function(con, country_code = NA) {
+import_processes_europe <- function(con, country_code = NA, minimal = FALSE) {
   
-  if (is.na(country_code)) {
-    
-    # Use all codes in database
+  # Use all codes in database
+  if (is.na(country_code)) 
     country_code <- import_country_codes(con)$country_code
-    
-  }
-  
+
   # Ensure some things
   country_code <- str_to_lower(country_code)
   
   # For sql
   country_code <- str_c(country_code, collapse = "|")
   
-  # Build statement
-  sql <- str_c("SELECT processes.process, 
-               processes.site,
-               processes.variable,
-               processes.period,
-               processes.date_start,
-               processes.date_end,
-               processes.group_code,
-               processes.data_source,
-               sites.site_name,
-               sites.region,
-               sites.country,
-               sites.site_type,
-               sites.site_area
-               FROM processes
-               LEFT JOIN sites
-               ON processes.site = sites.site
-               WHERE sites.site SIMILAR TO '(", country_code, ")%'
-               ORDER BY processes.process")
+  if (minimal) {
+    
+    # Build statement
+    sql <- str_c("SELECT processes.process, 
+                  processes.site,
+                  processes.variable,
+                  processes.period
+                  FROM processes
+                  WHERE processes.site SIMILAR TO '(", country_code, ")%'")
+    
+  } else {
+    
+    # Build statement
+    sql <- str_c("SELECT processes.process, 
+                  processes.site,
+                  processes.variable,
+                  processes.period,
+                  processes.group_code,
+                  processes.data_source,
+                  sites.country,
+                  sites.site_type,
+                  sites.site_area
+                  FROM processes
+                  LEFT JOIN sites
+                  ON processes.site = sites.site
+                  WHERE processes.site SIMILAR TO '(", country_code, ")%'
+                  ORDER BY processes.process")
+    
+  }
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)

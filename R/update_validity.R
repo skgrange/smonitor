@@ -34,10 +34,20 @@ update_validity <- function(con, process, tz = "UTC", progress = "time") {
 update_validity_worker <- function(con, process, df_look) {
   
   # Get observations
-  df <- import_any(con, process, summary = 0, start = 1970, end = 2020, 
-                   valid_only = FALSE) %>% 
-    mutate(date = as.numeric(date),
-           date_end = as.numeric(date_end))
+  # Catch is for when database contains no data for a process and gives an error
+  df <- tryCatch({
+    
+    import_any(con, process, summary = 0, start = 1970, end = 2020, 
+               valid_only = FALSE) %>% 
+      mutate(date = as.numeric(date),
+             date_end = as.numeric(date_end))
+    
+  }, error = function(e) {
+    
+    # Return no observations
+    data.frame()
+    
+  })
   
   if (nrow(df) != 0) {
     

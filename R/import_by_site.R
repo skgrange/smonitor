@@ -4,11 +4,16 @@
 #' 
 #' @param site A site code such as \code{"my1"}. 
 #' 
+#' @param variable An optional variable vector. If not used, all variables will
+#' be selected and returned.  
+#' 
 #' @param start Start date to import. 
 #' 
 #' @param end End date to import. 
 #' 
-#' @param period Averaging period. Default is \code{"hour"}. 
+#' @param period Averaging period. Default is \code{"hour"}. \code{period} can
+#' also take the value \code{"any"} which will return all periods, but 
+#' \code{pad} argument will be ignored.
 #' 
 #' @param valid_only Should only valid data be returned? Default is \code{FALSE}. 
 #' 
@@ -29,7 +34,7 @@
 #' @param date_insert Should the return include the \code{date_insert} variable? 
 #' Default is \code{TRUE}. 
 #' 
-#' @param date_insert Should the return include the \code{site_name} variable? 
+#' @param site_name Should the return include the \code{site_name} variable? 
 #' Default is \code{TRUE}. 
 #' 
 #' @import dplyr
@@ -37,15 +42,17 @@
 #' @author Stuart K. Grange
 #' 
 #' @export
-import_by_site <- function(con, site, start = 1970, end = NA, period = "hour", 
-                           valid_only = FALSE, pad = TRUE, tz = "UTC", 
-                           spread = FALSE, europe = FALSE, date_end = TRUE, 
-                           date_insert = TRUE, site_name = TRUE) {
+import_by_site <- function(con, site, variable = NA, start = 1970, end = NA, 
+                           period = "hour", valid_only = FALSE, pad = TRUE, 
+                           tz = "UTC", spread = FALSE, europe = FALSE, 
+                           date_end = TRUE, date_insert = TRUE, 
+                           site_name = TRUE) {
   
   # Parse arguments
   site <- stringr::str_trim(site)
+  variable <- stringr::str_trim(variable)
   
-  if (period %in% c("all", "any")) pad <- FALSE
+  if (period %in% c("all", "any", "source")) pad <- FALSE
   
   # Get process table
   if (europe) {
@@ -55,7 +62,7 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
     country_code <- unique(country_code)
     
     # Get filtered mapping table
-    df_processes <- import_processes_europe(con, country_code)
+    df_processes <- import_processes_europe(con, country_code, minimal = TRUE)
     
     if (period %in% c("all", "any")) {
       
@@ -70,7 +77,11 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
       
     }
     
-    # Summary is not used in Europe database
+    # Filter to variable too
+    if (!is.na(variable[1]))
+      df_processes <- df_processes[df_processes$variable %in% variable, ]
+    
+    # Summary is used differently in Europe database
     summary <- NA
     
   } else {
@@ -81,8 +92,13 @@ import_by_site <- function(con, site, start = 1970, end = NA, period = "hour",
     # Filter to site and period input
     df_processes <- df_processes[df_processes$site %in% site, ]
     
+    # Filter to variable
+    if (!is.na(variable[1]))
+      df_processes <- df_processes[df_processes$variable %in% variable, ]
+    
     # Switch period to integer
-    summary <- ifelse(period == "hour", 1, period)
+    summary <- ifelse(period == "source", 0, period)
+    summary <- ifelse(period == "hour", 1, summary)
     summary <- ifelse(period == "day", 20, summary)
     
   }

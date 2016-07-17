@@ -40,14 +40,17 @@ insert_envirologger_data <- function(con, user, key, server, station,
            site,
            variable,
            label = envirologger_label,
-           sensor = variable_long)
+           sensor = envirologger_sensor)
   
   # Get observations with API
   message("Getting new observations...")
   
   df <- envirologgerr::get_envirologger_data(
     user = user, key = key, server = server, station = station, start = start, 
-    end = end, clean = TRUE)
+    end = end)
+  
+  # Clean data
+  df <- envirologgerr::clean_envirologger_data(df)
   
   # Site, not station bitte
   df <- df %>% 

@@ -4,20 +4,26 @@
 \alias{import_by_site}
 \title{Function to import data from an \code{smonitor} database based on sites.}
 \usage{
-import_by_site(con, site, start = 1970, end = NA, period = "hour",
-  valid_only = FALSE, pad = TRUE, tz = "UTC", spread = FALSE,
-  europe = FALSE, date_end = TRUE, date_insert = TRUE, site_name = TRUE)
+import_by_site(con, site, variable = NA, start = 1970, end = NA,
+  period = "hour", valid_only = FALSE, pad = TRUE, tz = "UTC",
+  spread = FALSE, europe = FALSE, date_end = TRUE, date_insert = TRUE,
+  site_name = TRUE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
 
 \item{site}{A site code such as \code{"my1"}.}
 
+\item{variable}{An optional variable vector. If not used, all variables will
+be selected and returned.}
+
 \item{start}{Start date to import.}
 
 \item{end}{End date to import.}
 
-\item{period}{Averaging period. Default is \code{"hour"}.}
+\item{period}{Averaging period. Default is \code{"hour"}. \code{period} can
+also take the value \code{"any"} which will return all periods, but 
+\code{pad} argument will be ignored.}
 
 \item{valid_only}{Should only valid data be returned? Default is \code{FALSE}.}
 
@@ -38,7 +44,7 @@ Default is \code{TRUE}.}
 \item{date_insert}{Should the return include the \code{date_insert} variable? 
 Default is \code{TRUE}.}
 
-\item{date_insert}{Should the return include the \code{site_name} variable? 
+\item{site_name}{Should the return include the \code{site_name} variable? 
 Default is \code{TRUE}.}
 }
 \description{

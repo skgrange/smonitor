@@ -5,10 +5,10 @@
 \title{Function to import European data from an \strong{smonitor} database by
 process or site.}
 \usage{
-import_europe(con, process = NA, site = NA, start = 1969, end = NA,
-  period = "hour", pad = TRUE, spread = TRUE, tz = "UTC",
+import_europe(con, process = NA, site = NA, variable = NA, start = 1969,
+  end = NA, period = "hour", pad = TRUE, spread = TRUE, tz = "UTC",
   valid_only = TRUE, date_end = FALSE, date_insert = FALSE,
-  site_name = TRUE)
+  site_name = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -16,6 +16,10 @@ import_europe(con, process = NA, site = NA, start = 1969, end = NA,
 \item{process}{A vector of processes.}
 
 \item{site}{A site code such as \code{"betmeu1"}.}
+
+\item{variable}{Only to be used when \code{site} is used too. An optional 
+vector of variables such as \code{c("nox", "co")}. If not used, all variables
+will be selected and returned for each \code{site}.}
 
 \item{start}{What is the start date of data to be returned? Ideally, the 
 date format should be \code{yyyy-mm-dd}, but the UK locale convention of 
@@ -27,13 +31,16 @@ date format should be \code{yyyy-mm-dd}, but the UK locale convention of
 \code{dd/mm/yyyy} will also work. Years as strings or integers work too and 
 will be ceiling-rounded.}
 
-\item{period}{Averaging period. Default is \code{"hour"}.}
+\item{period}{Averaging period. Default is \code{"hour"}. \code{period} can
+also take the value \code{"any"} which will return all periods, but 
+\code{pad} argument will be ignored.}
 
 \item{pad}{Should the time-series be padded to ensure all dates in the 
 observation period are present? Default is \code{TRUE}.}
 
 \item{spread}{Should the data frame take the wider format resulting from
-spreading the data? Default is \code{TRUE}.}
+spreading the data? Default is \code{TRUE}. Will only work when used with 
+\code{site}.}
 
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
 
@@ -46,7 +53,7 @@ Default is \code{TRUE}.}
 Default is \code{TRUE}.}
 
 \item{site_name}{Should the return include the \code{site_name} variable? 
-Default is \code{TRUE}.}
+Default is \code{FALSE}.}
 }
 \description{
 Function to import European data from an \strong{smonitor} database by

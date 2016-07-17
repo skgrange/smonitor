@@ -5,7 +5,7 @@
 \title{Function to import \code{`processes`} table from the European 
 \strong{smonitor} database.}
 \usage{
-import_processes_europe(con, country_code = NA)
+import_processes_europe(con, country_code = NA, minimal = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -14,6 +14,9 @@ import_processes_europe(con, country_code = NA)
 expression \code{WHERE} clause. This will usually be parsed from site codes. 
 If \code{country_code} is \code{NA}, all ISO country codes in the database 
 will be used.}
+
+\item{minimal}{Should a bare-minimum SQL be run? This statment is small as 
+possible to make it fast when used within other functions.}
 }
 \description{
 \code{import_processes_europe} is an optimised version of 

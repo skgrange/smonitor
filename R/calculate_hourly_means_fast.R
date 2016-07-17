@@ -18,14 +18,9 @@ calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC") {
   df <- import_any(con, process, summary = 0, start = start, end = end, 
                    valid_only = TRUE, tz = tz)
   
-  # Create lookup table for future joining
-  df_look <- df %>% 
-    distinct(process,
-             site, 
-             variable)
-  
   # Prepare then reshape
   df <- df %>% 
+    mutate(variable = stringr::str_c(variable, process, sep = ";")) %>% 
     select(date,
            date_end, 
            value, 
@@ -49,8 +44,10 @@ calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC") {
   # Back to normalised data and add process key again
   df_agg <- df_agg %>% 
     gather(variable, value, -date, -date_end, -site) %>% 
-    left_join(df_look, by = c("site", "variable")) %>% 
-    mutate(summary = 1L)
+    mutate(process = stringr::str_split_fixed(variable, pattern = ";", n = 2)[, 2],
+           process = as.integer(process),
+           variable = stringr::str_split_fixed(variable, pattern = ";", n = 2)[, 1],
+           summary = 1L)
   
   # Delete
   delete_observations(con, df_agg, match = "between", convert = TRUE, 
