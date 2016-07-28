@@ -7,7 +7,7 @@
 #' @param progress Type of progress bar to display for the update statements. 
 #' Default is \code{"text"}. 
 #' 
-#' @seealso \link{\code{calculate_process_spans}}
+#' @seealso \code{\link{calculate_process_spans}}
 #' 
 #' @author Stuart K. Grange
 #' 

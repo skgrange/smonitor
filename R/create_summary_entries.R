@@ -10,6 +10,8 @@
 #' @param type Type of entries to create. Can be either \code{"standard"} or
 #' \code{"extended"}.
 #' 
+#' @param validity_threshold Threshold for valid average. 
+#' 
 #' @import dplyr
 #' 
 #' @export

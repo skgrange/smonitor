@@ -9,6 +9,7 @@
 #' 
 #' @param con Database connection. 
 #' @param process A vector of processes. 
+#' @param tz Time-zone. 
 #' @param progress Progress bar type. Default is \code{"time"}. 
 #' 
 #' @import dplyr
@@ -29,8 +30,7 @@ update_validity <- function(con, process, tz = "UTC", progress = "time") {
 }
 
 
-# No exported needed
-# 
+# No export needed
 update_validity_worker <- function(con, process, df_look) {
   
   # Get observations

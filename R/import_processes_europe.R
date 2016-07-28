@@ -82,6 +82,12 @@ import_processes_europe <- function(con, country_code = NA, minimal = FALSE,
 }
 
 
+#' Function to insert country codes from the European \strong{smonitor} database. 
+#' 
+#' @param con Database connection. 
+#' 
+#' @author Stuart K. Grange
+#' 
 #' @export
 import_country_codes <- function(con) {
   
