@@ -35,15 +35,20 @@
 #' @param site_name Should the return include the \code{site_name} variable? 
 #' Default is \code{TRUE}. 
 #' 
+#' @param print_query Should the SQL query string be printed? 
+#' 
 #' @return Data frame containing decoded observataion data with correct data 
 #' types. 
+#' 
+#' @seealso \code{\link{import_by_site}}
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @export
 import_any <- function(con, process, summary = NA, start = 1970, end = NA, 
                        tz = "UTC", valid_only = TRUE, date_end = TRUE, 
-                       date_insert = TRUE, site_name = TRUE) {
+                       date_insert = FALSE, site_name = TRUE, 
+                       print_query = FALSE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -132,6 +137,9 @@ import_any <- function(con, process, summary = NA, start = 1970, end = NA,
   
   # Clean statement
   sql <- threadr::str_trim_many_spaces(sql)
+  
+  # Message statement to user
+  if (print_query) message(sql)
   
   # Query database
   df <- databaser::db_get(con, sql)

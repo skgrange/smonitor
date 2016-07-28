@@ -13,11 +13,12 @@ calculate_process_spans <- function(con, tz = "UTC") {
   
   # Build sql
   sql <- "SELECT process, 
-        MIN(date) AS date_start, 
-        MAX(date) AS date_end 
-        FROM observations 
-        GROUP BY process 
-        ORDER BY process"
+         MIN(date) AS date_start, 
+         MAX(date) AS date_end,
+         CAST(COUNT(*) AS TEXT) AS observation_count
+         FROM observations 
+         GROUP BY process 
+         ORDER BY process"
   
   # Get table
   df <- db_get(con, sql) %>% 

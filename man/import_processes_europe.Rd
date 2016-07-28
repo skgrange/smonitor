@@ -5,7 +5,8 @@
 \title{Function to import \code{`processes`} table from the European 
 \strong{smonitor} database.}
 \usage{
-import_processes_europe(con, country_code = NA, minimal = FALSE)
+import_processes_europe(con, country_code = NA, minimal = FALSE,
+  print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -17,6 +18,8 @@ will be used.}
 
 \item{minimal}{Should a bare-minimum SQL be run? This statment is small as 
 possible to make it fast when used within other functions.}
+
+\item{print_query}{Should the SQL query string be printed?}
 }
 \description{
 \code{import_processes_europe} is an optimised version of 

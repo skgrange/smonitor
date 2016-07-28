@@ -8,7 +8,7 @@ process or site.}
 import_europe(con, process = NA, site = NA, variable = NA, start = 1969,
   end = NA, period = "hour", pad = TRUE, spread = TRUE, tz = "UTC",
   valid_only = TRUE, date_end = FALSE, date_insert = FALSE,
-  site_name = FALSE)
+  site_name = FALSE, print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -54,6 +54,8 @@ Default is \code{TRUE}.}
 
 \item{site_name}{Should the return include the \code{site_name} variable? 
 Default is \code{FALSE}.}
+
+\item{print_query}{Should the SQL query string be printed?}
 }
 \description{
 Function to import European data from an \strong{smonitor} database by

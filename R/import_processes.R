@@ -2,13 +2,14 @@
 #' 
 #' @param con A \strong{smonitor} database connection. 
 #' @param type Type of query to run; either \code{"full"} or \code{"minimal"}. 
+#' @param print_query Should the SQL query string be printed? 
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @import stringr
 #' 
 #' @export
-import_processes <- function(con, type = "full") {
+import_processes <- function(con, type = "full", print_query = FALSE) {
   
   # Check
   types_allowed <- c("full", "minimal")
@@ -50,6 +51,9 @@ import_processes <- function(con, type = "full") {
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
+  
+  # Message
+  if (print_query) message(sql)
   
   # Query
   df <- databaser::db_get(con, sql)

@@ -4,12 +4,14 @@
 \alias{import_processes}
 \title{Function to import \code{`processes`} table from a \strong{smonitor} database.}
 \usage{
-import_processes(con, type = "full")
+import_processes(con, type = "full", print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
 
 \item{type}{Type of query to run; either \code{"full"} or \code{"minimal"}.}
+
+\item{print_query}{Should the SQL query string be printed?}
 }
 \description{
 Function to import \code{`processes`} table from a \strong{smonitor} database.

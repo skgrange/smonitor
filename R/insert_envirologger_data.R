@@ -36,6 +36,7 @@ insert_envirologger_data <- function(con, user, key, server, station,
   
   # Process keys
   df_processes <- import_processes(con) %>% 
+    filter(service == 1) %>% 
     select(process,
            site,
            variable,

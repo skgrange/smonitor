@@ -15,6 +15,8 @@
 #' @param minimal Should a bare-minimum SQL be run? This statment is small as 
 #' possible to make it fast when used within other functions. 
 #' 
+#' @param print_query Should the SQL query string be printed? 
+#' 
 #' @seealso \code{\link{import_processes}}
 #' 
 #' @author Stuart K. Grange
@@ -22,10 +24,11 @@
 #' @import stringr
 #' 
 #' @export
-import_processes_europe <- function(con, country_code = NA, minimal = FALSE) {
+import_processes_europe <- function(con, country_code = NA, minimal = FALSE,
+                                    print_query = FALSE) {
   
   # Use all codes in database
-  if (is.na(country_code)) 
+  if (is.na(country_code[1])) 
     country_code <- import_country_codes(con)$country_code
 
   # Ensure some things
@@ -66,6 +69,9 @@ import_processes_europe <- function(con, country_code = NA, minimal = FALSE) {
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
+  
+  # Message
+  if (print_query) message(sql)
   
   # Query database
   df <- databaser::db_get(con, sql)

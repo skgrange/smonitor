@@ -5,8 +5,8 @@
 \title{Function to import observational data from a \strong{smonitor} database.}
 \usage{
 import_any(con, process, summary = NA, start = 1970, end = NA,
-  tz = "UTC", valid_only = TRUE, date_end = TRUE, date_insert = TRUE,
-  site_name = TRUE)
+  tz = "UTC", valid_only = TRUE, date_end = TRUE, date_insert = FALSE,
+  site_name = TRUE, print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -40,6 +40,8 @@ Default is \code{TRUE}.}
 
 \item{site_name}{Should the return include the \code{site_name} variable? 
 Default is \code{TRUE}.}
+
+\item{print_query}{Should the SQL query string be printed?}
 }
 \value{
 Data frame containing decoded observataion data with correct data 
@@ -51,5 +53,8 @@ types.
 }
 \author{
 Stuart K. Grange
+}
+\seealso{
+\code{\link{import_by_site}}
 }
 

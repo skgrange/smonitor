@@ -45,13 +45,16 @@
 #' @param site_name Should the return include the \code{site_name} variable? 
 #' Default is \code{FALSE}. 
 #' 
+#' @param print_query Should the SQL query string be printed? 
+#' 
 #' @author Stuart K. Grange
 #' 
 #' @export
 import_europe <- function(
   con, process = NA, site = NA, variable = NA, start = 1969, end = NA, 
   period = "hour", pad = TRUE, spread = TRUE, tz = "UTC", valid_only = TRUE, 
-  date_end = FALSE, date_insert = FALSE, site_name = FALSE) {
+  date_end = FALSE, date_insert = FALSE, site_name = FALSE, 
+  print_query = FALSE) {
   
   # Check
   if (is.na(process[1]) & is.na(site[1])) 
@@ -62,7 +65,8 @@ import_europe <- function(
     
     df <- import_any(con, process, summary = NA, start = start, end = end,
                      tz = tz, valid_only = valid_only, date_end = date_end, 
-                     date_insert = date_insert, site_name = site_name)
+                     date_insert = date_insert, site_name = site_name, 
+                     print_query = print_query)
     
   }
   
@@ -72,7 +76,7 @@ import_europe <- function(
       con, site, variable = variable, start = start, end = end, period = period,
       valid_only = valid_only, pad = pad, tz = tz, spread = spread, 
       europe = TRUE, date_end = date_end, date_insert = date_insert, 
-      site_name = site_name)
+      site_name = site_name, print_query = print_query)
     
   }
   

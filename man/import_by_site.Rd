@@ -2,12 +2,12 @@
 % Please edit documentation in R/import_by_site.R
 \name{import_by_site}
 \alias{import_by_site}
-\title{Function to import data from an \code{smonitor} database based on sites.}
+\title{Function to import data from an \strong{smonitor} database based on sites.}
 \usage{
 import_by_site(con, site, variable = NA, start = 1970, end = NA,
-  period = "hour", valid_only = FALSE, pad = TRUE, tz = "UTC",
-  spread = FALSE, europe = FALSE, date_end = TRUE, date_insert = TRUE,
-  site_name = TRUE)
+  period = "hour", valid_only = TRUE, pad = TRUE, tz = "UTC",
+  spread = FALSE, europe = FALSE, date_end = TRUE, date_insert = FALSE,
+  site_name = TRUE, print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -25,7 +25,7 @@ be selected and returned.}
 also take the value \code{"any"} which will return all periods, but 
 \code{pad} argument will be ignored.}
 
-\item{valid_only}{Should only valid data be returned? Default is \code{FALSE}.}
+\item{valid_only}{Should only valid data be returned? Default is \code{TRUE}.}
 
 \item{pad}{Should the time-series be padded to ensure all dates in the 
 observation period are present? Default is \code{TRUE}.}
@@ -42,15 +42,21 @@ spreading the data? Default is \code{FALSE}.}
 Default is \code{TRUE}.}
 
 \item{date_insert}{Should the return include the \code{date_insert} variable? 
-Default is \code{TRUE}.}
+Default is \code{FALSE}.}
 
 \item{site_name}{Should the return include the \code{site_name} variable? 
 Default is \code{TRUE}.}
+
+\item{print_query}{Should the SQL query string be printed?}
 }
 \description{
-Function to import data from an \code{smonitor} database based on sites.
+\code{import_by_site} is considered the primary user-focused importing 
+function while \code{import_any} is the primary lower-level function.
 }
 \author{
 Stuart K. Grange
+}
+\seealso{
+\code{\link{import_any}}
 }
 

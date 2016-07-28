@@ -4,12 +4,14 @@
 \alias{import_sites}
 \title{Function to import \code{`sites`} table from a \strong{smonitor} database.}
 \usage{
-import_sites(con, extra = TRUE)
+import_sites(con, extra = TRUE, print_query = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{extra}{Return extra data? Default is \code{TRUE}.}
+
+\item{print_query}{Should the SQL query string be printed?}
 }
 \description{
 Function to import \code{`sites`} table from a \strong{smonitor} database.

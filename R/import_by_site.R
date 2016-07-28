@@ -1,4 +1,7 @@
-#' Function to import data from an \code{smonitor} database based on sites. 
+#' Function to import data from an \strong{smonitor} database based on sites. 
+#' 
+#' \code{import_by_site} is considered the primary user-focused importing 
+#' function while \code{import_any} is the primary lower-level function. 
 #' 
 #' @param con A \strong{smonitor} database connection. 
 #' 
@@ -15,7 +18,7 @@
 #' also take the value \code{"any"} which will return all periods, but 
 #' \code{pad} argument will be ignored.
 #' 
-#' @param valid_only Should only valid data be returned? Default is \code{FALSE}. 
+#' @param valid_only Should only valid data be returned? Default is \code{TRUE}. 
 #' 
 #' @param pad Should the time-series be padded to ensure all dates in the 
 #' observation period are present? Default is \code{TRUE}. 
@@ -32,10 +35,14 @@
 #' Default is \code{TRUE}. 
 #' 
 #' @param date_insert Should the return include the \code{date_insert} variable? 
-#' Default is \code{TRUE}. 
+#' Default is \code{FALSE}. 
 #' 
 #' @param site_name Should the return include the \code{site_name} variable? 
 #' Default is \code{TRUE}. 
+#' 
+#' @param print_query Should the SQL query string be printed? 
+#' 
+#' @seealso \code{\link{import_any}}
 #' 
 #' @import dplyr
 #' 
@@ -43,10 +50,10 @@
 #' 
 #' @export
 import_by_site <- function(con, site, variable = NA, start = 1970, end = NA, 
-                           period = "hour", valid_only = FALSE, pad = TRUE, 
+                           period = "hour", valid_only = TRUE, pad = TRUE, 
                            tz = "UTC", spread = FALSE, europe = FALSE, 
-                           date_end = TRUE, date_insert = TRUE, 
-                           site_name = TRUE) {
+                           date_end = TRUE, date_insert = FALSE, 
+                           site_name = TRUE, print_query = FALSE) {
   
   # Parse arguments
   site <- stringr::str_trim(site)
@@ -111,7 +118,7 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
   df <- import_any(con, process = df_processes$process, summary = summary, 
                    start = start, end = end, tz = tz, valid_only = valid_only,
                    date_end = date_end, date_insert = date_insert, 
-                   site_name = site_name)
+                   site_name = site_name, print_query = print_query)
   
   # Drop all NAs for padding and reshaping
   df <- df %>% 
