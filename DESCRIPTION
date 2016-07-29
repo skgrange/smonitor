@@ -24,6 +24,6 @@ Imports:
     threadr,
     databaser
 Suggests:
-  envirologgerr,
-  worldmet
+    envirologgerr,
+    worldmet
 RoxygenNote: 5.0.1
