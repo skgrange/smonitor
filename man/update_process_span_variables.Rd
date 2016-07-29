@@ -25,6 +25,6 @@ table for an \strong{smonitor} database.
 Stuart K. Grange
 }
 \seealso{
-\link{\code{calculate_process_spans}}
+\code{\link{calculate_process_spans}}
 }
 

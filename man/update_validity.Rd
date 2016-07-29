@@ -12,6 +12,8 @@ update_validity(con, process, tz = "UTC", progress = "time")
 
 \item{process}{A vector of processes.}
 
+\item{tz}{Time-zone.}
+
 \item{progress}{Progress bar type. Default is \code{"time"}.}
 }
 \description{

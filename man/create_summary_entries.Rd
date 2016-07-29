@@ -15,6 +15,8 @@ create_summary_entries(con, process, type = "standard",
 
 \item{type}{Type of entries to create. Can be either \code{"standard"} or
 \code{"extended"}.}
+
+\item{validity_threshold}{Threshold for valid average.}
 }
 \description{
 Function to create entries for the \code{`summary`} table in a 
