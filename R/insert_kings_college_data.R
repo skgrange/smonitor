@@ -1,4 +1,4 @@
-#' Function to get observations from \strong{openair's} \code{importAURN} 
+#' Function to get observations from \strong{openair's} \code{importKCL} 
 #' function and insert them into a \strong{smonitor} database. 
 #' 
 #' Site-variable combinations need to be present in the database's process table,
@@ -13,7 +13,7 @@
 #' @param end End year to download and insert. 
 #' 
 #' @param data_source \code{data_source} variable to use as a filter on the 
-#' \code{`sites`} table. The default is \code{"openair:importAURN"}. 
+#' \code{`sites`} table. The default is \code{"openair:importKCL"}. 
 #' 
 #' @param service Should a \code{service} variable be used to filter sites? 
 #' If \code{TRUE}, the service value should be \code{1} to indicate service by
@@ -27,9 +27,9 @@
 #' @import dplyr
 #' 
 #' @export
-insert_aurn_data <- function(con, site, start, end = NA,
-                             data_source = "openair:importAURN", 
-                             service = TRUE, verbose = TRUE) {
+insert_kings_college_data <- function(con, site, start, end = NA,
+                                      data_source = "openair:importKCL", 
+                                      service = TRUE, verbose = TRUE) {
   
   # Ceiling round
   if (is.na(end)) end <- lubridate::year(Sys.Date())
@@ -53,8 +53,9 @@ insert_aurn_data <- function(con, site, start, end = NA,
   if (service) 
     df_sites <- df_sites[df_sites$service == 1 & !is.na(df_sites$service), ]
   
-  if (verbose) message("Downloading AURN data with openair...")
-  df <- download_aurn(unique(df_sites$site), start, end)
+  # A bit slow
+  if (verbose) message("Downloading data from Kings College London...")
+  df <- download_kings_college(unique(df_sites$site), start, end)
   
   # Make longer and join, inner join will only keep those in processes table
   df <- df %>% 
@@ -91,46 +92,61 @@ insert_aurn_data <- function(con, site, start, end = NA,
 }
 
 
-#' Function to get observations from the United Kingdom's Automatic Urban and 
-#' Rural Network (AURN) with \strong{openair's} \code{importAURN} function.
-#' 
-#' @param site Site code, for example \code{"yk11"}. 
-#' 
-#' @param start Start year. 
-#' 
-#' @param end End year. 
+#' Function to get observations which are served by Kings College London and 
+#' accessed with \strong{openair}. 
 #' 
 #' @author Stuart K. Grange
 #' 
+#' @param Site Site code, for example \code{"rb1"}. 
+#' 
+#' @param start Start year.
+#' 
+#' @param end End year. 
+#' 
+#' @import dplyr
+#' 
 #' @export
-download_aurn <- function(site, start = 1990, end = NA) {
+download_kings_college <- function(site, start, end = NA) {
   
   # Current year
   if (is.na(end)) end <- lubridate::year(Sys.Date())
   
-  suppressWarnings(
-    suppressMessages(
+  # Get data
+  df <- tryCatch({
+    
+    suppressWarnings(
       quiet(
-        df <- openair::importAURN(site, year = start:end)
+        openair::importKCL(site = site, year = start:end)
       )
     )
-  )
+    
+  }, error = function(e) {
+    
+    # Return nothing
+    NULL
+    
+  })
   
-  # An issue with openair function when files are missing
+  # Ensure everything is closed
   closeAllConnections()
   
-  # Clean site things
-  df$site <- NULL
-  names(df) <- ifelse(names(df) == "code", "site", names(df))
-  df$site <- stringr::str_to_lower(df$site)
+  if (!is.null(df)) {
   
-  # Fix other names
-  names(df) <- ifelse(names(df) == "pm2.5", "pm25", names(df))
-  names(df) <- ifelse(names(df) == "nv2.5", "nv25", names(df))
-  names(df) <- ifelse(names(df) == "v2.5", "v25", names(df))
-  
-  # 
-  df <- threadr::arrange_left(df, c("date", "site"))
+    # Clean site things
+    df$site <- NULL
+    names(df) <- ifelse(names(df) == "code", "site", names(df))
+    df$site <- stringr::str_to_lower(df$site)
+    
+    # Fix other names
+    names(df) <- ifelse(names(df) == "nv2.5", "nv25", names(df))
+    names(df) <- ifelse(names(df) == "v2.5", "v25", names(df))
+    
+  } else {
+    
+    # Empty
+    df <- data.frame()
+    
+  }
   
   # Return
   df

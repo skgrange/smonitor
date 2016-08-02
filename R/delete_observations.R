@@ -38,7 +38,11 @@ delete_observations <- function(con, df, groups = c("process", "summary"),
   
   # Check data frame input
   if (!all(groups %in% names(df))) 
-    stop("Data frame must contain 'group' variables.", call. = TRUE)
+    stop("Data frame must contain 'group' variables.", call. = FALSE)
+  
+  # May need to use the argument
+  if (any(is.na(df[, "process"])))
+    stop("Data frame must not contain missing processes.", call. = FALSE)
   
   # Delete observations by groups
   plyr::d_ply(df, groups, function(x) 

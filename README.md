@@ -17,7 +17,6 @@ library(devtools)
 # Install dependencies
 install_github("skgrange/threadr")
 install_github("skgrange/databaser")
-install_github("davidcarslaw/worldmet")
 
 # Install smonitor
 install_github("skgrange/smonitor")

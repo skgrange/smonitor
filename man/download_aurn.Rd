@@ -3,7 +3,7 @@
 \name{download_aurn}
 \alias{download_aurn}
 \title{Function to get observations from the United Kingdom's Automatic Urban and 
-Rural Network (AURN) with \code{openair}.}
+Rural Network (AURN) with \strong{openair's} \code{importAURN} function.}
 \usage{
 download_aurn(site, start = 1990, end = NA)
 }
@@ -16,7 +16,7 @@ download_aurn(site, start = 1990, end = NA)
 }
 \description{
 Function to get observations from the United Kingdom's Automatic Urban and 
-Rural Network (AURN) with \code{openair}.
+Rural Network (AURN) with \strong{openair's} \code{importAURN} function.
 }
 \author{
 Stuart K. Grange

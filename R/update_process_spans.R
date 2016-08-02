@@ -7,18 +7,20 @@
 #' @param progress Type of progress bar to display for the update statements. 
 #' Default is \code{"text"}. 
 #' 
-#' @seealso \code{\link{calculate_process_spans}}
+#' @seealso \code{\link{calculate_process_spans}}, 
+#' \code{\link{update_site_spans}}
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @export
-update_process_span_variables <- function(con, tz = "UTC", progress = "text") {
+update_process_spans <- function(con, tz = "UTC", progress = "text") {
   
   # Let database calculate process spans
   message("Database is aggregating...")
   df <- calculate_process_spans(con, tz = tz)
   
   # Build update statements
+  # No nas will be created
   sql <- stringr::str_c(
     "UPDATE processes
      SET date_start='", df$date_start, 

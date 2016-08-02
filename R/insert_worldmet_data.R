@@ -1,4 +1,4 @@
-#' Function to get observations from \strong{openair's} \code{importAURN} 
+#' Function to get observations from \strong{worldmet's} \code{importNOAA} 
 #' function and insert them into a \strong{smonitor} database. 
 #' 
 #' Site-variable combinations need to be present in the database's process table,
@@ -13,7 +13,7 @@
 #' @param end End year to download and insert. 
 #' 
 #' @param data_source \code{data_source} variable to use as a filter on the 
-#' \code{`sites`} table. The default is \code{"openair:importAURN"}. 
+#' \code{`sites`} table. The default is \code{"openair:importNOAA"}. 
 #' 
 #' @param service Should a \code{service} variable be used to filter sites? 
 #' If \code{TRUE}, the service value should be \code{1} to indicate service by
@@ -27,9 +27,9 @@
 #' @import dplyr
 #' 
 #' @export
-insert_aurn_data <- function(con, site, start, end = NA,
-                             data_source = "openair:importAURN", 
-                             service = TRUE, verbose = TRUE) {
+insert_worldmet_data <- function(con, site, start, end = NA,
+                                 data_source = "worldmet:importNOAA", 
+                                 service = TRUE, verbose = TRUE) {
   
   # Ceiling round
   if (is.na(end)) end <- lubridate::year(Sys.Date())
@@ -46,6 +46,11 @@ insert_aurn_data <- function(con, site, start, end = NA,
            service,
            data_source) 
   
+  # Small look-up table just to decode site_code
+  df_sites_small <- df_sites %>% 
+    select(site,
+           site_code)
+
   # Filter to data source
   df_sites <- df_sites[df_sites$data_source == data_source, ]
   
@@ -53,11 +58,15 @@ insert_aurn_data <- function(con, site, start, end = NA,
   if (service) 
     df_sites <- df_sites[df_sites$service == 1 & !is.na(df_sites$service), ]
   
-  if (verbose) message("Downloading AURN data with openair...")
-  df <- download_aurn(unique(df_sites$site), start, end)
+  # A bit slow
+  if (verbose) message("Downloading data with worldmet...")
+  
+  df <- download_noaa(unique(df_sites$site_code), start, end)
   
   # Make longer and join, inner join will only keep those in processes table
   df <- df %>% 
+    left_join(df_sites_small, by = "site_code") %>% 
+    select(-site_code) %>% 
     gather(variable, value, -date, -site, na.rm = TRUE) %>% 
     mutate(date_end = date + 3599,
            date = as.integer(date),
@@ -91,46 +100,50 @@ insert_aurn_data <- function(con, site, start, end = NA,
 }
 
 
-#' Function to get observations from the United Kingdom's Automatic Urban and 
-#' Rural Network (AURN) with \strong{openair's} \code{importAURN} function.
+#' Function to get observations from NOAA's Integrated Surface Database (ISD)
+#' with \code{worldmet}. 
 #' 
-#' @param site Site code, for example \code{"yk11"}. 
+#' @author Stuart K. Grange
+#' 
+#' @param Site Site code, for example \code{"037720-99999"}. 
 #' 
 #' @param start Start year. 
 #' 
 #' @param end End year. 
 #' 
-#' @author Stuart K. Grange
+#' @import dplyr
 #' 
 #' @export
-download_aurn <- function(site, start = 1990, end = NA) {
+download_noaa <- function(site, start = 1990, end = NA) {
   
   # Current year
   if (is.na(end)) end <- lubridate::year(Sys.Date())
   
-  suppressWarnings(
-    suppressMessages(
-      quiet(
-        df <- openair::importAURN(site, year = start:end)
-      )
-    )
-  )
+  # Download
+  # importNOAA is not vectorised over site
+  df <- plyr::ldply(site, worldmet::importNOAA, year = start:end, hourly = TRUE)
+  # df <- worldmet::importNOAA(code = site, year = start:end, hourly = TRUE)
   
-  # An issue with openair function when files are missing
+  # Just in case, may not be needed
   closeAllConnections()
   
-  # Clean site things
-  df$site <- NULL
-  names(df) <- ifelse(names(df) == "code", "site", names(df))
-  df$site <- stringr::str_to_lower(df$site)
+  # Drop and rename
+  df <- df %>% 
+    select(-usaf,
+           -wban,
+           -station,
+           -lat,
+           -lon,
+           -elev) %>% 
+    rename(site_code = code)
   
-  # Fix other names
-  names(df) <- ifelse(names(df) == "pm2.5", "pm25", names(df))
-  names(df) <- ifelse(names(df) == "nv2.5", "nv25", names(df))
-  names(df) <- ifelse(names(df) == "v2.5", "v25", names(df))
-  
-  # 
-  df <- threadr::arrange_left(df, c("date", "site"))
+  # Fix names
+  # Other dirty names will still be present
+  names(df) <- ifelse(names(df) == "ceil_hgt", "ceiling_height", names(df))
+  names(df) <- ifelse(names(df) == "air_temp", "temp", names(df))
+  names(df) <- ifelse(names(df) == "atmos_pres", "pressure", names(df))
+  names(df) <- ifelse(names(df) == "RH", "rh", names(df))
+  names(df) <- ifelse(names(df) == "cl", "cloud_cover", names(df))
   
   # Return
   df
