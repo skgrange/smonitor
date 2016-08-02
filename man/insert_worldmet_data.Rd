@@ -5,8 +5,7 @@
 \title{Function to get observations from \strong{worldmet's} \code{importNOAA} 
 function and insert them into a \strong{smonitor} database.}
 \usage{
-insert_worldmet_data(con, site, start, end = NA,
-  data_source = "worldmet:importNOAA", service = TRUE, verbose = TRUE)
+insert_worldmet_data(con, site, start, end = NA, verbose = TRUE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -16,13 +15,6 @@ insert_worldmet_data(con, site, start, end = NA,
 \item{start}{Start year to download and insert.}
 
 \item{end}{End year to download and insert.}
-
-\item{data_source}{\code{data_source} variable to use as a filter on the 
-\code{`sites`} table. The default is \code{"openair:importNOAA"}.}
-
-\item{service}{Should a \code{service} variable be used to filter sites? 
-If \code{TRUE}, the service value should be \code{1} to indicate service by
-this function.}
 
 \item{verbose}{Should the function give messages and be chatty? Default is 
 \code{TRUE}.}

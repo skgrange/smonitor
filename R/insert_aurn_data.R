@@ -12,13 +12,6 @@
 #' 
 #' @param end End year to download and insert. 
 #' 
-#' @param data_source \code{data_source} variable to use as a filter on the 
-#' \code{`sites`} table. The default is \code{"openair:importAURN"}. 
-#' 
-#' @param service Should a \code{service} variable be used to filter sites? 
-#' If \code{TRUE}, the service value should be \code{1} to indicate service by
-#' this function. 
-#' 
 #' @param verbose Should the function give messages and be chatty? Default is 
 #' \code{TRUE}. 
 #' 
@@ -28,8 +21,7 @@
 #' 
 #' @export
 insert_aurn_data <- function(con, site, start, end = NA,
-                             data_source = "openair:importAURN", 
-                             service = TRUE, verbose = TRUE) {
+                             verbose = TRUE) {
   
   # Ceiling round
   if (is.na(end)) end <- lubridate::year(Sys.Date())
@@ -40,44 +32,30 @@ insert_aurn_data <- function(con, site, start, end = NA,
            site,
            variable)
   
-  df_sites <- import_sites(con) %>% 
-    select(site,
-           site_code, 
-           service,
-           data_source) 
-  
-  # Filter to data source
-  df_sites <- df_sites[df_sites$data_source == data_source, ]
-  
-  # Filter to service too
-  if (service) 
-    df_sites <- df_sites[df_sites$service == 1 & !is.na(df_sites$service), ]
-  
+  # Get data
   if (verbose) message("Downloading AURN data with openair...")
-  df <- download_aurn(unique(df_sites$site), start, end)
-  
-  # Make longer and join, inner join will only keep those in processes table
-  df <- df %>% 
-    gather(variable, value, -date, -site, na.rm = TRUE) %>% 
-    mutate(date_end = date + 3599,
-           date = as.integer(date),
-           date_end = as.integer(date_end),
-           summary = 1L,
-           validity = NA) %>% 
-    inner_join(df_processes, by = c("site", "variable")) 
+  df <- download_aurn(site, start, end)
   
   # Insert if there is data
   if (nrow(df) > 0) {
     
+    # Make longer and join, inner join will only keep those in processes table
+    df <- df %>% 
+      gather(variable, value, -date, -site, na.rm = TRUE) %>% 
+      mutate(date_end = date + 3599,
+             date = as.integer(date),
+             date_end = as.integer(date_end),
+             summary = 1L,
+             validity = NA) %>% 
+      inner_join(df_processes, by = c("site", "variable")) 
+    
     # Delete observations
     if (verbose) message("Deleting old observations...")
-    
     delete_observations(con, df, match = "between", convert = FALSE, 
                         progress = "none")
     
     # Insert
     if (verbose) message("Inserting new observations...")
-    
     insert_observations(con, df)
     
   } else {
