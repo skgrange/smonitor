@@ -2,15 +2,17 @@
 % Please edit documentation in R/insert_observations.R
 \name{insert_observations}
 \alias{insert_observations}
-\title{Function to insert observations into \code{`observations`} table for a 
+\title{Function to insert observations into the \code{`observations`} in a 
 \strong{smonitor} database.}
 \usage{
-insert_observations(con, df)
+insert_observations(con, df, message = FALSE)
 }
 \arguments{
 \item{con}{Database connection}
 
-\item{df}{Data frame to be inserted.}
+\item{df}{Data frame containing observations to be inserted.}
+
+\item{message}{Should a message of counts and size be displayed?}
 }
 \description{
 \code{insert_observations} will handle the variable/column order, the date 
@@ -22,6 +24,9 @@ a \strong{smonitor} database.
 
 # Insert some data
 insert_observations(con, data_test)
+
+# Insert some data, with a message
+insert_observations(con, data_test, message = TRUE)
 
 }
 

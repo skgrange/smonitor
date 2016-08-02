@@ -1,4 +1,4 @@
-#' Function to insert observations into \code{`observations`} table for a 
+#' Function to insert observations into the \code{`observations`} in a 
 #' \strong{smonitor} database. 
 #' 
 #' \code{insert_observations} will handle the variable/column order, the date 
@@ -8,7 +8,8 @@
 #' @author Stuart K. Grange
 #' 
 #' @param con Database connection
-#' @param df Data frame to be inserted. 
+#' @param df Data frame containing observations to be inserted. 
+#' @param message Should a message of counts and size be displayed? 
 #' 
 #' @examples 
 #' \dontrun{
@@ -16,10 +17,13 @@
 #' # Insert some data
 #' insert_observations(con, data_test)
 #' 
+#' # Insert some data, with a message
+#' insert_observations(con, data_test, message = TRUE)
+#' 
 #' }
 #' 
 #' @export
-insert_observations <- function(con, df) {
+insert_observations <- function(con, df, message = FALSE) {
   
   # No tbl_df
   df <- threadr::base_df(df)
@@ -42,7 +46,11 @@ insert_observations <- function(con, df) {
                          stringsAsFactors = FALSE)
   
   # Bind
+  # To-do, this is expensive and slow
   df <- plyr::rbind.fill(df_headers, df)
+  
+  # Force after binding
+  gc()
   
   # Add variable
   df$date_insert <- threadr::sys_unix_time(integer = TRUE)
@@ -51,6 +59,20 @@ insert_observations <- function(con, df) {
   if (any(is.na(df$process))) warning("Missing processes detected...", call. = FALSE)
   if (any(is.na(df$summary))) warning("Missing summaries detected...", call. = FALSE)
   if (any(is.na(df$date))) warning("Missing dates detected...", call. = FALSE)
+  
+  # Print a message
+  if (message) {
+    
+    df_message <- data.frame(
+      message = "Inserting observations...", 
+      observations = threadr::str_thousands_separator(nrow(df)),
+      size = threadr::object_size(df)
+    )
+    
+    # The message
+    message(jsonlite::toJSON(df_message, pretty = TRUE))
+    
+  }
   
   # Insert
   databaser::db_insert(con, "observations", df)
