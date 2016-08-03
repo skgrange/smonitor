@@ -10,6 +10,8 @@
 #' Default is \code{"none"}. 
 #'
 #' @seealso \code{\link{update_process_spans}}
+#' 
+#' @import dplyr
 #'
 #' @export
 update_site_spans <- function(con, tz = "UTC", progress = "none") {

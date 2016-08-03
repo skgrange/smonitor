@@ -1,12 +1,14 @@
 #' Function to find start and end dates of a process in an \strong{smonitor}
 #' database. 
 #' 
-#' To-do: Add WHERE clauses for summary and validity. 
+#' To-do: Add WHERE clauses for summary and validity and also processes. 
 #' 
 #' @param con Database connection. 
 #' @param tz Time-zone to parse the dates to. 
 #' 
 #' @author Stuart K.Grange
+#' 
+#' @import dplyr
 #' 
 #' @export
 calculate_process_spans <- function(con, tz = "UTC") {
@@ -21,7 +23,7 @@ calculate_process_spans <- function(con, tz = "UTC") {
          ORDER BY process"
   
   # Get table
-  df <- db_get(con, sql) %>% 
+  df <- databaser::db_get(con, sql) %>% 
     mutate(date_start = threadr::parse_unix_time(date_start, tz = tz), 
            date_end = threadr::parse_unix_time(date_end, tz = tz))
   

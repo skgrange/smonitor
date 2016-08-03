@@ -15,8 +15,14 @@
 #' @export
 update_row_counts <- function(con, estimate = FALSE, read = FALSE) {
   
+  # Get all tables
+  table <- dplyr::db_list_tables(con)
+  
+  # But do not do `row_counts`
+  table <- grep("row_counts", table, value = TRUE, invert = TRUE)
+  
   # Get counts of all tables
-  df <- databaser::db_count_rows(con, table = NA, estimate)
+  df <- databaser::db_count_rows(con, table = table, estimate)
   
   # Insert and always overwrite
   databaser::db_insert(con, "row_counts", df, append = FALSE, overwrite = TRUE)

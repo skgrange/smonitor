@@ -16,7 +16,7 @@
 update_process_spans <- function(con, tz = "UTC", progress = "text") {
   
   # Let database calculate process spans
-  message("Database is aggregating...")
+  # message("Database is aggregating...")
   df <- calculate_process_spans(con, tz = tz)
   
   # Build update statements
@@ -32,7 +32,7 @@ update_process_spans <- function(con, tz = "UTC", progress = "text") {
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Use statements
-  message("Updating 'processes' table...")
+  # message("Updating 'processes' table...")
   databaser::db_send(con, sql, progress = progress)
   
   # No return

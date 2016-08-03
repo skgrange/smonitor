@@ -65,6 +65,7 @@ insert_observations <- function(con, df, message = FALSE) {
     
     df_message <- data.frame(
       message = "Inserting observations...", 
+      date_begin = threadr::str_system_date(),
       observations = threadr::str_thousands_separator(nrow(df)),
       size = threadr::object_size(df)
     )

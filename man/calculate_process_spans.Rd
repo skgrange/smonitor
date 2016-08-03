@@ -13,7 +13,7 @@ calculate_process_spans(con, tz = "UTC")
 \item{tz}{Time-zone to parse the dates to.}
 }
 \description{
-To-do: Add WHERE clauses for summary and validity.
+To-do: Add WHERE clauses for summary and validity and also processes.
 }
 \author{
 Stuart K.Grange
