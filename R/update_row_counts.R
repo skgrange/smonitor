@@ -24,8 +24,8 @@ update_row_counts <- function(con, estimate = FALSE, read = FALSE) {
   # Get counts of all tables
   df <- databaser::db_count_rows(con, table = table, estimate)
   
-  # Insert and always overwrite
-  databaser::db_insert(con, "row_counts", df, append = FALSE, overwrite = TRUE)
+  # Insert and always replace table
+  databaser::db_insert(con, "row_counts", df, replace = TRUE)
   
   # Reassign df
   if (read) df <- databaser::db_read_table(con, "row_counts")
