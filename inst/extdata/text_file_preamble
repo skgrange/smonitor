@@ -1,0 +1,16 @@
+#' **smonitor** data export as tabular data. 
+#' 
+#' Contact: Stuart K. Grange, s.k.grange@gmail.com, http://skgrange.github.io/
+#' 
+#' These data are sourced from a number of sources including: 
+#'   
+#'   - [AirBase](http://www.eea.europa.eu/data-and-maps/data/airbase-the-european-air-quality-database-8)
+#'   - [e-Reporting]()
+#'   
+#' Some metadata:
+#'   - Dates are in UTC and represent the preceding time unit.
+#'   - Units of gases and particulate matter are ug m-3 unless otherwise stated.
+#'   - Wind speed and direction units are m s-1 and deg. from north respectivly.
+#'   - The validity variable indicates if the value is valid. Observations which
+#'   are invalid are represented with 0. 
+#'

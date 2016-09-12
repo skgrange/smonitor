@@ -89,7 +89,7 @@ download_aurn <- function(site, start = 1990, end = NA) {
   suppressWarnings(
     suppressMessages(
       quiet(
-        df <- openair::importAURN(site, year = start:end)
+        df <- openair::importAURN(site, year = start:end, verbose = FALSE)
       )
     )
   )

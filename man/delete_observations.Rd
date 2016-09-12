@@ -18,11 +18,12 @@ know what to send the database in the delete statement.}
 \item{groups}{Groups in \code{df} to apply the deleting function to. Default 
 is \code{c("process", "summary")} and should not need changing.}
 
-\item{match}{Type of match to use for dates. Currently only \code{"between"}
-is supported.}
+\item{match}{Type of match to use for dates. \code{"between"} and 
+\code{"all"} are supported. Beware that \code{"all"} will remove all 
+observations associated with a process.}
 
 \item{convert}{Should dates be coverted to integers for the unix time/date 
-match for the database? Default is \code{TRUE} but is not nessassary if dates 
+match for the database? Default is \code{TRUE} but is not necessary if dates 
 in \code{df} are already in unix time format.}
 
 \item{progress}{Type of progress bar to display. Default is \code{"time"}.}

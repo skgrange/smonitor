@@ -72,7 +72,7 @@ wind_rose <- function(data,
   n.colors.in.range <- n.spd.seq - 1
 
   # create the color map
-  spd.colors <- colorRampPalette(brewer.pal(min(max(3,
+  spd.colors <- colorRampPalette(RColorBrewer::brewer.pal(min(max(3,
                                                     n.colors.in.range),
                                                 min(9,
                                                     n.colors.in.range)),
@@ -136,8 +136,8 @@ wind_rose <- function(data,
     geom_bar() + scale_x_discrete(drop = FALSE, labels = waiver()) +
     coord_polar(start = -((dirres / 2) / 360) * 2 * pi) +
     scale_fill_manual(name = "Wind Speed (m/s)", values = spd.colors, 
-                      drop = FALSE) +
-    theme(axis.title.x = element_blank())
+                      drop = FALSE) + theme(axis.title.x = element_blank()) + 
+    theme_minimal()
 
   # adjust axes if required
   if (!is.na(countmax)) {

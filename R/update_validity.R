@@ -14,7 +14,12 @@
 #' 
 #' @import dplyr
 #' @export
-update_validity <- function(con, process, tz = "UTC", progress = "time") {
+update_validity <- function(con, process, tz = "UTC", delete = "between", 
+                            progress = "time") {
+  
+  # Check
+  if (!delete %in% c("between", "all")) 
+    stop("'delete' must be 'between' or 'all'.", call. = FALSE)
   
   # Get look-up table
   df_look <- import_invalidation(con, tz = tz) %>% 
@@ -22,8 +27,8 @@ update_validity <- function(con, process, tz = "UTC", progress = "time") {
            date_end = as.numeric(date_end))
   
   # Do for every process
-  plyr::l_ply(process, function(x) update_validity_worker(con, x, df_look), 
-              .progress = progress)
+  plyr::l_ply(process, function(x) 
+    update_validity_worker(con, x, df_look, delete), .progress = progress)
   
   # No return
   
@@ -31,13 +36,13 @@ update_validity <- function(con, process, tz = "UTC", progress = "time") {
 
 
 # No export needed
-update_validity_worker <- function(con, process, df_look) {
+update_validity_worker <- function(con, process, df_look, delete) {
   
   # Get observations
   # Catch is for when database contains no data for a process and gives an error
   df <- tryCatch({
     
-    import_any(con, process, summary = 0, start = 1970, end = 2020, 
+    import_any(con, process, summary = 0, start = 1965, end = 2020, 
                valid_only = FALSE) %>% 
       mutate(date = as.numeric(date),
              date_end = as.numeric(date_end))
@@ -55,7 +60,7 @@ update_validity_worker <- function(con, process, df_look) {
     df <- validity_test(df, df_look)
     
     # Delete old observations
-    delete_observations(con, df, match = "between", convert = FALSE, 
+    delete_observations(con, df, match = delete, convert = FALSE, 
                         progress = "none")
     
     # Insert new observations

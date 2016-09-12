@@ -22,11 +22,12 @@
 #' @param groups Groups in \code{df} to apply the deleting function to. Default 
 #' is \code{c("process", "summary")} and should not need changing. 
 #' 
-#' @param match Type of match to use for dates. Currently only \code{"between"}
-#' is supported. 
+#' @param match Type of match to use for dates. \code{"between"} and 
+#' \code{"all"} are supported. Beware that \code{"all"} will remove all 
+#' observations associated with a process. 
 #' 
 #' @param convert Should dates be coverted to integers for the unix time/date 
-#' match for the database? Default is \code{TRUE} but is not nessassary if dates 
+#' match for the database? Default is \code{TRUE} but is not necessary if dates 
 #' in \code{df} are already in unix time format. 
 #' 
 #' @param progress Type of progress bar to display. Default is \code{"time"}. 
@@ -44,11 +45,25 @@ delete_observations <- function(con, df, groups = c("process", "summary"),
   if (any(is.na(df[, "process"])))
     stop("Data frame must not contain missing processes.", call. = FALSE)
   
-  # Delete observations by groups
-  plyr::d_ply(df, groups, function(x) 
-    delete_observations_worker(con, x, match = match, convert = convert), 
-    .progress = progress)
+  if (match == "between") {
+    
+    # Delete observations by groups
+    plyr::d_ply(df, groups, function(x) 
+      delete_observations_worker(con, x, match = match, convert = convert), 
+      .progress = progress)
+    
+  }
   
+  if (match == "all") {
+    
+    # Get processes
+    keys <- unique(df$process)
+   
+    # Delete all observations associated with a process
+    delete_process(con, keys)
+    
+  }
+ 
   # No return
   
 }
