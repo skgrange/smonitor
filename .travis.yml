@@ -10,7 +10,6 @@ r_binary_packages:
 r_github_packages:
   - skgrange/threadr
   - skgrange/databaser
-  - skgrange/gissr
   - skgrange/envirologgerr
   - davidcarslaw/worldmet
 
