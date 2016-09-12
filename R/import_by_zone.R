@@ -8,7 +8,7 @@
 #' @param con Database connection. 
 #' 
 #' @param zone A vector of zones to use as the boundaries for site filtering. 
-#' Use \link{\code{import_zone_names}} to get the vectors needed.
+#' Use \code{\link{import_zone_names}} to get the vectors needed.
 #' 
 #' @param variable An optional variable vector. If not used, all variables will
 #' be selected and returned.  

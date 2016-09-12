@@ -13,7 +13,7 @@ import_by_zone(con, zone, variable = NA, start = 1969, end = NA,
 \item{con}{Database connection.}
 
 \item{zone}{A vector of zones to use as the boundaries for site filtering. 
-Use \link{\code{import_zone_names}} to get the vectors needed.}
+Use \code{\link{import_zone_names}} to get the vectors needed.}
 
 \item{variable}{An optional variable vector. If not used, all variables will
 be selected and returned.}
