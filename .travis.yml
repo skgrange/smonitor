@@ -4,7 +4,7 @@ warnings_are_errors: false
 
 env:
   global:
-    - _R_CHECK_FORCE_SUGGESTS_ = FALSE
+    - _R_CHECK_FORCE_SUGGESTS_=FALSE
 
 r_binary_packages:
   - Rcpp
