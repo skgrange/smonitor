@@ -5,8 +5,8 @@
 \title{Function to import data from an \strong{smonitor} database based on zones/
 spatial polygons.}
 \usage{
-import_by_zone(con, zone, variable = NA, start = 1969, end = NA,
-  period = "hour", pad = TRUE, spread = TRUE, tz = "UTC",
+import_by_zone(con, zone, variable = NA, sp_other = NA, start = 1969,
+  end = NA, period = "hour", pad = TRUE, spread = TRUE, tz = "UTC",
   valid_only = TRUE, print_query = FALSE)
 }
 \arguments{
@@ -17,6 +17,9 @@ Use \code{\link{import_zone_names}} to get the vectors needed.}
 
 \item{variable}{An optional variable vector. If not used, all variables will
 be selected and returned.}
+
+\item{sp_other}{An optional spatial polygon which exists outside the database
+tables to be used as a boundary rather than using \code{zone}.}
 
 \item{start}{Start date to import.}
 
