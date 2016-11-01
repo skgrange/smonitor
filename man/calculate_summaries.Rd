@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_summaries.R
 \name{calculate_summaries}
 \alias{calculate_summaries}
-\title{Function to calculate various time-series summaries for data stored in a 
+\title{Function to calculate time-series summaries for data stored in a 
 \strong{smonitor} database.}
 \usage{
 calculate_summaries(con, df_map, start, end, tz = "UTC", insert = TRUE)
@@ -22,6 +22,10 @@ variables.}
 \description{
 \code{calculate_summaries} will handle aggregation methods, transformation,
 and updating processes when the \strong{smonitor} tables are complete.
+}
+\details{
+To-do: Optimise to stop many select and insert steps.
+
 \code{calculate_summaries} will correctly aggregate wind direction.
 }
 \examples{
@@ -30,7 +34,7 @@ and updating processes when the \strong{smonitor} tables are complete.
 # ... create database connection
 # ... create look-up table
 
-# Calculate all summaries in data_look_up for 2014 and insert them in the 
+# Calculate all summaries in data_look_up for 2014 and insert them into the 
 # database
 calculate_summaries(con, data_look_up, start = 2014, start = 2014)
 

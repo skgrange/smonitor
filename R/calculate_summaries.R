@@ -1,8 +1,11 @@
-#' Function to calculate various time-series summaries for data stored in a 
+#' Function to calculate time-series summaries for data stored in a 
 #' \strong{smonitor} database. 
 #' 
 #' \code{calculate_summaries} will handle aggregation methods, transformation,
 #' and updating processes when the \strong{smonitor} tables are complete.
+#' 
+#' To-do: Optimise to stop many select and insert steps. 
+#' 
 #' \code{calculate_summaries} will correctly aggregate wind direction.
 #' 
 #' @seealso \code{\link{timeAverage}}, \code{\link{dplyr::summarise}}
@@ -29,7 +32,7 @@
 #' # ... create database connection
 #' # ... create look-up table
 #' 
-#' # Calculate all summaries in data_look_up for 2014 and insert them in the 
+#' # Calculate all summaries in data_look_up for 2014 and insert them into the 
 #' # database
 #' calculate_summaries(con, data_look_up, start = 2014, start = 2014)
 #' 
@@ -51,7 +54,7 @@ calculate_summaries <- function(con, df_map, start, end, tz = "UTC",
 summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   # Print what is happening
-  message(jsonlite::toJSON(df_map, pretty = TRUE))
+  message(threadr::to_json(df_map))
   
   # Drop tbl_df
   df_map <- threadr::base_df(df_map)
@@ -70,6 +73,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   # Different logic for the different aggregation periods
   if (df_look$source == "source" & df_look$period == "hour") {
+    
+    # Message
+    message_querying()
     
     # Get valid observations, i.e. not 0
     df <- import_source(con, df_map$process, start = start, end = end,
@@ -132,6 +138,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   if (df_look$source == "hour" & df_look$period == "day") {
     
+    # Message
+    message_querying()
+    
     # Load
     df <- import_hourly_means(con, df_map$process, start = start, end = end, 
                               tz = tz, extra = FALSE)
@@ -190,6 +199,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   if (df_look$source == "day" & df_look$period == "month") {
     
+    # Message
+    message_querying()
+    
     # Load
     df <- import_daily_means(con, df_map$process, start = start, end = end,
                              tz = tz, extra = FALSE)
@@ -243,6 +255,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   
   if (df_look$source == "hour" & df_look$period == "year") {
+    
+    # Message
+    message_querying()
     
     # Load
     df <- import_hourly_means(con, df_map$process, start = start, end = end,
@@ -306,6 +321,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   
   if (df_look$source == "day" & df_look$period == "year") {
+    
+    # Message
+    message_querying()
     
     # Load
     df <- import_daily_means(con, df_map$process, start = start, end = end,
@@ -402,3 +420,4 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
 
 # No export needed
 message_summary <- function() message("Aggregating data...")
+message_querying <- function() message("Querying database...")

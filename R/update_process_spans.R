@@ -3,7 +3,9 @@
 #' table for an \strong{smonitor} database.
 #' 
 #' @param con Database connection. 
+#' 
 #' @param tz Time-zone to parse the dates to.
+#' 
 #' @param progress Type of progress bar to display for the update statements. 
 #' Default is \code{"text"}. 
 #' 
