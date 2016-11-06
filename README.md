@@ -75,7 +75,7 @@ The **smonitor** data model allows *n* number of summaries to be associated with
 
 **smonitor** is used for many pieces of my work including: 
 
-  - Data which is served with my personal homepage ([here](http://skgrange.github.io/temperature_plots.html) and [here](http://skgrange.github.io/air_quality_plots.html)). 
+  - Data which is served with my personal homepage ([here](http://skgrange.github.io/temperature_plots.html)). 
   - Personal database containing New Zealand's air quality monitoring data. 
   - Personal database containing United Kingdom's [AURN](https://uk-air.defra.gov.uk/) (Automatic Urban and Rural Network) data and meteorological data sourced from NOAA's integrated Surface Database ([ISD](https://www.ncdc.noaa.gov/isd)). 
   - A database which contains a handful of sites which is serviced by the [**envirologgerr**](https://github.com/skgrange/envirologgerr) API.
