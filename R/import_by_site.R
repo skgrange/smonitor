@@ -191,6 +191,9 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
     
   }
   
+  # Clean R's names prefix, occurs with hydrocarbon variables
+  names(df) <- stringr::str_replace(names(df), "^X", "")
+  
   # Return
   df
   

@@ -2,23 +2,36 @@
 #' database. 
 #' 
 #' @param con Database connection. 
+#' 
 #' @param process A vector of processes. 
+#' 
 #' @param start Start date to import. 
+#' 
 #' @param end End date to import. 
+#' 
 #' @param tz Time-zone for the dates to be parsed into. Default is \code{"UTC"}. 
 #' 
+#' @param na.rm Should \code{NA}s be dropped from the summaries and not inserted
+#' into the database. 
+#' 
+#' @param verbose Should the function give messages? 
+#'  
 #' @author Stuart K. Grange
 #' 
 #' @import dplyr
 #' 
 #' @export
-calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC") {
+calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC",
+                                        na.rm = FALSE, verbose = FALSE) {
   
   # Get all processes' source data
+  if (verbose) message("Querying database for source data...")
   df <- import_any(con, process, summary = 0, start = start, end = end, 
                    valid_only = TRUE, tz = tz)
   
   # Prepare then reshape
+  if (verbose) message("Do the aggregation...")
+  
   df <- df %>% 
     mutate(variable = stringr::str_c(variable, process, sep = ";")) %>% 
     select(date,
@@ -49,11 +62,23 @@ calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC") {
            variable = stringr::str_split_fixed(variable, pattern = ";", n = 2)[, 1],
            summary = 1L)
   
+  # Drop NAs
+  if (na.rm) {
+    
+    df_agg <- df_agg %>% filter(!is.na(value))
+    
+  }
+  
   # Delete
+  progress_delete <- ifelse(verbose, "time", "none")
+  
+  if (progress_delete == "time") 
+    message("Deleting old observations...")
+  
   delete_observations(con, df_agg, match = "between", convert = TRUE, 
-                      progress = "none")
+                      progress = progress_delete)
   
   # Insert
-  insert_observations(con, df_agg)
+  insert_observations(con, df_agg, message = verbose)
   
 }

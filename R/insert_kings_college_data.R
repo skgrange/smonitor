@@ -99,15 +99,15 @@ download_kings_college <- function(site, start, end = NA) {
     
   }, error = function(e) {
     
-    # Return nothing
-    NULL
+    # Empty data frame
+    df <- data.frame()
     
   })
   
   # Ensure everything is closed
   closeAllConnections()
   
-  if (!is.null(df)) {
+  if (nrow(df) != 0) {
   
     # Clean site things
     df$site <- NULL
@@ -117,11 +117,6 @@ download_kings_college <- function(site, start, end = NA) {
     # Fix other names
     names(df) <- ifelse(names(df) == "nv2.5", "nv25", names(df))
     names(df) <- ifelse(names(df) == "v2.5", "v25", names(df))
-    
-  } else {
-    
-    # Empty
-    df <- data.frame()
     
   }
   

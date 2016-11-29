@@ -5,7 +5,8 @@
 \title{Function to calculate hourly means quickly for an \strong{smonitor} 
 database.}
 \usage{
-calculate_hourly_means_fast(con, process, start, end, tz = "UTC")
+calculate_hourly_means_fast(con, process, start, end, tz = "UTC",
+  na.rm = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -17,6 +18,11 @@ calculate_hourly_means_fast(con, process, start, end, tz = "UTC")
 \item{end}{End date to import.}
 
 \item{tz}{Time-zone for the dates to be parsed into. Default is \code{"UTC"}.}
+
+\item{na.rm}{Should \code{NA}s be dropped from the summaries and not inserted
+into the database.}
+
+\item{verbose}{Should the function give messages?}
 }
 \description{
 Function to calculate hourly means quickly for an \strong{smonitor} 

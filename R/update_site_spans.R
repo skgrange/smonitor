@@ -46,14 +46,7 @@ update_site_spans <- function(con, tz = "UTC", progress = "none") {
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
   
-  # # Split into pieces
-  # list_sql <- threadr::split_nrow(sql, 1000)
-  # 
-  # # Collapse
-  # list_sql <- lapply(list_sql, stringr::str_c, collapse = ";")
-  
   # Use statements
-  # message("Updating 'sites' table...")
   databaser::db_send(con, sql, progress = progress)
   
   # No return

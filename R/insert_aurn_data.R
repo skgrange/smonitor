@@ -89,7 +89,8 @@ download_aurn <- function(site, start = 1990, end = NA) {
   suppressWarnings(
     suppressMessages(
       quiet(
-        df <- openair::importAURN(site, year = start:end, verbose = FALSE)
+        df <- openair::importAURN(site, year = start:end, verbose = FALSE,
+                                  hc = TRUE)
       )
     )
   )
@@ -102,15 +103,43 @@ download_aurn <- function(site, start = 1990, end = NA) {
   names(df) <- ifelse(names(df) == "code", "site", names(df))
   df$site <- stringr::str_to_lower(df$site)
   
-  # Fix other names
-  names(df) <- ifelse(names(df) == "pm2.5", "pm25", names(df))
-  names(df) <- ifelse(names(df) == "nv2.5", "nv25", names(df))
-  names(df) <- ifelse(names(df) == "v2.5", "v25", names(df))
+  # Use look-up table to create smonitor names
+  df_names <- data.frame(
+    variable = names(df),
+    stringsAsFactors = FALSE
+  )
   
-  # 
+  # Join look-up
+  df_names <- dplyr::left_join(df_names, load_openair_variable_helper(), 
+                               by = "variable")
+  
+  # Catch non-matching names
+  df_names$variable_smonitor <- ifelse(
+    is.na(df_names$variable_smonitor), df_names$variable, df_names$variable_smonitor)
+  
+  # Overwrite names
+  names(df) <- df_names$variable_smonitor
+  
+  # Arrange variables
   df <- threadr::arrange_left(df, c("date", "site"))
   
   # Return
   df
   
 }
+
+
+load_openair_variable_helper <- function() {
+  
+  # Load
+  df <- readRDS(system.file("extdata/openair_variable_helper.rds", 
+                            package = "smonitor"))
+  
+  # Drop variable
+  df$data_source <- NULL
+  
+  # Return
+  df
+  
+}
+  
