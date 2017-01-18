@@ -11,7 +11,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @seealso \code{\link{db_send}}, \code{\link{insert_observations}}
+#' @seealso \code{\link{db_execute}}, \code{\link{insert_observations}}
 #' 
 #' @param con Database connection.
 #' 
@@ -104,7 +104,7 @@ delete_observations_worker <- function(con, df, match, convert) {
     sql <- threadr::str_trim_many_spaces(sql)
     
     # Use statement
-    databaser::db_send(con, sql)
+    databaser::db_execute(con, sql)
     
   }
   

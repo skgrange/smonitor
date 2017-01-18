@@ -41,48 +41,56 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
   df <- plyr::ldply(site_vector, function(x) 
     sscraper::scrape_wunderground(x, start = start, end = end, verbose = verbose))
   
-  # Transform and reshape data
-  df <- df %>% 
-    select(-date, 
-           -date_local, 
-           -software) %>% 
-    rename(date = date_unix) %>% 
-    tidyr::gather(variable, value, -date, -site) %>% 
-    mutate(date_end = NA, 
-           validity = NA,
-           summary = 0L)
-  
-  # To-do validity
-  
-  # Join processes, only processes in table will be kept, then arrange
-  df <- df %>% 
-    inner_join(df_look, by = c("site", "variable")) %>% 
-    select(date,
-           date_end,
-           process,
-           summary,
-           validity,
-           value)
-  
-  if (nrow(df) > 0) {
+  if (nrow(df) != 0) {
     
-    # Delete observations
-    message("Deleting old observations...")
+    # Transform and reshape data
+    df <- df %>% 
+      select(-date, 
+             -date_local, 
+             -software) %>% 
+      rename(date = date_unix) %>% 
+      tidyr::gather(variable, value, -date, -site) %>% 
+      mutate(date_end = NA, 
+             validity = NA,
+             summary = 0L)
     
-    # Does the grouping
-    delete_observations(con, df, match = "between", convert = FALSE, 
-                        progress = "none")
+    # To-do validity
     
-    # Insert
-    message("Inserting new observations...")
-    insert_observations(con, df)
+    # Join processes, only processes in table will be kept, then arrange
+    df <- df %>% 
+      inner_join(df_look, by = c("site", "variable")) %>% 
+      select(date,
+             date_end,
+             process,
+             summary,
+             validity,
+             value)
+    
+    if (nrow(df) > 0) {
+      
+      # Delete observations
+      message("Deleting old observations...")
+      
+      # Does the grouping
+      delete_observations(con, df, match = "between", convert = FALSE, 
+                          progress = "none")
+      
+      # Insert
+      message("Inserting new observations...")
+      insert_observations(con, df)
+      
+    } else {
+      
+      message("No data inserted...")
+      
+    }
     
   } else {
     
-    message("No data inserted...")
+    message("No data was returned from the API...")
     
   }
-
+  
 }
 
 

@@ -43,7 +43,7 @@ calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC",
              site,
              variable,
              .keep_all = TRUE) %>% 
-    spread(variable, value) %>% 
+    tidyr::spread(variable, value) %>% 
     arrange(site, 
             date)
   

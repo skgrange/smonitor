@@ -42,6 +42,6 @@ data frame.
 Stuart K. Grange
 }
 \seealso{
-\code{\link{db_send}}, \code{\link{insert_observations}}
+\code{\link{db_execute}}, \code{\link{insert_observations}}
 }
 
