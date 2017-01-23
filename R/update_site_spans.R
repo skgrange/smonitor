@@ -47,7 +47,7 @@ update_site_spans <- function(con, tz = "UTC", progress = "none") {
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Use statements
-  databaser::db_send(con, sql, progress = progress)
+  databaser::db_execute(con, sql, progress = progress)
   
   # No return
   

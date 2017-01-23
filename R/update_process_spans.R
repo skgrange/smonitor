@@ -35,7 +35,7 @@ update_process_spans <- function(con, tz = "UTC", progress = "text") {
   
   # Use statements
   # message("Updating 'processes' table...")
-  databaser::db_send(con, sql, progress = progress)
+  databaser::db_execute(con, sql, progress = progress)
   
   # No return
   
