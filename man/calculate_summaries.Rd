@@ -41,10 +41,9 @@ calculate_summaries(con, data_look_up, start = 2014, start = 2014)
 }
 
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{timeAverage}}, \code{\link{dplyr::summarise}}
 }
-
+\author{
+Stuart K. Grange
+}

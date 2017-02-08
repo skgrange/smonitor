@@ -26,4 +26,3 @@ Function to import hourly means from a \strong{smonitor} database.
 \author{
 Stuart K. Grange
 }
-

@@ -36,4 +36,3 @@ Function to import UK air quality data from a \strong{smonitor} database.
 \author{
 Stuart K. Grange
 }
-

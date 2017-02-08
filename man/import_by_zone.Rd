@@ -46,10 +46,9 @@ spreading the data? Default is \code{FALSE}.}
 specifically for \strong{smonitor} Europe and it therefore not generic. To-do:
 make it generic.
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{import_zones}}, \code{\link{import_zone_names}}
 }
-
+\author{
+Stuart K. Grange
+}

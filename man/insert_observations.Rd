@@ -34,4 +34,3 @@ insert_observations(con, data_test, message = TRUE)
 \author{
 Stuart K. Grange
 }
-

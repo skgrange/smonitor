@@ -14,4 +14,3 @@ import_summaries(con, extra = TRUE)
 \description{
 Function to import \code{`summaries`} table from a \strong{smonitor} database.
 }
-

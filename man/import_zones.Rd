@@ -17,10 +17,9 @@ SpatialPolygonsDataFrame with WGS84 projection.
 \description{
 Function to import zones from an \strong{smonitor} database.
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{import_by_zone}}, \code{\link{import_zone_names}}
 }
-
+\author{
+Stuart K. Grange
+}

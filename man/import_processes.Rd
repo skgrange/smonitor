@@ -19,4 +19,3 @@ Function to import \code{`processes`} table from a \strong{smonitor} database.
 \author{
 Stuart K. Grange
 }
-

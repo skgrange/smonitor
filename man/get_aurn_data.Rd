@@ -25,4 +25,3 @@ Function to get UK's AURN data using the same API as \strong{openair}.
 \author{
 Stuart K. Grange
 }
-

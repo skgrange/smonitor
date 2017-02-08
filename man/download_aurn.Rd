@@ -21,4 +21,3 @@ Rural Network (AURN) with \strong{openair's} \code{importAURN} function.
 \author{
 Stuart K. Grange
 }
-

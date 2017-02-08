@@ -25,4 +25,3 @@ table.
 \author{
 Stuart K. Grange
 }
-

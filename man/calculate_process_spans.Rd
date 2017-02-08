@@ -18,4 +18,3 @@ To-do: Add WHERE clauses for summary and validity and also processes.
 \author{
 Stuart K.Grange
 }
-

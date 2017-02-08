@@ -21,11 +21,10 @@ Function to calculate \code{date_start}, \code{date_end}, and
 \code{observation_count} for processes and then update the \code{`processes`}
 table for an \strong{smonitor} database.
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{calculate_process_spans}}, 
 \code{\link{update_site_spans}}
 }
-
+\author{
+Stuart K. Grange
+}

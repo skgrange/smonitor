@@ -22,4 +22,3 @@ it queries the \code{`processes`} table rather than \code{`observations`}.
 \seealso{
 \code{\link{update_process_spans}}
 }
-

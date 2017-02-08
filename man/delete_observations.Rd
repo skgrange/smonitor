@@ -38,10 +38,9 @@ undesirable.
 \code{delete_observations} does allow the use of groups based on the input 
 data frame.
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{db_execute}}, \code{\link{insert_observations}}
 }
-
+\author{
+Stuart K. Grange
+}

@@ -26,4 +26,3 @@ otherwise they will be silently filtered and not be inserted.
 \author{
 Stuart K. Grange
 }
-

@@ -16,4 +16,3 @@ integrity_check(con)
 \author{
 Stuart K. Grange
 }
-

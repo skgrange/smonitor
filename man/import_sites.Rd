@@ -16,4 +16,3 @@ import_sites(con, extra = TRUE, print_query = FALSE)
 \description{
 Function to import \code{`sites`} table from a \strong{smonitor} database.
 }
-

@@ -30,4 +30,3 @@ dump_observations(con, n = 5, output = "~/Desktop/")
 \author{
 Stuart K. Grange
 }
-

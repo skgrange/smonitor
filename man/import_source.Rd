@@ -27,4 +27,3 @@ Function to import source data from a \strong{smonitor} database.
 \author{
 Stuart K. Grange
 }
-

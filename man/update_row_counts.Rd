@@ -18,10 +18,9 @@ is \code{FALSE}.}
 \description{
 Function to get row counts and insert as a table in a database.
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{db_count_rows}}
 }
-
+\author{
+Stuart K. Grange
+}

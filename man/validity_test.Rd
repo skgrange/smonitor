@@ -19,10 +19,9 @@ the date range test, what value should they take? Default is \code{NA}, but
 \description{
 Function to add a validity variable to a data frame based on date ranges.
 }
-\author{
-Stuart K. Grange.
-}
 \seealso{
 \code{\link{within_range}}
 }
-
+\author{
+Stuart K. Grange.
+}

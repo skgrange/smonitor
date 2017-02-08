@@ -16,4 +16,3 @@ import_aggregations(con, extra = TRUE)
 Function to import \code{`aggregations`} table from a \strong{smonitor} 
 database.
 }
-

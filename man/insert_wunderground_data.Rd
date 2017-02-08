@@ -30,4 +30,3 @@ observations are deleted with this function.
 \author{
 Stuart K. Grange
 }
-

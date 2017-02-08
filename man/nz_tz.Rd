@@ -13,4 +13,3 @@ The time-zone string is \code{"Etc/GMT-12"}.
 \author{
 Stuart K. Grange
 }
-

@@ -26,10 +26,9 @@ possible to make it fast when used within other functions.}
 \code{import_processes} which includes a regular expression filter to speed
 up the retreval of processes because the table is larger than normal.
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{import_processes}}
 }
-
+\author{
+Stuart K. Grange
+}

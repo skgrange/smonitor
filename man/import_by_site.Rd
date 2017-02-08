@@ -53,10 +53,9 @@ Default is \code{TRUE}.}
 \code{import_by_site} is considered the primary user-focused importing 
 function while \code{import_any} is the primary lower-level function.
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{import_any}}
 }
-
+\author{
+Stuart K. Grange
+}

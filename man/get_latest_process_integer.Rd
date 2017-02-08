@@ -15,4 +15,3 @@ Function to get latest process integer from an \strong{smonitor} database.
 \author{
 Stuart K. Grange
 }
-

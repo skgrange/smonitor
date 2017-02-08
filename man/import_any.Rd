@@ -51,10 +51,9 @@ types.
 \code{import_any} is considered the primary data importer for 
 \strong{smonitor}.
 }
-\author{
-Stuart K. Grange
-}
 \seealso{
 \code{\link{import_by_site}}
 }
-
+\author{
+Stuart K. Grange
+}

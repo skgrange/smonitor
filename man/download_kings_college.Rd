@@ -21,4 +21,3 @@ accessed with \strong{openair}.
 \author{
 Stuart K. Grange
 }
-

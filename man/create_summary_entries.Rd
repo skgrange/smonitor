@@ -25,4 +25,3 @@ Function to create entries for the \code{`summary`} table in a
 \author{
 Stuart K. Grange
 }
-

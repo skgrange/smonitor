@@ -36,10 +36,9 @@ wind_rose(data, spd = "ws", dir = "wd", spdres = 2, dirres = 30,
 polar coordinates. \code{wind_rose} bins wind speed and direction then 
 aggregates to find counts.
 }
-\author{
-Andy Clifton with a few changes by Stuart K. Grange
-}
 \seealso{
 \code{\link{windRose}} \href{http://stackoverflow.com/questions/17266780/wind-rose-with-ggplot-r}{stackoverflow.com}
 }
-
+\author{
+Andy Clifton with a few changes by Stuart K. Grange
+}

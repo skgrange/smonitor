@@ -16,4 +16,3 @@ import_invalidation(con, tz = "UTC")
 Function to import \code{`invalidations`} table from a \strong{smonitor} 
 database.
 }
-

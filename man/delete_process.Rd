@@ -19,4 +19,3 @@ will delete all summaries associated with a process too. Use with care.
 \author{
 Stuart K. Grange
 }
-

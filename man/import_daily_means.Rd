@@ -24,4 +24,3 @@ Function to import daily means from a \strong{smonitor} database.
 \author{
 Stuart K. Grange
 }
-

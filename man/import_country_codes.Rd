@@ -15,4 +15,3 @@ Function to insert country codes from the European \strong{smonitor} database.
 \author{
 Stuart K. Grange
 }
-
