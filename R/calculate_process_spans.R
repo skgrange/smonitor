@@ -22,6 +22,9 @@ calculate_process_spans <- function(con, tz = "UTC") {
          GROUP BY process 
          ORDER BY process"
   
+  # Clean
+  sql <- threadr::str_trim_many_spaces(sql)
+  
   # Get table
   df <- databaser::db_get(con, sql) %>% 
     mutate(date_start = threadr::parse_unix_time(date_start, tz = tz), 

@@ -48,7 +48,7 @@ import_by_zone <- function(con, zone, variable = NA, sp_other = NA, start = 1969
   # Get sites
   suppressWarnings(
     sp_sites <- import_sites(con) %>% 
-      gissr::sp_from_wkt(projection = "wgs84")
+      gissr::sp_from_wkt(projection = gissr::projection_wgs84())
   )
   
   # Use zone vector
@@ -64,7 +64,7 @@ import_by_zone <- function(con, zone, variable = NA, sp_other = NA, start = 1969
     
     # Get zones
     sp_zones <- db_get(con, sql) %>% 
-      gissr::sp_from_wkt(projection = "wgs84")
+      gissr::sp_from_wkt(projection = gissr::projection_wgs84())
     
     # Filter sites
     sp_sites <- sp_sites[sp_zones, ]

@@ -35,7 +35,7 @@ import_zones <- function(con, zone = NA) {
   }
   
   # Promote
-  sp <- gissr::sp_from_wkt(df, projection = "wgs84")
+  sp <- gissr::sp_from_wkt(df, projection = gissr::projection_wgs84())
   
   # Return
   sp
