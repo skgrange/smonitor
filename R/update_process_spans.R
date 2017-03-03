@@ -7,7 +7,6 @@
 #' @param tz Time-zone to parse the dates to.
 #' 
 #' @param progress Type of progress bar to display for the update statements. 
-#' Default is \code{"text"}. 
 #' 
 #' @seealso \code{\link{calculate_process_spans}}, 
 #' \code{\link{update_site_spans}}
@@ -15,26 +14,29 @@
 #' @author Stuart K. Grange
 #' 
 #' @export
-update_process_spans <- function(con, tz = "UTC", progress = "text") {
+update_process_spans <- function(con, tz = "UTC", progress = "none") {
   
   # Let database calculate process spans
   # message("Database is aggregating...")
-  df <- calculate_process_spans(con, tz = tz)
+  df <- calculate_process_spans(con, tz = tz) %>% 
+    mutate(date_start = stringr::str_replace_na(date_start), 
+           date_end = stringr::str_replace_na(date_end))
   
   # Build update statements
-  # No nas will be created
   sql <- stringr::str_c(
     "UPDATE processes
      SET date_start='", df$date_start, 
-    "', date_end='", df$date_end, 
-    "', observation_count=", df$observation_count,
+    "',date_end='", df$date_end, 
+    "',observation_count=", df$observation_count,
     " WHERE process=", df$process, "")
+  
+  # No quotes for NULL
+  sql <- stringr::str_replace_all(sql, "'NA'", "NULL")
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Use statements
-  # message("Updating 'processes' table...")
   databaser::db_execute(con, sql, progress = progress)
   
   # No return

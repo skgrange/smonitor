@@ -6,15 +6,14 @@
 \code{observation_count} for processes and then update the \code{`processes`}
 table for an \strong{smonitor} database.}
 \usage{
-update_process_spans(con, tz = "UTC", progress = "text")
+update_process_spans(con, tz = "UTC", progress = "none")
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{tz}{Time-zone to parse the dates to.}
 
-\item{progress}{Type of progress bar to display for the update statements. 
-Default is \code{"text"}.}
+\item{progress}{Type of progress bar to display for the update statements.}
 }
 \description{
 Function to calculate \code{date_start}, \code{date_end}, and 

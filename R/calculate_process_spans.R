@@ -30,6 +30,17 @@ calculate_process_spans <- function(con, tz = "UTC") {
     mutate(date_start = threadr::parse_unix_time(date_start, tz = tz), 
            date_end = threadr::parse_unix_time(date_end, tz = tz))
   
+  # sql group by will not return groups with no data
+  df_processes <- databaser::db_get(con, "SELECT process 
+                                          FROM processes 
+                                          ORDER BY process")
+  
+  # Join and add observation counts if missing
+  df <- df_processes %>% 
+    left_join(df, by = "process") %>% 
+    mutate(observation_count = ifelse(
+      is.na(observation_count), 0, observation_count))
+  
   # Return
   df
   
