@@ -10,6 +10,7 @@
 #' @param con Database connection. 
 #' @param process A vector of processes. 
 #' @param tz Time-zone. 
+#' @param delete Type of delete-match to use for dates.
 #' @param progress Progress bar type. Default is \code{"time"}. 
 #' 
 #' @import dplyr

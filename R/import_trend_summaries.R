@@ -1,4 +1,4 @@
-#' Function to import monthly summaries from an \strong{smonitor} database. 
+#' Function to import trend summaries from an \strong{smonitor} database. 
 #' 
 #' @param con Database connection. 
 #' 
@@ -6,7 +6,7 @@
 #' 
 #' @param variable Variables to import. 
 #' 
-#' @param period Periods to import
+#' @param aggregation Aggregation to import. 
 #' 
 #' @param date_insert Should the \code{date_insert} variable be returned? 
 #' 
@@ -22,27 +22,31 @@
 #' @return Data frame.
 #' 
 #' @export
-import_monthly_summaries <- function(con, site = NA, variable = NA, period = NA,
-                                     date_insert = FALSE, spread = FALSE,
-                                     tz = "UTC") {
-  
-  # Switch period
-  period <- ifelse(period %in% c("hour", "hourly"), 1, period)
-  period <- ifelse(period %in% c("day", "daily"), 20, period)
+import_trend_summaries <- function(con, site = NA, variable = NA, aggregation = NA,
+                                   date_insert = FALSE, spread = FALSE,
+                                   tz = "UTC") {
   
   # Clean
   site <- stringr::str_trim(site)
   site <- stringr::str_to_lower(site)
+  aggregation <- stringr::str_trim(aggregation)
+  aggregation <- stringr::str_to_lower(aggregation)
   
+  # Switch aggregation
+  aggregation <- ifelse(aggregation %in% c("month", "monthly"), 92, aggregation)
+  aggregation <- ifelse(aggregation %in% c("year", "annual"), 102, aggregation)
+  
+  # Build
   sql <- "SELECT date_insert, 
           date, 
           date_end,
           summary,
+          aggregation,
           site,
           variable,
           count,
           value 
-          FROM observations_monthly
+          FROM observations_trend_summaries
           ORDER BY site,
           summary,
           variable,
@@ -56,8 +60,8 @@ import_monthly_summaries <- function(con, site = NA, variable = NA, period = NA,
     sql_site_where <- stringr::str_c(" WHERE site IN (", site, ")")
     
     # Add to statement
-    sql <- stringr::str_replace(sql, "observations_monthly", 
-      stringr::str_c("observations_monthly", sql_site_where))
+    sql <- stringr::str_replace(sql, "observations_trend_summaries", 
+      stringr::str_c("observations_trend_summaries", sql_site_where))
     
   }
   
@@ -71,8 +75,8 @@ import_monthly_summaries <- function(con, site = NA, variable = NA, period = NA,
   if (!is.na(variable[1])) 
     df <- df[df$variable %in% variable, ]
   
-  if (!is.na(period[1]))
-    df <- df[df$summary %in% period, ]
+  if (!is.na(aggregation[1]))
+    df <- df[df$aggregation %in% aggregation, ]
   
   # Clean-up a bit
   df <- df %>% 

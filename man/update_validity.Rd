@@ -15,6 +15,8 @@ update_validity(con, process, tz = "UTC", delete = "between",
 
 \item{tz}{Time-zone.}
 
+\item{delete}{Type of delete-match to use for dates.}
+
 \item{progress}{Progress bar type. Default is \code{"time"}.}
 }
 \description{
