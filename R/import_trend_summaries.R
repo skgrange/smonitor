@@ -71,41 +71,49 @@ import_trend_summaries <- function(con, site = NA, variable = NA, aggregation = 
   # Query database
   df <- databaser::db_get(con, sql)
   
-  # Do variable filtering here, to-do add to sql
-  if (!is.na(variable[1])) 
-    df <- df[df$variable %in% variable, ]
-  
-  if (!is.na(aggregation[1]))
-    df <- df[df$aggregation %in% aggregation, ]
-  
-  # Clean-up a bit
-  df <- df %>% 
-    mutate(date = threadr::parse_unix_time(date, tz = tz),
-           date_end = threadr::parse_unix_time(date_end, tz = tz))
-  
-  if (date_insert) {
+  if (nrow(df) == 0) {
     
-    df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
+    # Empty data frame
+    return(data.frame())
     
   } else {
     
-    df$date_insert <- NULL
+    # Do variable filtering here, to-do add to sql
+    if (!is.na(variable[1])) 
+      df <- df[df$variable %in% variable, ]
     
-  }
+    if (!is.na(aggregation[1]))
+      df <- df[df$aggregation %in% aggregation, ]
     
-  if (spread) {
-    
-    # Drop
-    df$date_end <- NULL
-    df$count <- NULL
-    
-    # Make wider
+    # Clean-up a bit
     df <- df %>% 
-      tidyr::spread(variable, value)
+      mutate(date = threadr::parse_unix_time(date, tz = tz),
+             date_end = threadr::parse_unix_time(date_end, tz = tz))
+    
+    if (date_insert) {
+      
+      df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
+      
+    } else {
+      
+      df$date_insert <- NULL
+      
+    }
+    
+    if (spread) {
+      
+      # Drop
+      df$date_end <- NULL
+      df$count <- NULL
+      
+      # Make wider
+      df <- df %>% 
+        tidyr::spread(variable, value)
+      
+    }
+    
+    return(df)
     
   }
-  
-  # Return
-  df
   
 }
