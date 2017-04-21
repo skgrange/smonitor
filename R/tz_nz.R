@@ -6,4 +6,4 @@
 #' @author Stuart K. Grange
 #' 
 #' @export
-nz_tz <- function() "Etc/GMT-12"
+tz_nz <- function() "Etc/GMT-12"

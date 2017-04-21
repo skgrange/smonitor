@@ -67,14 +67,10 @@ import_trend_summaries <- function(con, site = NA, variable = NA,
     site <- stringr::str_c(site, collapse = ",")
     
     sql_site_and <- stringr::str_c(" AND site IN (", site, ")")
-    # sql_site_where <- stringr::str_c(" WHERE site IN (", site, ")")
     
     # Add to statement
     sql <- stringr::str_replace(
       sql, "ORDER BY", stringr::str_c(sql_site_and, " ORDER BY "))
-    
-    # sql <- stringr::str_replace(sql, "observations_trend_summaries", 
-    #   stringr::str_c("observations_trend_summaries", sql_site_where))
     
   }
   
