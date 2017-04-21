@@ -4,8 +4,9 @@
 \alias{import_trend_summaries}
 \title{Function to import trend summaries from an \strong{smonitor} database.}
 \usage{
-import_trend_summaries(con, site = NA, variable = NA, aggregation = NA,
-  date_insert = FALSE, spread = FALSE, tz = "UTC")
+import_trend_summaries(con, site = NA, variable = NA,
+  aggregation = "monthly_mean", date_insert = FALSE, spread = FALSE,
+  tz = "UTC", print_query = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -24,6 +25,8 @@ can occur.}
 
 \item{tz}{What time-zone should the dates be returned as? Default is 
 \code{"UTC"}.}
+
+\item{print_query}{Should the SQL query statement be printed?}
 }
 \value{
 Data frame.

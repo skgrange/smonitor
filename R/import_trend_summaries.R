@@ -17,14 +17,17 @@
 #' @param tz What time-zone should the dates be returned as? Default is 
 #' \code{"UTC"}. 
 #' 
+#' @param print_query Should the SQL query statement be printed? 
+#' 
 #' @author Stuart K. Grange
 #' 
 #' @return Data frame.
 #' 
 #' @export
-import_trend_summaries <- function(con, site = NA, variable = NA, aggregation = NA,
+import_trend_summaries <- function(con, site = NA, variable = NA, 
+                                   aggregation = "monthly_mean",
                                    date_insert = FALSE, spread = FALSE,
-                                   tz = "UTC") {
+                                   tz = "UTC", print_query = FALSE) {
   
   # Clean
   site <- stringr::str_trim(site)
@@ -33,40 +36,53 @@ import_trend_summaries <- function(con, site = NA, variable = NA, aggregation = 
   aggregation <- stringr::str_to_lower(aggregation)
   
   # Switch aggregation
-  aggregation <- ifelse(aggregation %in% c("month", "monthly"), 92, aggregation)
-  aggregation <- ifelse(aggregation %in% c("year", "annual"), 102, aggregation)
+  aggregation <- ifelse(aggregation %in% c("monthly_mean", "month_mean"), 92, 
+                        aggregation)
+  
+  aggregation <- ifelse(aggregation %in% c("year_mean", "annual_mean"), 102, 
+                        aggregation)
   
   # Build
-  sql <- "SELECT date_insert, 
-          date, 
-          date_end,
-          summary,
-          aggregation,
-          site,
-          variable,
-          count,
-          value 
-          FROM observations_trend_summaries
-          ORDER BY site,
-          summary,
-          variable,
-          date"
+  sql <- stringr::str_c(
+    "SELECT date_insert, 
+    date, 
+    date_end,
+    summary,
+    aggregation,
+    site,
+    variable,
+    count,
+    value 
+    FROM observations_trend_summaries
+    WHERE aggregation = ", aggregation, "
+    ORDER BY site,
+    summary,
+    variable,
+    date")
   
   # Add site where clause
   if (!is.na(site[1])) {
     
     site <- stringr::str_c("'", site, "'")
     site <- stringr::str_c(site, collapse = ",")
-    sql_site_where <- stringr::str_c(" WHERE site IN (", site, ")")
+    
+    sql_site_and <- stringr::str_c(" AND site IN (", site, ")")
+    # sql_site_where <- stringr::str_c(" WHERE site IN (", site, ")")
     
     # Add to statement
-    sql <- stringr::str_replace(sql, "observations_trend_summaries", 
-      stringr::str_c("observations_trend_summaries", sql_site_where))
+    sql <- stringr::str_replace(
+      sql, "ORDER BY", stringr::str_c(sql_site_and, " ORDER BY "))
+    
+    # sql <- stringr::str_replace(sql, "observations_trend_summaries", 
+    #   stringr::str_c("observations_trend_summaries", sql_site_where))
     
   }
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
+  
+  # Print
+  if (print_query) message(sql)
   
   # Query database
   df <- databaser::db_get(con, sql)
@@ -82,13 +98,9 @@ import_trend_summaries <- function(con, site = NA, variable = NA, aggregation = 
     if (!is.na(variable[1])) 
       df <- df[df$variable %in% variable, ]
     
-    if (!is.na(aggregation[1]))
-      df <- df[df$aggregation %in% aggregation, ]
-    
     # Clean-up a bit
-    df <- df %>% 
-      mutate(date = threadr::parse_unix_time(date, tz = tz),
-             date_end = threadr::parse_unix_time(date_end, tz = tz))
+    df$date <- threadr::parse_unix_time(df$date, tz = tz)
+    df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
     
     if (date_insert) {
       
@@ -107,8 +119,7 @@ import_trend_summaries <- function(con, site = NA, variable = NA, aggregation = 
       df$count <- NULL
       
       # Make wider
-      df <- df %>% 
-        tidyr::spread(variable, value)
+      df <- tidyr::spread(df, variable, value)
       
     }
     

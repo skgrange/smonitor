@@ -39,7 +39,7 @@ update_variables_monitored <- function(con) {
 # Nest the vector
 nest_variable_vectors <- function(df) {
   
-  variables <- sort(df$variable)
+  variables <- sort(unique(df$variable))
   variables <- stringr::str_c(variables, collapse = "; ")
   observation_count <- sum(df$observation_count, na.rm = TRUE)
   

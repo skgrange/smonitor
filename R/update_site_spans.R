@@ -6,15 +6,13 @@
 #' 
 #' @param con Database connection. 
 #' @param tz Time-zone to parse the dates to.
-#' @param progress Type of progress bar to display for the update statements. 
-#' Default is \code{"none"}. 
-#'
+
 #' @seealso \code{\link{update_process_spans}}
 #' 
 #' @import dplyr
 #'
 #' @export
-update_site_spans <- function(con, tz = "UTC", progress = "none") {
+update_site_spans <- function(con, tz = "UTC") {
   
   # Get data and transform
   df <- databaser::db_get(con, "SELECT site,
@@ -47,7 +45,7 @@ update_site_spans <- function(con, tz = "UTC", progress = "none") {
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Use statements
-  databaser::db_execute(con, sql, progress = progress)
+  databaser::db_execute(con, sql)
   
   # No return
   

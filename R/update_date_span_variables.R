@@ -5,20 +5,26 @@
 #' \code{`row_counts`} table. 
 #' 
 #' @param con Database connection.
+#' 
 #' @param tz Time-zone Time-zone for the dates to be represented as. 
-#' @param progress Type of progress bar to display. 
+#' 
+#' @param na.rm Should missing values (\code{NA}/\code{NULL}) be omited from the
+#' aggregation functions? 
+#' 
+#' @param verbose Should the function give messages?
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @export
-update_date_span_variables <- function(con, tz = "UTC", verbose = FALSE) {
+update_date_span_variables <- function(con, tz = "UTC", na.rm = FALSE, 
+                                       verbose = FALSE) {
   
   # Do
   if (verbose) message("Updating `processes` table...")
-  update_process_spans(con, tz = tz, progress = "none")
+  update_process_spans(con, tz = tz)
   
   if (verbose) message("Updating `sites` table...")
-  update_site_spans(con, tz = tz, progress = "none")
+  update_site_spans(con, tz = tz)
   
   # Also row counts
   # Message text logic

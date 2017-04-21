@@ -143,18 +143,6 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
       
     }, error = function(e) {
       
-      # # Raise warning
-      # warning("Variable names were manipulated for reshaping.", call. = FALSE)
-      # 
-      # df %>%
-      #   mutate(process = stringr::str_pad(process, width = 6, pad = "0"),
-      #          variable = stringr::str_c(variable, "_", process)) %>% 
-      #   select(-date_insert,
-      #          -process,
-      #          -summary,
-      #          -validity) %>%
-      #   tidyr::spread(variable, value)
-      
       # Raise warning
       warning("Data has been removed for reshaping...", call. = FALSE)
       

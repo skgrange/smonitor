@@ -6,14 +6,15 @@
 \code{observation_count} for processes and then update the \code{`processes`}
 table for an \strong{smonitor} database.}
 \usage{
-update_process_spans(con, tz = "UTC", progress = "none")
+update_process_spans(con, tz = "UTC", na.rm = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{tz}{Time-zone to parse the dates to.}
 
-\item{progress}{Type of progress bar to display for the update statements.}
+\item{na.rm}{Should missing values (\code{NA}/\code{NULL}) be omited from the
+aggregation functions?}
 }
 \description{
 Function to calculate \code{date_start}, \code{date_end}, and 

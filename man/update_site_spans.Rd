@@ -5,15 +5,12 @@
 \title{Function to update \code{date_start} and \code{date_end}, for sites and then
 update the \code{`sites`} table for an \strong{smonitor} database.}
 \usage{
-update_site_spans(con, tz = "UTC", progress = "none")
+update_site_spans(con, tz = "UTC")
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{tz}{Time-zone to parse the dates to.}
-
-\item{progress}{Type of progress bar to display for the update statements. 
-Default is \code{"none"}.}
 }
 \description{
 Use \code{update_site_span} after \code{\link{update_process_spans}} because 
