@@ -56,7 +56,12 @@ calculate_process_spans <- function(con, tz, na.rm) {
          ORDER BY process"
   
   # Omit NULL values
-  if (na.rm) sql <- stringr::str_c(sql, " AND value IS NOT NULL")
+  if (na.rm) {
+    
+    sql <- stringr::str_replace(
+      sql, "FROM observations", " FROM observations WHERE value IS NOT NULL ")
+    
+  }
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)

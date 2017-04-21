@@ -21,7 +21,7 @@ update_date_span_variables <- function(con, tz = "UTC", na.rm = FALSE,
   
   # Do
   if (verbose) message("Updating `processes` table...")
-  update_process_spans(con, tz = tz)
+  update_process_spans(con, tz = tz, na.rm = na.rm)
   
   if (verbose) message("Updating `sites` table...")
   update_site_spans(con, tz = tz)
