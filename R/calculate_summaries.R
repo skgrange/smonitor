@@ -4,7 +4,8 @@
 #' \code{calculate_summaries} will handle aggregation methods, transformation,
 #' and updating processes when the \strong{smonitor} tables are complete.
 #' 
-#' To-do: Optimise to stop many select and insert steps. 
+#' To-do: Optimise to stop many select and insert steps with 
+#' \code{aggregate_by_date}. 
 #' 
 #' \code{calculate_summaries} will correctly aggregate wind direction.
 #' 
@@ -28,10 +29,7 @@
 #' 
 #' @examples 
 #' \dontrun{
-#' 
-#' # ... create database connection
-#' # ... create look-up table
-#' 
+#'
 #' # Calculate all summaries in data_look_up for 2014 and insert them into the 
 #' # database
 #' calculate_summaries(con, data_look_up, start = 2014, start = 2014)
@@ -54,10 +52,10 @@ calculate_summaries <- function(con, df_map, start, end, tz = "UTC",
 summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   # Print what is happening
-  message(threadr::to_json(df_map))
+  message(to_json(df_map))
   
   # Drop tbl_df
-  df_map <- threadr::base_df(df_map)
+  df_map <- base_df(df_map)
   
   # Get mapping table
   df_look <- import_summaries(con, extra = TRUE)
@@ -78,8 +76,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     message_querying()
     
     # Get valid observations, i.e. not 0
-    df <- import_source(con, df_map$process, start = start, end = end,
-                        tz = tz, valid = TRUE, extra = FALSE)
+    df <- import_any(con, df_map$process, start = start, end = end,
+                     tz = tz, valid_only = TRUE, site_name = FALSE,
+                     date_end = FALSE)
     
     # Only if data
     if (nrow(df) > 0) {
@@ -141,11 +140,10 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     # Message
     message_querying()
     
-    # Load
-    df <- import_hourly_means(con, df_map$process, start = start, end = end, 
-                              tz = tz, extra = FALSE)
-    
-    df$date_end <- NULL
+    # Get hourly means
+    df <- import_any(con, df_map$process, summary = 1, start = start, end = end,
+                     tz = tz, valid_only = TRUE, site_name = FALSE, 
+                     date_end = FALSE)
     
     # Only if data
     if (nrow(df) > 0) {
@@ -202,11 +200,10 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     # Message
     message_querying()
     
-    # Load
-    df <- import_daily_means(con, df_map$process, start = start, end = end,
-                             tz = tz, extra = FALSE)
-    
-    df$date_end <- NULL
+    # Get daily means
+    df <- import_any(con, df_map$process, summary = 20, start = start, end = end,
+                     tz = tz, valid_only = TRUE, site_name = FALSE, 
+                     date_end = FALSE)
     
     # Only if data
     if (nrow(df) > 0) {
@@ -259,12 +256,11 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     # Message
     message_querying()
     
-    # Load
-    df <- import_hourly_means(con, df_map$process, start = start, end = end,
-                              tz = tz, extra = FALSE)
-    
-    df$date_end <- NULL
-    
+    # Get hourly means
+    df <- import_any(con, df_map$process, summary = 1, start = start, end = end,
+                     tz = tz, valid_only = TRUE, site_name = FALSE, 
+                     date_end = FALSE)
+
     # Only if data
     if (nrow(df) > 0) {
       
@@ -325,9 +321,10 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     # Message
     message_querying()
     
-    # Load
-    df <- import_daily_means(con, df_map$process, start = start, end = end,
-                             tz = tz, extra = FALSE)
+    # Get daily means
+    df <- import_any(con, df_map$process, summary = 20, start = start, end = end,
+                     tz = tz, valid_only = TRUE, site_name = FALSE, 
+                     date_end = FALSE)
     
     df$date_end <- NULL
     
@@ -403,7 +400,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     } else {
       
       # Also add variable here
-      df_agg$date_insert <- threadr::sys_unix_time(integer = TRUE)
+      df_agg$date_insert <- sys_unix_time(integer = TRUE)
       message("No data inserted...")
       
     }

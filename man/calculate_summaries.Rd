@@ -24,15 +24,13 @@ variables.}
 and updating processes when the \strong{smonitor} tables are complete.
 }
 \details{
-To-do: Optimise to stop many select and insert steps.
+To-do: Optimise to stop many select and insert steps with 
+\code{aggregate_by_date}.
 
 \code{calculate_summaries} will correctly aggregate wind direction.
 }
 \examples{
 \dontrun{
-
-# ... create database connection
-# ... create look-up table
 
 # Calculate all summaries in data_look_up for 2014 and insert them into the 
 # database

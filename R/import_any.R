@@ -144,9 +144,16 @@ import_any <- function(con, process, summary = NA, start = 1970, end = NA,
   # Query database
   df <- databaser::db_get(con, sql)
   
-  # Check
-  if (nrow(df) == 0)
-    stop("Database has been queried but no data has been returned.", call. = FALSE)
+  # Check for data
+  if (nrow(df) == 0) {
+    
+    warning("Database has been queried but no data has been returned.", 
+            call. = FALSE)
+    
+    # Return empty data frame here
+    return(data.frame())
+    
+  }
   
   # Filter invalid observations, not 0, may move to sql at some point
   if (valid_only) df <- df[is.na(df$validity) | df$validity == 1, ]
@@ -161,7 +168,6 @@ import_any <- function(con, process, summary = NA, start = 1970, end = NA,
   
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   
-  # Return
-  df
+  return(df)
   
 }
