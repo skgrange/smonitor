@@ -26,8 +26,8 @@ calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC",
   
   # Get all processes' source data
   if (verbose) message("Querying database for source data...")
-  df <- import_any(con, process, summary = 0, start = start, end = end, 
-                   valid_only = TRUE, tz = tz)
+  df <- import_by_process(con, process, summary = 0, start = start, end = end, 
+                          valid_only = TRUE, tz = tz)
   
   # Prepare then reshape
   if (verbose) message("Do the aggregation...")

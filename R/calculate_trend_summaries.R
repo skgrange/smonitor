@@ -50,8 +50,8 @@ calculate_trend_summaries_worker <- function(con, df, interval, verbose) {
   # Get observations
   df <- tryCatch({
     
-    import_any(con, process, site_name = FALSE, date_end = FALSE, 
-               valid_only = TRUE)
+    import_by_process(con, process, site_name = FALSE, date_end = FALSE, 
+                      valid_only = TRUE)
     
   }, error = function(e) {
     
@@ -60,9 +60,6 @@ calculate_trend_summaries_worker <- function(con, df, interval, verbose) {
   })
   
   if (nrow(df) != 0) {
-    
-    # Not reverted yet...
-    options(dplyr.show_progress = FALSE)
     
     # Means
     df_mean <- aggregate_by_date(df, interval = interval, 

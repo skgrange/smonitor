@@ -6,16 +6,16 @@
 \usage{
 import_by_site(con, site, variable = NA, start = 1970, end = NA,
   period = "hour", valid_only = TRUE, pad = TRUE, tz = "UTC",
-  spread = FALSE, europe = FALSE, date_end = TRUE, date_insert = FALSE,
+  spread = FALSE, date_end = TRUE, date_insert = FALSE,
   site_name = TRUE, print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
 
-\item{site}{A site code such as \code{"my1"}.}
+\item{site}{A vector of sites.}
 
 \item{variable}{An optional variable vector. If not used, all variables will
-be selected and returned.}
+be returned.}
 
 \item{start}{Start date to import.}
 
@@ -35,9 +35,6 @@ observation period are present? Default is \code{TRUE}.}
 \item{spread}{Should the data frame take the wider format resulting from
 spreading the data? Default is \code{FALSE}.}
 
-\item{europe}{Should \code{import_processes_europe} be used rather than
-\code{import_processes}?}
-
 \item{date_end}{Should the return include the \code{date_end} variable? 
 Default is \code{TRUE}.}
 
@@ -51,10 +48,10 @@ Default is \code{TRUE}.}
 }
 \description{
 \code{import_by_site} is considered the primary user-focused importing 
-function while \code{import_any} is the primary lower-level function.
+function while \code{import_by_process} is the primary lower-level function.
 }
 \seealso{
-\code{\link{import_any}}
+\code{\link{import_by_process}}
 }
 \author{
 Stuart K. Grange

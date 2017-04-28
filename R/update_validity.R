@@ -23,7 +23,7 @@ update_validity <- function(con, process, tz = "UTC", delete = "between",
     stop("'delete' must be 'between' or 'all'.", call. = FALSE)
   
   # Get look-up table
-  df_look <- import_invalidation(con, tz = tz) %>% 
+  df_look <- import_invalidations(con, tz = tz) %>% 
     mutate(date_start = as.numeric(date_start),
            date_end = as.numeric(date_end))
   
@@ -43,8 +43,8 @@ update_validity_worker <- function(con, process, df_look, delete) {
   # Catch is for when database contains no data for a process and gives an error
   df <- tryCatch({
     
-    import_any(con, process, summary = 0, start = 1965, end = 2020, 
-               valid_only = FALSE) %>% 
+    import_by_process(con, process, summary = 0, start = 1965, end = 2020, 
+                      valid_only = FALSE) %>% 
       mutate(date = as.numeric(date),
              date_end = as.numeric(date_end))
     

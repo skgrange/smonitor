@@ -75,10 +75,10 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     # Message
     message_querying()
     
-    # Get valid observations, i.e. not 0
-    df <- import_any(con, df_map$process, start = start, end = end,
-                     tz = tz, valid_only = TRUE, site_name = FALSE,
-                     date_end = FALSE)
+    # Get valid observations
+    df <- import_by_process(con, df_map$process, start = start, end = end,
+                            tz = tz, valid_only = TRUE, site_name = FALSE,
+                            date_end = FALSE)
     
     # Only if data
     if (nrow(df) > 0) {
@@ -141,9 +141,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     message_querying()
     
     # Get hourly means
-    df <- import_any(con, df_map$process, summary = 1, start = start, end = end,
-                     tz = tz, valid_only = TRUE, site_name = FALSE, 
-                     date_end = FALSE)
+    df <- import_by_process(con, df_map$process, summary = 1, start = start, 
+                            end = end, tz = tz, valid_only = TRUE, 
+                            site_name = FALSE, date_end = FALSE)
     
     # Only if data
     if (nrow(df) > 0) {
@@ -201,9 +201,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     message_querying()
     
     # Get daily means
-    df <- import_any(con, df_map$process, summary = 20, start = start, end = end,
-                     tz = tz, valid_only = TRUE, site_name = FALSE, 
-                     date_end = FALSE)
+    df <- import_by_process(con, df_map$process, summary = 20, start = start, 
+                            end = end, tz = tz, valid_only = TRUE, site_name = FALSE, 
+                            date_end = FALSE)
     
     # Only if data
     if (nrow(df) > 0) {
@@ -257,9 +257,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     message_querying()
     
     # Get hourly means
-    df <- import_any(con, df_map$process, summary = 1, start = start, end = end,
-                     tz = tz, valid_only = TRUE, site_name = FALSE, 
-                     date_end = FALSE)
+    df <- import_by_process(con, df_map$process, summary = 1, start = start, 
+                            end = end, tz = tz, valid_only = TRUE, site_name = FALSE, 
+                            date_end = FALSE)
 
     # Only if data
     if (nrow(df) > 0) {
@@ -322,9 +322,9 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
     message_querying()
     
     # Get daily means
-    df <- import_any(con, df_map$process, summary = 20, start = start, end = end,
-                     tz = tz, valid_only = TRUE, site_name = FALSE, 
-                     date_end = FALSE)
+    df <- import_by_process(con, df_map$process, summary = 20, start = start, 
+                            end = end, tz = tz, valid_only = TRUE, site_name = FALSE,
+                            date_end = FALSE)
     
     df$date_end <- NULL
     
