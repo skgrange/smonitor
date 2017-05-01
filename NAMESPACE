@@ -2,6 +2,7 @@
 
 export(calculate_hourly_means_fast)
 export(calculate_summaries)
+export(calculate_summaries_efficently)
 export(calculate_trend_summaries)
 export(create_observations_table)
 export(create_summary_entries)

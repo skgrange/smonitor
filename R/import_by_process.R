@@ -35,6 +35,8 @@
 #' @param site_name Should the return include the \code{site_name} variable? 
 #' Default is \code{TRUE}. 
 #' 
+#' @param warn Should the functions raise warnings? 
+#' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
 #' @return Data frame containing decoded observataion data with correct data 
@@ -48,7 +50,7 @@
 import_by_process <- function(con, process, summary = NA, start = 1969, end = NA,
                               tz = "UTC", valid_only = TRUE, date_end = TRUE, 
                               date_insert = FALSE, site_name = TRUE, 
-                              print_query = FALSE) {
+                              warn = TRUE, print_query = FALSE) {
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -71,8 +73,12 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   # Check for data
   if (nrow(df_processes) == 0) {
     
-    warning("Process(s) not found in database, no data has been returned...", 
-            call. = FALSE)
+    if (warn) {
+      
+      warning("Process(s) not found in database, no data has been returned...", 
+              call. = FALSE)
+      
+    }
     
     # Return empty data frame here
     return(data.frame())
@@ -86,8 +92,12 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   # Check for data
   if (nrow(df) == 0) {
     
-    warning("Database has been queried but no data has been returned...", 
-            call. = FALSE)
+    if (warn) {
+      
+      warning("Database has been queried but no data has been returned...", 
+              call. = FALSE)
+      
+    }
     
     # Return empty data frame here
     return(data.frame())
@@ -100,7 +110,11 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   # Check for data
   if (nrow(df) == 0) {
     
-    warning("Database contains no valid observations...", call. = FALSE)
+    if (warn) {
+      
+      warning("Database contains no valid observations...", call. = FALSE)
+      
+    }
     
     # Return empty data frame here
     return(data.frame())
@@ -121,6 +135,17 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   
   # Arrange
   df <- dplyr::arrange(df, process, date)
+  
+  # And variable order
+  df <- dplyr::select(df, 
+                      dplyr::matches("date_insert"),
+                      dplyr::matches("date"), 
+                      dplyr::matches("date_end"), 
+                      dplyr::matches("process"), 
+                      dplyr::matches("summary"),
+                      dplyr::matches("validity"),
+                      dplyr::matches("value"),
+                      dplyr::everything())
   
   return(df)
   

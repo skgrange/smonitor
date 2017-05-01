@@ -31,7 +31,7 @@ update_variables_monitored <- function(con) {
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Do
-  db_execute(con, sql)
+  databaser::db_execute(con, sql)
   
 }
 
@@ -41,7 +41,7 @@ nest_variable_vectors <- function(df) {
   
   variables <- sort(unique(df$variable))
   variables <- stringr::str_c(variables, collapse = "; ")
-  observation_count <- sum(df$observation_count, na.rm = TRUE)
+  observation_count <- sum(as.numeric(df$observation_count), na.rm = TRUE)
   
   df <- data.frame(
     site = df$site[1],
