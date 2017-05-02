@@ -89,13 +89,12 @@ calculate_summaries_efficently_worker <- function(con, df_map, start, end, tz,
     
     message(
       threadr::to_json(
-        data.frame(
+        list(
           source_summary_name = source_summary_name,
           summary_name = df_map$summary_name[1],
           aggregation_function = aggregation_function,
           validity_threshold = validity_threshold,
-          processes = stringr::str_c(processes, collapse = ", "),
-          stringsAsFactors = FALSE
+          processes = processes
         )
       )
     )
@@ -138,6 +137,9 @@ calculate_summaries_efficently_worker <- function(con, df_map, start, end, tz,
     insert_observations(con, df_agg)
     
   }
+  
+  # House keeping
+  gc()
   
   # No return
   
