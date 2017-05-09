@@ -41,7 +41,7 @@ insert_aurn_data <- function(con, site, start, end = NA,
     
     # Make longer and join, inner join will only keep those in processes table
     df <- df %>% 
-      dplyr::gather(variable, value, -date, -site, na.rm = TRUE) %>% 
+      tidyr::gather(variable, value, -date, -site, na.rm = TRUE) %>% 
       dplyr::mutate(date_end = date + 3599,
                     date = as.integer(date),
                     date_end = as.integer(date_end),
