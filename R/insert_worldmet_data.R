@@ -17,7 +17,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @export
 insert_worldmet_data <- function(con, site, start, end = NA,
@@ -28,14 +28,14 @@ insert_worldmet_data <- function(con, site, start, end = NA,
   
   # Get look-up tables
   df_processes <- import_processes(con, type = "minimal") %>% 
-    select(process, 
-           site,
-           variable)
+    dplyr::select(process, 
+                  site,
+                  variable)
   
   # Small look-up table just to decode site_code
   df_sites_small <- import_sites(con) %>% 
-    select(site,
-           site_code)
+    dplyr::select(site,
+                  site_code)
   
   # Get data
   if (verbose) message("Downloading data with worldmet...")
@@ -46,15 +46,15 @@ insert_worldmet_data <- function(con, site, start, end = NA,
     
     # Make longer and join, inner join will only keep those in processes table
     df <- df %>% 
-      left_join(df_sites_small, by = "site_code") %>% 
-      select(-site_code) %>% 
-      gather(variable, value, -date, -site, na.rm = TRUE) %>% 
-      mutate(date_end = date + 3599,
-             date = as.integer(date),
-             date_end = as.integer(date_end),
-             summary = 1L,
-             validity = NA) %>% 
-      inner_join(df_processes, by = c("site", "variable")) 
+      dplyr::left_join(df_sites_small, by = "site_code") %>% 
+      dplyr::select(-site_code) %>% 
+      tidyr::gather(variable, value, -date, -site, na.rm = TRUE) %>% 
+      dplyr::mutate(date_end = date + 3599,
+                    date = as.integer(date),
+                    date_end = as.integer(date_end),
+                    summary = 1L,
+                    validity = NA) %>% 
+      dplyr::inner_join(df_processes, by = c("site", "variable")) 
     
     # Delete observations
     if (verbose) message("Deleting old observations...")
@@ -87,31 +87,30 @@ insert_worldmet_data <- function(con, site, start, end = NA,
 #' 
 #' @param end End year. 
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @export
 download_noaa <- function(site, start = 1990, end = NA) {
   
   # Current year
-  if (is.na(end)) end <- lubridate::year(Sys.Date())
+  if (is.na(end)) end <- lubridate::year(lubridate::today())
   
   # Download
   # importNOAA is not vectorised over site
   df <- plyr::ldply(site, worldmet::importNOAA, year = start:end, hourly = TRUE)
-  # df <- worldmet::importNOAA(code = site, year = start:end, hourly = TRUE)
-  
+
   # Just in case, may not be needed
   closeAllConnections()
   
   # Drop and rename
   df <- df %>% 
-    select(-usaf,
-           -wban,
-           -station,
-           -lat,
-           -lon,
-           -elev) %>% 
-    rename(site_code = code)
+    dplyr::select(-usaf,
+                  -wban,
+                  -station,
+                  -lat,
+                  -lon,
+                  -elev) %>% 
+    dplyr::rename(site_code = code)
   
   # Fix names
   # Other dirty names will still be present

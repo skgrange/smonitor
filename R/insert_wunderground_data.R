@@ -20,7 +20,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @export
 insert_wunderground_data <- function(con, site, start, end = NA, validity = FALSE,
@@ -31,10 +31,10 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
   
   # Get look-up table for a join
   df_look <- import_processes(con) %>% 
-    filter(site %in% site_vector) %>% 
-    select(process,
-           site,
-           variable)
+    dplyr::filter(site %in% site_vector) %>% 
+    dplyr::select(process,
+                  site,
+                  variable)
   
   # Get observations, every site is done separately
   message("Getting new observations...")
@@ -45,26 +45,26 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
     
     # Transform and reshape data
     df <- df %>% 
-      select(-date, 
-             -date_local, 
-             -software) %>% 
-      rename(date = date_unix) %>% 
+      dplyr::select(-date, 
+                    -date_local, 
+                    -software) %>% 
+      dplyr::rename(date = date_unix) %>% 
       tidyr::gather(variable, value, -date, -site) %>% 
-      mutate(date_end = NA, 
-             validity = NA,
-             summary = 0L)
+      dplyr::mutate(date_end = NA, 
+                    validity = NA,
+                    summary = 0L)
     
     # To-do validity
     
     # Join processes, only processes in table will be kept, then arrange
     df <- df %>% 
-      inner_join(df_look, by = c("site", "variable")) %>% 
-      select(date,
-             date_end,
-             process,
-             summary,
-             validity,
-             value)
+      dplyr::inner_join(df_look, by = c("site", "variable")) %>% 
+      dplyr::select(date,
+                    date_end,
+                    process,
+                    summary,
+                    validity,
+                    value)
     
     if (nrow(df) > 0) {
       
@@ -105,31 +105,31 @@ insert_wunderground_data_frame <- function(con, df) {
   
   # Get look-up table for a join
   df_look <- import_processes(con) %>% 
-    filter(site %in% site_vector) %>% 
-    select(process,
-           site,
-           variable)
+    dplyr::filter(site %in% site_vector) %>% 
+    dplyr::select(process,
+                  site,
+                  variable)
   
   # Transform and reshape data
   df <- df %>% 
-    select(-date, 
-           -date_local, 
-           -software) %>% 
-    rename(date = date_unix) %>% 
+    dplyr::select(-date, 
+                  -date_local, 
+                  -software) %>% 
+    dplyr::rename(date = date_unix) %>% 
     tidyr::gather(variable, value, -date, -site) %>% 
-    mutate(date_end = NA, 
-           validity = NA,
-           summary = 0L)
+    dplyr::mutate(date_end = NA, 
+                  validity = NA,
+                  summary = 0L)
   
   # Join processes, only processes in table will be kept, then arrange
   df <- df %>% 
-    inner_join(df_look, by = c("site", "variable")) %>% 
-    select(date,
-           date_end,
-           process,
-           summary,
-           validity,
-           value)
+    dplyr::inner_join(df_look, by = c("site", "variable")) %>% 
+    dplyr::select(date,
+                  date_end,
+                  process,
+                  summary,
+                  validity,
+                  value)
   
   # Insert
   if (nrow(df) > 0) {

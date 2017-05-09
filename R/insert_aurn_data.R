@@ -17,20 +17,20 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @export
 insert_aurn_data <- function(con, site, start, end = NA,
                              verbose = TRUE) {
   
   # Ceiling round
-  if (is.na(end)) end <- lubridate::year(Sys.Date())
+  if (is.na(end)) end <- lubridate::year(lubridate::today())
   
   # Get look-up tables
   df_processes <- import_processes(con, type = "minimal") %>% 
-    select(process, 
-           site,
-           variable)
+    dplyr::select(process, 
+                  site,
+                  variable)
   
   # Get data
   if (verbose) message("Downloading AURN data with openair...")
@@ -41,13 +41,13 @@ insert_aurn_data <- function(con, site, start, end = NA,
     
     # Make longer and join, inner join will only keep those in processes table
     df <- df %>% 
-      gather(variable, value, -date, -site, na.rm = TRUE) %>% 
-      mutate(date_end = date + 3599,
-             date = as.integer(date),
-             date_end = as.integer(date_end),
-             summary = 1L,
-             validity = NA) %>% 
-      inner_join(df_processes, by = c("site", "variable")) 
+      dplyr::gather(variable, value, -date, -site, na.rm = TRUE) %>% 
+      dplyr::mutate(date_end = date + 3599,
+                    date = as.integer(date),
+                    date_end = as.integer(date_end),
+                    summary = 1L,
+                    validity = NA) %>% 
+      dplyr::inner_join(df_processes, by = c("site", "variable")) 
     
     # Delete observations
     if (verbose) message("Deleting old observations...")
@@ -84,7 +84,7 @@ insert_aurn_data <- function(con, site, start, end = NA,
 download_aurn <- function(site, start = 1990, end = NA) {
   
   # Current year
-  if (is.na(end)) end <- lubridate::year(Sys.Date())
+  if (is.na(end)) end <- lubridate::year(lubridate::today())
   
   suppressWarnings(
     suppressMessages(
@@ -142,4 +142,3 @@ load_openair_variable_helper <- function() {
   df
   
 }
-  

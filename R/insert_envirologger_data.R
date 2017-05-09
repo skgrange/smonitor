@@ -22,7 +22,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @export
 insert_envirologger_data <- function(con, user, key, server, station, 
@@ -31,17 +31,17 @@ insert_envirologger_data <- function(con, user, key, server, station,
   # Load look-up tables
   # Sites
   df_sites_look_up <- import_sites(con) %>% 
-    select(site,
-           station = envirologger_station)
+    dplyr::select(site,
+                  station = envirologger_station)
   
   # Process keys
   df_processes <- import_processes(con) %>% 
-    filter(service == 1) %>% 
-    select(process,
-           site,
-           variable,
-           label = envirologger_label,
-           sensor = envirologger_sensor)
+    dplyr::filter(service == 1) %>% 
+    dplyr::select(process,
+                  site,
+                  variable,
+                  label = envirologger_label,
+                  sensor = envirologger_sensor)
   
   # Get observations with API
   message("Getting new observations...")
@@ -55,25 +55,25 @@ insert_envirologger_data <- function(con, user, key, server, station,
   
   # Site, not station bitte
   df <- df %>% 
-    left_join(df_sites_look_up, by = "station") %>% 
-    select(-station)
+    dplyr::left_join(df_sites_look_up, by = "station") %>% 
+    dplyr::select(-station)
   
   # Only processes in table will be kept
   df <- df %>% 
-    inner_join(df_processes, by = c("site", "label", "sensor", "variable"))
+    dplyr::inner_join(df_processes, by = c("site", "label", "sensor", "variable"))
 
   # Transform data frame for smonitor
   df <- df %>% 
-    mutate(date = as.integer(date),
-           date_end = NA, 
-           validity = NA,
-           summary = 0L) %>% 
-    select(date,
-           date_end,
-           process,
-           summary,
-           validity,
-           value)
+    dplyr:: mutate(date = as.integer(date),
+                   date_end = NA, 
+                   validity = NA,
+                   summary = 0L) %>% 
+    dplyr::select(date,
+                  date_end,
+                  process,
+                  summary,
+                  validity,
+                  value)
   
   if (nrow(df) > 0) {
     

@@ -24,8 +24,7 @@
 #' 
 #' @param insert Should the data be inserted? Default is \code{TRUE}. 
 #' 
-#' @import dplyr
-#' @import threadr
+#' @importFrom magrittr %>%
 #' 
 #' @examples 
 #' \dontrun{
@@ -52,10 +51,10 @@ calculate_summaries <- function(con, df_map, start, end, tz = "UTC",
 summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   # Print what is happening
-  message(to_json(df_map))
+  message(threadr::to_json(df_map))
   
   # Drop tbl_df
-  df_map <- base_df(df_map)
+  df_map <- threadr::base_df(df_map)
   
   # Get mapping table
   df_look <- import_summaries(con, extra = TRUE)
@@ -66,7 +65,8 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   
   # Stop if duplicated mappings
   if (nrow(df_look) > 1) 
-    stop("Duplicate process-summary pairs found in `summaries` table.", call. = FALSE)
+    stop("Duplicate process-summary pairs found in `summaries` table.", 
+         call. = FALSE)
   
   
   # Different logic for the different aggregation periods
@@ -95,8 +95,8 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
         openair::timeAverage(avg.time = df_look$period,
                              data.thresh = df_look$validity_threshold,
                              statistic = df_look$aggregation_function) %>%
-        ungroup() %>%
-        factor_coerce()
+        dplyr::ungroup() %>%
+        threadr::factor_coerce()
       
       # Back to 'value' in aggregations
       if (df_look$variable == "wd")
@@ -113,18 +113,18 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
       
       # Transform for database
       df_agg <- df_agg %>%
-        mutate(date_end = date + minutes(59) + seconds(59),
-               date = as.integer(date),
-               date_end = as.integer(date_end),
-               process = as.integer(df_look$process),
-               summary = as.integer(df_look$summary),
-               validity = NA) %>%
-        select(date,
-               date_end,
-               process,
-               summary,
-               validity,
-               value)
+        dplyr::mutate(date_end = date + minutes(59) + seconds(59),
+                      date = as.integer(date),
+                      date_end = as.integer(date_end),
+                      process = as.integer(df_look$process),
+                      summary = as.integer(df_look$summary),
+                      validity = NA) %>%
+        dplyr::select(date,
+                      date_end,
+                      process,
+                      summary,
+                      validity,
+                      value)
       
     } else {
       
@@ -160,8 +160,8 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
         openair::timeAverage(avg.time = df_look$period,
                              data.thresh = df_look$validity_threshold,
                              statistic = df_look$aggregation_function) %>% 
-        ungroup() %>% 
-        factor_coerce() 
+        dplyr::ungroup() %>% 
+        threadr::factor_coerce() 
       
       # Back to 'value' in aggregations
       if (df_look$variable == "wd")
@@ -173,18 +173,18 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
       
       # Transform for database
       df_agg <- df_agg %>% 
-        mutate(date_end = date + hours(23) + minutes(59) + seconds(59),
-               date = as.integer(date),
-               date_end = as.integer(date_end),
-               process = as.integer(df_look$process),
-               summary = as.integer(df_look$summary),
-               validity = NA) %>% 
-        select(date,
-               date_end,
-               process,
-               summary,
-               validity,
-               value)
+        dplyr::mutate(date_end = date + hours(23) + minutes(59) + seconds(59),
+                      date = as.integer(date),
+                      date_end = as.integer(date_end),
+                      process = as.integer(df_look$process),
+                      summary = as.integer(df_look$summary),
+                      validity = NA) %>% 
+        dplyr::select(date,
+                      date_end,
+                      process,
+                      summary,
+                      validity,
+                      value)
       
     } else {
       
@@ -220,8 +220,8 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
         openair::timeAverage(avg.time = df_look$period,
                              data.thresh = df_look$validity_threshold,
                              statistic = df_look$aggregation_function) %>% 
-        ungroup() %>% 
-        factor_coerce() 
+        dplyr::ungroup() %>% 
+        threadr::factor_coerce() 
       
       # Back to 'value' in aggregations
       if (df_look$variable == "wd")
@@ -229,18 +229,18 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
       
       # Transform for database
       df_agg <- df_agg %>% 
-        mutate(date_end = ceiling_date(date + 1, "month") - 1,
-               date = as.integer(date),
-               date_end = as.integer(date_end),
-               process = as.integer(df_look$process),
-               summary = as.integer(df_look$summary),
-               validity = NA) %>% 
-        select(date,
-               date_end,
-               process,
-               summary,
-               validity,
-               value)
+        dplyr::mutate(date_end = ceiling_date(date + 1, "month") - 1,
+                      date = as.integer(date),
+                      date_end = as.integer(date_end),
+                      process = as.integer(df_look$process),
+                      summary = as.integer(df_look$summary),
+                      validity = NA) %>% 
+        dplyr::select(date,
+                      date_end,
+                      process,
+                      summary,
+                      validity,
+                      value)
       
     } else {
       
@@ -276,8 +276,8 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
         openair::timeAverage(avg.time = df_look$period,
                              data.thresh = df_look$validity_threshold,
                              statistic = df_look$aggregation_function) %>% 
-        ungroup() %>% 
-        factor_coerce()
+        dplyr::ungroup() %>% 
+        threadr::factor_coerce()
       
       # Back to 'value' in aggregations
       if (df_look$variable == "wd")
@@ -294,18 +294,18 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
       
       # Transform for database
       df_agg <- df_agg %>% 
-        mutate(date_end = ceiling_date(date + 1, "year") - 1,
-               date = as.integer(date),
-               date_end = as.integer(date_end),
-               process = as.integer(df_look$process),
-               summary = as.integer(df_look$summary),
-               validity = NA) %>% 
-        select(date,
-               date_end,
-               process,
-               summary,
-               validity,
-               value)
+        dplyr::mutate(date_end = ceiling_date(date + 1, "year") - 1,
+                      date = as.integer(date),
+                      date_end = as.integer(date_end),
+                      process = as.integer(df_look$process),
+                      summary = as.integer(df_look$summary),
+                      validity = NA) %>% 
+        dplyr::select(date,
+                      date_end,
+                      process,
+                      summary,
+                      validity,
+                      value)
       
     } else {
       
@@ -343,8 +343,8 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
         openair::timeAverage(avg.time = df_look$period,
                              data.thresh = df_look$validity_threshold,
                              statistic = df_look$aggregation_function) %>% 
-        ungroup() %>% 
-        factor_coerce() 
+        dplyr::ungroup() %>% 
+        threadr::factor_coerce() 
       
       # Back to 'value' in aggregations
       if (df_look$variable == "wd")
@@ -363,18 +363,18 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
       
       # Transform for database
       df_agg <- df_agg %>% 
-        mutate(date_end = ceiling_date(date + 1, "year") - 1,
-               date = as.integer(date),
-               date_end = as.integer(date_end),
-               process = as.integer(df_look$process),
-               summary = as.integer(df_look$summary),
-               validity = NA) %>% 
-        select(date,
-               date_end,
-               process,
-               summary,
-               validity,
-               value)
+        dplyr::mutate(date_end = ceiling_date(date + 1, "year") - 1,
+                      date = as.integer(date),
+                      date_end = as.integer(date_end),
+                      process = as.integer(df_look$process),
+                      summary = as.integer(df_look$summary),
+                      validity = NA) %>% 
+        dplyr::select(date,
+                      date_end,
+                      process,
+                      summary,
+                      validity,
+                      value)
       
     } else {
       

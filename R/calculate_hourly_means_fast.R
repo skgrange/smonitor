@@ -18,7 +18,7 @@
 #'  
 #' @author Stuart K. Grange
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @export
 calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC",
@@ -33,52 +33,49 @@ calculate_hourly_means_fast <- function(con, process, start, end, tz = "UTC",
   if (verbose) message("Do the aggregation...")
   
   df <- df %>% 
-    mutate(variable = stringr::str_c(variable, process, sep = ";")) %>% 
-    select(date,
-           date_end, 
-           value, 
-           site,
-           variable) %>% 
-    distinct(date,
-             site,
-             variable,
-             .keep_all = TRUE) %>% 
+    dplyr::mutate(variable = stringr::str_c(variable, process, sep = ";")) %>% 
+    dplyr::select(date,
+                  date_end, 
+                  value, 
+                  site,
+                  variable) %>% 
+    dplyr::distinct(date,
+                    site,
+                    variable,
+                    .keep_all = TRUE) %>% 
     tidyr::spread(variable, value) %>% 
-    arrange(site, 
-            date)
+    dplyr::arrange(site, 
+                   date)
   
   # Do the aggregation
   df_agg <- df %>% 
     openair::timeAverage(avg.time = "hour", data.thresh = 0, type = "site") %>% 
-    ungroup() %>% 
-    mutate(date_end = date + 3599,
-           site = as.character(site))
+    dplyr::ungroup() %>% 
+    dplyr::mutate(date_end = date + 3599,
+                  site = as.character(site))
   
   # Back to normalised data and add process key again
   df_agg <- df_agg %>% 
-    gather(variable, value, -date, -date_end, -site) %>% 
-    mutate(process = stringr::str_split_fixed(variable, pattern = ";", n = 2)[, 2],
-           process = as.integer(process),
-           variable = stringr::str_split_fixed(variable, pattern = ";", n = 2)[, 1],
-           summary = 1L)
+    dplyr::gather(variable, value, -date, -date_end, -site) %>% 
+    dplyr::mutate(process = stringr::str_split_fixed(variable, pattern = ";", n = 2)[, 2],
+                  process = as.integer(process),
+                  variable = stringr::str_split_fixed(variable, pattern = ";", n = 2)[, 1],
+                  summary = 1L)
   
   # Drop NAs
-  if (na.rm) {
-    
-    df_agg <- df_agg %>% filter(!is.na(value))
-    
-  }
+  if (na.rm) df_agg <- df_agg %>% dplyr::filter(!is.na(value))
   
   # Delete
   progress_delete <- ifelse(verbose, "time", "none")
   
-  if (progress_delete == "time") 
-    message("Deleting old observations...")
+  if (progress_delete == "time") message("Deleting old observations...")
   
   delete_observations(con, df_agg, match = "between", convert = TRUE, 
                       progress = progress_delete)
   
   # Insert
   insert_observations(con, df_agg, message = verbose)
+  
+  # No return
   
 }

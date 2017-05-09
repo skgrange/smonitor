@@ -6,10 +6,10 @@
 #' 
 #' @param con Database connection. 
 #' @param tz Time-zone to parse the dates to.
-
+#' 
 #' @seealso \code{\link{update_process_spans}}
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #'
 #' @export
 update_site_spans <- function(con, tz = "UTC") {
@@ -19,17 +19,17 @@ update_site_spans <- function(con, tz = "UTC") {
                                 date_start, 
                                 date_end
                                 FROM processes") %>% 
-    mutate(date_start = lubridate::ymd_hms(date_start, tz = tz, truncated = 3),
-           date_end = lubridate::ymd_hms(date_end, tz = tz, truncated = 3))
+    dplyr::mutate(date_start = lubridate::ymd_hms(date_start, tz = tz, truncated = 3),
+                  date_end = lubridate::ymd_hms(date_end, tz = tz, truncated = 3))
   
   # Summarise
   df <- df %>% 
-    group_by(site) %>% 
-    summarise(date_start = min(date_start, na.rm = TRUE),
-              date_end = max(date_end, na.rm = TRUE)) %>% 
-    ungroup() %>% 
-    mutate(date_start = stringr::str_replace_na(date_start),
-           date_end = stringr::str_replace_na(date_end))
+    dplyr::group_by(site) %>% 
+    dplyr::summarise(date_start = min(date_start, na.rm = TRUE),
+                     date_end = max(date_end, na.rm = TRUE)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(date_start = stringr::str_replace_na(date_start),
+                  date_end = stringr::str_replace_na(date_end))
   
   # Build update statements
   sql <- stringr::str_c(

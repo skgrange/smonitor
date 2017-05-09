@@ -41,7 +41,7 @@
 #' 
 #' @seealso \code{\link{import_by_process}}
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @author Stuart K. Grange
 #' 
@@ -131,9 +131,9 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
     df <- tryCatch({
       
       df %>%
-        select(-process,
-               -summary,
-               -validity) %>%
+        dplyr::select(-process,
+                      -summary,
+                      -validity) %>%
         tidyr::spread(variable, value)
       
     }, error = function(e) {
@@ -142,13 +142,13 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
       warning("Data has been removed to honour 'spread' argument...", call. = FALSE)
       
       df %>%
-        distinct(date,
-                 site,
-                 variable, 
-                 .keep_all = TRUE) %>% 
-        select(-process,
-               -summary,
-               -validity) %>%
+        dplyr::distinct(date,
+                        site,
+                        variable, 
+                        .keep_all = TRUE) %>% 
+        dplyr::select(-process,
+                      -summary,
+                      -validity) %>%
         tidyr::spread(variable, value)
       
     })

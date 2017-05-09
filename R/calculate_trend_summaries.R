@@ -14,9 +14,9 @@
 #' 
 #' @param progress What type of progress bar should be displayed? 
 #' 
-#' @author Stuart K.Grange
+#' @importFrom magrittr %>%
 #' 
-#' @import dplyr
+#' @author Stuart K.Grange
 #' 
 #' @export
 calculate_trend_summaries <- function(con, df, interval = "month", verbose = TRUE, 
@@ -62,30 +62,31 @@ calculate_trend_summaries_worker <- function(con, df, interval, verbose) {
   if (nrow(df) != 0) {
     
     # Means
-    df_mean <- aggregate_by_date(df, interval = interval, 
-                                 by = c("site", "variable", "summary"),
-                                 summary = "mean")
+    df_mean <- threadr::aggregate_by_date(df, interval = interval, 
+                                          by = c("site", "variable", "summary"),
+                                          summary = "mean")
     
     # Counts
-    df_count <- aggregate_by_date(df, interval = interval, 
-                                  by = c("site", "variable", "summary"),
-                                  summary = "count", pad = FALSE) %>% 
-      rename(count = value)
+    df_count <- threadr::aggregate_by_date(df, interval = interval, 
+                                           by = c("site", "variable", "summary"),
+                                           summary = "count", pad = FALSE) %>% 
+      dplyr::rename(count = value)
     
     # Join the summaries together
     df <- df_mean %>% 
-      left_join(df_count, by = c("date", "date_end", "site", "variable", "summary")) %>% 
-      mutate(count = ifelse(is.na(count), 0, count),
-             date_insert = as.integer(NA)) %>% 
-      select(date_insert,
-             date,
-             date_end,
-             summary,
-             everything()) %>% 
-      arrange(site,
-              summary,
-              variable,
-              date)
+      dplyr::left_join(
+        df_count, by = c("date", "date_end", "site", "variable", "summary")) %>% 
+      dplyrmutate(count = ifelse(is.na(count), 0, count),
+                  date_insert = as.integer(NA)) %>% 
+      dplyr:select(date_insert,
+                   date,
+                   date_end,
+                   summary,
+                   everything()) %>% 
+      dplyr::arrange(site,
+                     summary,
+                     variable,
+                     ate)
     
   } else {
     

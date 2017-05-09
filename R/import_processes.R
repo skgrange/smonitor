@@ -6,7 +6,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @import stringr
+#' @importFrom stringr str_c
 #' 
 #' @export
 import_processes <- function(con, type = "full", print_query = FALSE) {

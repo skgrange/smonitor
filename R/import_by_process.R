@@ -65,6 +65,7 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   start <- as.numeric(start)
   end <- as.numeric(end)
   process <- stringr::str_c(process, collapse = ",")
+  summary <- stringr::str_c(summary, collapse = ",")
   
   # Get table to link processs with sites
   df_processes <- import_by_process_process_table(con, process, site_name, 

@@ -13,7 +13,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @export
 get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
@@ -33,10 +33,10 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   
   # Do
   df <- suppressWarnings(
-    data_frame(url = url) %>% 
-      rowwise() %>% 
-      do(get_aurn_data_worker(.$url, print_query = print_query)) %>% 
-      ungroup()
+    dplyr::data_frame(url = url) %>% 
+      dplyr::rowwise() %>% 
+      dplyr::do(get_aurn_data_worker(.$url, print_query = print_query)) %>% 
+      dplyr::ungroup()
   )
   
   # Immediate name cleaning
@@ -55,8 +55,8 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   )
   
   # Join look-up
-  df_names <- left_join(df_names, load_openair_variable_helper(), 
-                        by = "variable")
+  df_names <- dplyr::left_join(df_names, load_openair_variable_helper(), 
+                               by = "variable")
   
   # Catch non-matching names
   df_names$variable_smonitor <- ifelse(is.na(df_names$variable_smonitor), 

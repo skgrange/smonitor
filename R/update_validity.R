@@ -13,7 +13,8 @@
 #' @param delete Type of delete-match to use for dates.
 #' @param progress Progress bar type. Default is \code{"time"}. 
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
+#' 
 #' @export
 update_validity <- function(con, process, tz = "UTC", delete = "between", 
                             progress = "time") {
@@ -24,8 +25,8 @@ update_validity <- function(con, process, tz = "UTC", delete = "between",
   
   # Get look-up table
   df_look <- import_invalidations(con, tz = tz) %>% 
-    mutate(date_start = as.numeric(date_start),
-           date_end = as.numeric(date_end))
+    dplyr::mutate(date_start = as.numeric(date_start),
+                  date_end = as.numeric(date_end))
   
   # Do for every process
   plyr::l_ply(process, function(x) 
@@ -45,8 +46,8 @@ update_validity_worker <- function(con, process, df_look, delete) {
     
     import_by_process(con, process, summary = 0, start = 1965, end = 2020, 
                       valid_only = FALSE) %>% 
-      mutate(date = as.numeric(date),
-             date_end = as.numeric(date_end))
+      dplyr::mutate(date = as.numeric(date),
+                    date_end = as.numeric(date_end))
     
   }, error = function(e) {
     

@@ -5,7 +5,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @import dplyr
+#' @importFrom magrittr %>%
 #' 
 #' @export
 update_variables_monitored <- function(con) {
@@ -15,10 +15,10 @@ update_variables_monitored <- function(con) {
   
   # Nest variables
   df <- df_processes %>% 
-    group_by(site) %>% 
-    do(nest_variable_vectors(.)) %>% 
-    ungroup() %>% 
-    mutate(variables_monitored = ifelse(
+    dplyr::group_by(site) %>% 
+    dplyr::do(nest_variable_vectors(.)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(variables_monitored = ifelse(
       observation_count == 0, NA, variables_monitored),
       variables_monitored = stringr::str_replace_na(variables_monitored))
   

@@ -22,8 +22,7 @@
 #' @param heathrow Should Heathrow's meteorological data be added to the data
 #' frame? Useful for dealing with London's air quality data. 
 #' 
-#' @import dplyr
-#' @import tidyr
+#' @importFrom magrittr %>%
 #' 
 #' @author Stuart K. Grange
 #' 
@@ -38,12 +37,13 @@ import_uk <- function(con, site, start = 1970, end = NA, tz = "UTC",
   if (heathrow) {
     
     df_processes_heathrow <- df_processes %>% 
-      filter(site == "hea",
-             variable %in% c("wd", "ws", "temp", "rh", "pressure"))
+      dplyr::filter(site == "hea",
+                    variable %in% c("wd", "ws", "temp", "rh", "pressure"))
     
     # Get data, watch that extra is not used here
-    df_heathrow <- import_hourly_means(con, df_processes_heathrow$process, start, 
-                                       end, tz, extra = TRUE)
+    df_heathrow <- import_by_process(
+      con, process = df_processes_heathrow$process, summary = 1,
+      start = start, end = end)
     
   }
   
@@ -51,32 +51,33 @@ import_uk <- function(con, site, start = 1970, end = NA, tz = "UTC",
   df_processes <- df_processes[df_processes$site %in% site, ]
   
   # Get sites' data
-  df <- import_hourly_means(con, df_processes$process, start, end, tz,
-                            extra = TRUE)
+  df <-  import_by_process(
+    con, process = df_processes$process, summary = 1,
+    start = start, end = end)
   
   if (!extra) {
     
-    # Cast data
+    # Spread data
     df <- df %>%
-      select(-date_insert,
-             -process,
-             -summary) %>%
-      spread(variable, value)
+      dplyr::select(-date_insert,
+                    -process,
+                    -summary) %>%
+      tidyr::spread(variable, value)
     
     if (heathrow) {
       
       # Cast without site identifiers
       df_heathrow <- df_heathrow %>%
-        select(-date_insert,
-               -process,
-               -summary,
-               -site,
-               -site_name) %>%
-        spread(variable, value)
+        dplyr::select(-date_insert,
+                      -process,
+                      -summary,
+                      -site,
+                      -site_name) %>%
+        tidyr::spread(variable, value)
       
       # Join heathrow's met data
       df <- df %>%
-        left_join(df_heathrow, by = c("date", "date_end"))
+        dplyr::left_join(df_heathrow, by = c("date", "date_end"))
       
     }
     
@@ -94,7 +95,7 @@ import_uk <- function(con, site, start = 1970, end = NA, tz = "UTC",
       
       # Just bind
       df <- df %>%
-        bind_rows(df_heathrow)
+        dplyr::bind_rows(df_heathrow)
       
     }
     
