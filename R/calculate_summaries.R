@@ -22,9 +22,7 @@
 #' 
 #' @param end End date for summaries. 
 #' 
-#' @param insert Should the data be inserted? Default is \code{TRUE}. 
-#' 
-#' @importFrom magrittr %>%
+#' @param insert Should the data be inserted? Default is \code{TRUE}.
 #' 
 #' @examples 
 #' \dontrun{

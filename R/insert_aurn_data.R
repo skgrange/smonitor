@@ -17,8 +17,6 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @export
 insert_aurn_data <- function(con, site, start, end = NA,
                              verbose = TRUE) {

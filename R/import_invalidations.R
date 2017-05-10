@@ -4,8 +4,6 @@
 #' @param con Database connection. 
 #' @param tz What time-zone should the dates be in? Default is \code{"UTC"}. 
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @export
 import_invalidations <- function(con, tz = "UTC") {
   

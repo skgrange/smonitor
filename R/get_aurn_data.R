@@ -13,8 +13,6 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @export
 get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   

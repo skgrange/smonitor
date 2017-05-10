@@ -5,8 +5,6 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @export
 update_variables_monitored <- function(con) {
   

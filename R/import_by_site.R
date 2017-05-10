@@ -41,8 +41,6 @@
 #' 
 #' @seealso \code{\link{import_by_process}}
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @author Stuart K. Grange
 #' 
 #' @export

@@ -22,8 +22,6 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @export
 insert_envirologger_data <- function(con, user, key, server, station, 
                                      start, end = NA) {

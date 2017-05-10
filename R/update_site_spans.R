@@ -8,8 +8,6 @@
 #' @param tz Time-zone to parse the dates to.
 #' 
 #' @seealso \code{\link{update_process_spans}}
-#' 
-#' @importFrom magrittr %>%
 #'
 #' @export
 update_site_spans <- function(con, tz = "UTC") {

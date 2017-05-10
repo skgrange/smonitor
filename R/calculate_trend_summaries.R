@@ -14,8 +14,6 @@
 #' 
 #' @param progress What type of progress bar should be displayed? 
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @author Stuart K.Grange
 #' 
 #' @export

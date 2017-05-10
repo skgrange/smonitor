@@ -17,8 +17,6 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @export
 insert_worldmet_data <- function(con, site, start, end = NA,
                                  verbose = TRUE) {
@@ -86,8 +84,6 @@ insert_worldmet_data <- function(con, site, start, end = NA,
 #' @param start Start year. 
 #' 
 #' @param end End year. 
-#' 
-#' @importFrom magrittr %>%
 #' 
 #' @export
 download_noaa <- function(site, start = 1990, end = NA) {

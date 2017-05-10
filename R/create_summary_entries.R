@@ -12,8 +12,6 @@
 #' 
 #' @param validity_threshold Threshold for valid average. 
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @export
 create_summary_entries <- function(con, process, type = "standard", 
                                    validity_threshold = 0L) {

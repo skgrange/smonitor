@@ -20,8 +20,6 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @importFrom magrittr %>%
-#' 
 #' @export
 insert_wunderground_data <- function(con, site, start, end = NA, validity = FALSE,
                                      verbose = FALSE) {
