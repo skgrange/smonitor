@@ -2,8 +2,7 @@
 #' spatial polygons. 
 #' 
 #' \code{import_by_zone} needs a \code{`zones`} table and has been developed 
-#' specifically for \strong{smonitor} Europe and it therefore not generic. To-do:
-#' make it generic. 
+#' specifically for \strong{smonitor} Europe and it therefore not generic.
 #' 
 #' @param con Database connection. 
 #' 
@@ -34,6 +33,8 @@
 #' 
 #' @param valid_only Should only valid data be returned? Default is \code{TRUE}. 
 #' 
+#' @param site_name Should \code{site_name} be returned? 
+#' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
 #' @author Stuart K. Grange
@@ -43,7 +44,8 @@
 #' @export
 import_by_zone <- function(con, zone, variable = NA, sp_other = NA, start = 1969, 
                            end = NA, period = "hour", pad = TRUE, spread = TRUE, 
-                           tz = "UTC", valid_only = TRUE, print_query = FALSE) {
+                           tz = "UTC", valid_only = TRUE, site_name = FALSE, 
+                           print_query = FALSE) {
   
   # Get sites
   suppressWarnings(
@@ -87,9 +89,10 @@ import_by_zone <- function(con, zone, variable = NA, sp_other = NA, start = 1969
   sites <- sort(unique(sp_sites@data$site))
   
   # Import observations
-  df <- import_europe(con, site = sites, variable = variable, start = start,
-                      end = end, period = period, pad = pad, spread = spread, 
-                      tz = tz, valid_only = valid_only, print_query = print_query)
+  df <- import_by_site(con, site = sites, variable = variable, start = start,
+                       end = end, period = period, pad = pad, spread = spread, 
+                       tz = tz, valid_only = valid_only, site_name = site_name, 
+                       print_query = print_query)
   
   # Return
   df
