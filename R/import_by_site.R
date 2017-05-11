@@ -57,10 +57,25 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
   variable <- stringr::str_trim(variable)
   variable <- threadr::str_sql_quote(variable)
   
+  period <- stringr::str_trim(period)
+  period <- stringr::str_replace_all(period, " ", "_")
+  
   # Switch period to integer
   summary <- ifelse(period == "source", 0, period)
+  summary <- ifelse(period %in% c("fifteen_minute", "15_minute", "15_min"), 15, period)
   summary <- ifelse(period == "hour", 1, summary)
   summary <- ifelse(period == "day", 20, summary)
+
+  # Time padder requires a string for seq
+  if (summary == 15) {
+    
+    interval_pad <- "15 min"
+    
+  } else {
+    
+    interval_pad <- period
+    
+  }
   
   # Does not make sense to pad data in these situations
   if (period %in% c("all", "any", "source")) pad <- FALSE
@@ -153,8 +168,10 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
       
     if (pad) {
       
+      
+      
       # Pad time-series
-      df <- threadr::time_pad(df, interval = period, by = site_variables)
+      df <- threadr::time_pad(df, interval = interval_pad, by = site_variables)
       
     }
     
@@ -163,7 +180,7 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
     if (pad) {
       
       # Pad time-series
-      df <- threadr::time_pad(df, interval = period, 
+      df <- threadr::time_pad(df, interval = interval_pad, 
         by = c("process", "summary", site_variables, "variable"))
       
     }

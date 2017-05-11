@@ -13,7 +13,7 @@ import_sites <- function(con, extra = TRUE, print_query = FALSE) {
           ORDER BY site"
   
   # Clean
-  sql <- str_trim_many_spaces(sql)
+  sql <- threadr::str_trim_many_spaces(sql)
   
   # Message
   if (print_query) message(sql)
