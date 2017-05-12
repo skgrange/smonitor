@@ -62,7 +62,7 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
   
   # Switch period to integer
   summary <- ifelse(period == "source", 0, period)
-  summary <- ifelse(period %in% c("fifteen_minute", "15_minute", "15_min"), 15, period)
+  summary <- ifelse(period %in% c("fifteen_minute", "15_minute", "15_min"), 15, summary)
   summary <- ifelse(period == "hour", 1, summary)
   summary <- ifelse(period == "day", 20, summary)
 
