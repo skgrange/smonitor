@@ -11,6 +11,9 @@
 #' 
 #' @param process A vector of processes. 
 #' 
+#' @param summary Summary to invalidate. This will usually be \code{0} for source
+#' data. 
+#' 
 #' @param tz Time-zone. 
 #' 
 #' @param delete Type of delete-match to use for dates.
@@ -18,21 +21,38 @@
 #' @param progress Progress bar type. Default is \code{"time"}.
 #' 
 #' @export
-update_validity <- function(con, process, tz = "UTC", delete = "between", 
-                            progress = "time") {
+update_validity <- function(con, process, summary = 0, tz = "UTC", 
+                            delete = "between", progress = "time") {
   
   # Check
   if (!delete %in% c("between", "all")) 
     stop("'delete' must be 'between' or 'all'.", call. = FALSE)
   
+  if (!length(summary) == 1) 
+    stop("Only one summary can be used.", call. = FALSE)
+  
   # Get look-up table
   df_look <- import_invalidations(con, tz = tz) %>% 
-    dplyr::mutate(date_start = as.numeric(date_start),
-                  date_end = as.numeric(date_end))
+    mutate(date_start = as.numeric(date_start),
+           date_end = as.numeric(date_end))
+  
+  # Filter
+  df_look <- df_look[df_look[, "process"] %in% process, ]
+  
+  # Check again
+  if (nrow(df_look) == 0) 
+    stop("Processes have no entries in the `invalidation` table.", call. = FALSE)
   
   # Do for every process
   plyr::l_ply(process, function(x) 
-    update_validity_worker(con, x, df_look, delete), .progress = progress)
+    update_validity_worker(
+      con, 
+      process = x, 
+      summary = summary, 
+      df_look = df_look, 
+      delete = delete), 
+    .progress = progress
+  )
   
   # No return
   
@@ -40,16 +60,16 @@ update_validity <- function(con, process, tz = "UTC", delete = "between",
 
 
 # No export needed
-update_validity_worker <- function(con, process, df_look, delete) {
+update_validity_worker <- function(con, process, summary, df_look, delete) {
   
   # Get observations
   # Catch is for when database contains no data for a process and gives an error
   df <- tryCatch({
     
-    import_by_process(con, process, summary = 0, start = 1965, end = 2020, 
+    import_by_process(con, process, summary = summary, start = 1965, end = 2020, 
                       valid_only = FALSE) %>% 
-      dplyr::mutate(date = as.numeric(date),
-                    date_end = as.numeric(date_end))
+      mutate(date = as.numeric(date),
+             date_end = as.numeric(date_end))
     
   }, error = function(e) {
     

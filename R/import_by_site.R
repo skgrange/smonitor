@@ -65,7 +65,7 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
   summary <- ifelse(period %in% c("fifteen_minute", "15_minute", "15_min"), 15, summary)
   summary <- ifelse(period == "hour", 1, summary)
   summary <- ifelse(period == "day", 20, summary)
-
+  
   # Time padder requires a string for seq
   if (summary == 15) {
     
@@ -87,14 +87,16 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
      site,
      variable
      FROM processes
-     WHERE site IN (", site, ")")
+     WHERE site IN (", site, ")"
+  )
   
   # Add variable as where clause too
   if (!is.na(variable[1])) {
     
     sql_processes <- stringr::str_c(
       sql_processes, 
-      " AND variable IN (", variable, ")")
+      " AND variable IN (", variable, ")"
+    )
     
   }
   
@@ -107,22 +109,33 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
   # Check mapping table
   if (nrow(df_processes) == 0) {
     
-    warning("Check the 'site' and 'period' arguments, processes are not available...", 
-            call. = FALSE)
+    warning(
+      "Check the 'site' and 'period' arguments, processes are not available...", 
+      call. = FALSE
+    )
     
     return(data.frame())
     
   }
   
   # Query database to get sites' data
-  df <- import_by_process(con, process = df_processes$process, summary = summary, 
-                          start = start, end = end, tz = tz, valid_only = valid_only,
-                          date_end = date_end, date_insert = date_insert, 
-                          site_name = site_name, print_query = print_query)
+  df <- import_by_process(
+    con,
+    process = df_processes$process, 
+    summary = summary, 
+    start = start, 
+    end = end, 
+    tz = tz, 
+    valid_only = valid_only,
+    date_end = date_end, 
+    date_insert = date_insert, 
+    site_name = site_name, 
+    print_query = print_query
+  )
   
   # Drop all NAs for padding and reshaping
   df <- df[!is.na(df$value), ]
-
+  
   # Groups for time-padding
   if (site_name) {
     
@@ -144,31 +157,32 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
     df <- tryCatch({
       
       df %>%
-        dplyr::select(-process,
-                      -summary,
-                      -validity) %>%
-        tidyr::spread(variable, value)
+        select(-process,
+               -summary,
+               -validity) %>%
+        spread(variable, value)
       
     }, error = function(e) {
       
       # Raise warning
-      warning("Data has been removed to honour 'spread' argument...", call. = FALSE)
+      warning(
+        "Data has been removed to honour 'spread' argument...", 
+        call. = FALSE
+      )
       
       df %>%
-        dplyr::distinct(date,
-                        site,
-                        variable, 
-                        .keep_all = TRUE) %>% 
-        dplyr::select(-process,
-                      -summary,
-                      -validity) %>%
+        distinct(date,
+                 site,
+                 variable, 
+                 .keep_all = TRUE) %>% 
+        select(-process,
+               -summary,
+               -validity) %>%
         tidyr::spread(variable, value)
       
     })
-      
+    
     if (pad) {
-      
-      
       
       # Pad time-series
       df <- threadr::time_pad(df, interval = interval_pad, by = site_variables)
@@ -180,8 +194,11 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
     if (pad) {
       
       # Pad time-series
-      df <- threadr::time_pad(df, interval = interval_pad, 
-        by = c("process", "summary", site_variables, "variable"))
+      df <- threadr::time_pad(
+        df, 
+        interval = interval_pad, 
+        by = c("process", "summary", site_variables, "variable")
+      )
       
     }
     

@@ -17,24 +17,25 @@ update_site_spans <- function(con, tz = "UTC") {
                                 date_start, 
                                 date_end
                                 FROM processes") %>% 
-    dplyr::mutate(date_start = lubridate::ymd_hms(date_start, tz = tz, truncated = 3),
-                  date_end = lubridate::ymd_hms(date_end, tz = tz, truncated = 3))
+    mutate(date_start = lubridate::ymd_hms(date_start, tz = tz, truncated = 3),
+           date_end = lubridate::ymd_hms(date_end, tz = tz, truncated = 3))
   
   # Summarise
   df <- df %>% 
-    dplyr::group_by(site) %>% 
-    dplyr::summarise(date_start = min(date_start, na.rm = TRUE),
-                     date_end = max(date_end, na.rm = TRUE)) %>% 
-    dplyr::ungroup() %>% 
-    dplyr::mutate(date_start = stringr::str_replace_na(date_start),
-                  date_end = stringr::str_replace_na(date_end))
+    group_by(site) %>% 
+    summarise(date_start = min(date_start, na.rm = TRUE),
+              date_end = max(date_end, na.rm = TRUE)) %>% 
+    ungroup() %>% 
+    mutate(date_start = stringr::str_replace_na(date_start),
+           date_end = stringr::str_replace_na(date_end))
   
   # Build update statements
   sql <- stringr::str_c(
     "UPDATE sites
      SET date_start='", df$date_start, 
     "',date_end='", df$date_end, 
-    "' WHERE site='", df$site, "'")
+    "' WHERE site='", df$site, "'"
+  )
   
   # Make nulls
   sql <- stringr::str_replace_all(sql, "'NA'", "NULL")

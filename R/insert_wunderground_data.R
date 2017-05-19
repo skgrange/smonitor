@@ -29,40 +29,48 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
   
   # Get look-up table for a join
   df_look <- import_processes(con) %>% 
-    dplyr::filter(site %in% site_vector) %>% 
-    dplyr::select(process,
-                  site,
-                  variable)
+    filter(site %in% site_vector) %>% 
+    select(process,
+           site,
+           variable)
   
   # Get observations, every site is done separately
   message("Getting new observations...")
-  df <- plyr::ldply(site_vector, function(x) 
-    sscraper::scrape_wunderground(x, start = start, end = end, verbose = verbose))
+  df <- plyr::ldply(
+    site_vector, 
+    function(x) 
+      sscraper::scrape_wunderground(
+        x, 
+        start = start, 
+        end = end, 
+        verbose = verbose
+      )
+  )
   
   if (nrow(df) != 0) {
     
     # Transform and reshape data
     df <- df %>% 
-      dplyr::select(-date, 
-                    -date_local, 
-                    -software) %>% 
-      dplyr::rename(date = date_unix) %>% 
+      select(-date, 
+             -date_local, 
+             -software) %>% 
+      rename(date = date_unix) %>% 
       tidyr::gather(variable, value, -date, -site) %>% 
-      dplyr::mutate(date_end = NA, 
-                    validity = NA,
-                    summary = 0L)
+      mutate(date_end = NA, 
+             validity = NA,
+             summary = 0L)
     
     # To-do validity
     
     # Join processes, only processes in table will be kept, then arrange
     df <- df %>% 
-      dplyr::inner_join(df_look, by = c("site", "variable")) %>% 
-      dplyr::select(date,
-                    date_end,
-                    process,
-                    summary,
-                    validity,
-                    value)
+      inner_join(df_look, by = c("site", "variable")) %>% 
+      select(date,
+             date_end,
+             process,
+             summary,
+             validity,
+             value)
     
     if (nrow(df) > 0) {
       
@@ -94,7 +102,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
 
 # No export at the moment
 insert_wunderground_data_frame <- function(con, df) {
-
+  
   if (length(unique(df$site)) != 1) 
     stop("Only one site allowed in data frame.", call. = FALSE)
   
@@ -103,31 +111,31 @@ insert_wunderground_data_frame <- function(con, df) {
   
   # Get look-up table for a join
   df_look <- import_processes(con) %>% 
-    dplyr::filter(site %in% site_vector) %>% 
-    dplyr::select(process,
-                  site,
-                  variable)
+    filter(site %in% site_vector) %>% 
+    select(process,
+           site,
+           variable)
   
   # Transform and reshape data
   df <- df %>% 
-    dplyr::select(-date, 
-                  -date_local, 
-                  -software) %>% 
-    dplyr::rename(date = date_unix) %>% 
+    select(-date, 
+           -date_local, 
+           -software) %>% 
+    rename(date = date_unix) %>% 
     tidyr::gather(variable, value, -date, -site) %>% 
-    dplyr::mutate(date_end = NA, 
-                  validity = NA,
-                  summary = 0L)
+    mutate(date_end = NA, 
+           validity = NA,
+           summary = 0L)
   
   # Join processes, only processes in table will be kept, then arrange
   df <- df %>% 
-    dplyr::inner_join(df_look, by = c("site", "variable")) %>% 
-    dplyr::select(date,
-                  date_end,
-                  process,
-                  summary,
-                  validity,
-                  value)
+    inner_join(df_look, by = c("site", "variable")) %>% 
+    select(date,
+           date_end,
+           process,
+           summary,
+           validity,
+           value)
   
   # Insert
   if (nrow(df) > 0) {

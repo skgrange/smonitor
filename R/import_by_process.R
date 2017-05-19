@@ -68,16 +68,22 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   summary <- stringr::str_c(summary, collapse = ",")
   
   # Get table to link processs with sites
-  df_processes <- import_by_process_process_table(con, process, site_name, 
-                                                  print_query)
+  df_processes <- import_by_process_process_table(
+    con, 
+    process, 
+    site_name, 
+    print_query
+  )
   
   # Check for data
   if (nrow(df_processes) == 0) {
     
     if (warn) {
       
-      warning("Process(s) not found in database, no data has been returned...", 
-              call. = FALSE)
+      warning(
+        "Process(s) not found in database, no data has been returned...", 
+        call. = FALSE
+      )
       
     }
     
@@ -87,16 +93,26 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   }
   
   # Get observations
-  df <- import_by_process_observation_table(con, process, summary, start, end,
-                                            date_end, date_insert, print_query)
+  df <- import_by_process_observation_table(
+    con, 
+    process, 
+    summary, 
+    start,
+    end,
+    date_end, 
+    date_insert, 
+    print_query
+  )
   
   # Check for data
   if (nrow(df) == 0) {
     
     if (warn) {
       
-      warning("Database has been queried but no data has been returned...", 
-              call. = FALSE)
+      warning(
+        "Database has been queried but no data has been returned...", 
+        call. = FALSE
+      )
       
     }
     
@@ -123,7 +139,7 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   }
   
   # Join process and site data
-  df <- dplyr::left_join(df, df_processes, by = "process")
+  df <- left_join(df, df_processes, by = "process")
   
   # Parse dates
   if (date_insert) 
@@ -135,18 +151,20 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   
   # Arrange
-  df <- dplyr::arrange(df, process, date)
+  df <- arrange(df, process, date)
   
   # And variable order
-  df <- dplyr::select(df, 
-                      dplyr::matches("date_insert"),
-                      dplyr::matches("date"), 
-                      dplyr::matches("date_end"), 
-                      dplyr::matches("process"), 
-                      dplyr::matches("summary"),
-                      dplyr::matches("validity"),
-                      dplyr::matches("value"),
-                      dplyr::everything())
+  df <- select(
+    df, 
+    matches("date_insert"),
+    matches("date"), 
+    matches("date_end"), 
+    matches("process"), 
+    matches("summary"),
+    matches("validity"),
+    matches("value"),
+    everything()
+  )
   
   return(df)
   

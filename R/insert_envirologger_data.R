@@ -29,49 +29,54 @@ insert_envirologger_data <- function(con, user, key, server, station,
   # Load look-up tables
   # Sites
   df_sites_look_up <- import_sites(con) %>% 
-    dplyr::select(site,
-                  station = envirologger_station)
+    select(site,
+           station = envirologger_station)
   
   # Process keys
   df_processes <- import_processes(con) %>% 
-    dplyr::filter(service == 1) %>% 
-    dplyr::select(process,
-                  site,
-                  variable,
-                  label = envirologger_label,
-                  sensor = envirologger_sensor)
+    filter(service == 1) %>% 
+    select(process,
+           site,
+           variable,
+           label = envirologger_label,
+           sensor = envirologger_sensor)
   
   # Get observations with API
   message("Getting new observations...")
   
   df <- envirologgerr::get_envirologger_data(
-    user = user, key = key, server = server, station = station, start = start, 
-    end = end)
+    user = user, 
+    key = key, 
+    server = server, 
+    station = station, 
+    start = start, 
+    end = end
+  )
   
   # Clean data
   df <- envirologgerr::clean_envirologger_data(df)
   
   # Site, not station bitte
   df <- df %>% 
-    dplyr::left_join(df_sites_look_up, by = "station") %>% 
-    dplyr::select(-station)
+    left_join(df_sites_look_up, by = "station") %>% 
+    select(-station)
   
   # Only processes in table will be kept
   df <- df %>% 
-    dplyr::inner_join(df_processes, by = c("site", "label", "sensor", "variable"))
-
+    inner_join(df_processes, by = c("site", "label", "sensor", "variable"))
+  
   # Transform data frame for smonitor
   df <- df %>% 
-    dplyr:: mutate(date = as.integer(date),
-                   date_end = NA, 
-                   validity = NA,
-                   summary = 0L) %>% 
-    dplyr::select(date,
-                  date_end,
-                  process,
-                  summary,
-                  validity,
-                  value)
+    mutate(date = as.integer(date),
+           date_end = NA, 
+           validity = NA,
+           summary = 0L) %>% 
+    select(date,
+           date_end,
+           process,
+           summary,
+           validity,
+           value)
   
   if (nrow(df) > 0) {
     

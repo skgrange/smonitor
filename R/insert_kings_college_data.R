@@ -26,7 +26,7 @@ insert_kings_college_data <- function(con, site, start, end = NA,
   
   # Get look-up tables
   df_processes <- import_processes(con, type = "minimal") %>% 
-    dplyr::select(process, 
+    select(process, 
                   site,
                   variable)
   
@@ -40,12 +40,12 @@ insert_kings_college_data <- function(con, site, start, end = NA,
     # Make longer and join, inner join will only keep those in processes table
     df <- df %>% 
       tidyr::gather(variable, value, -date, -site, na.rm = TRUE) %>% 
-      dplyr::mutate(date_end = date + 3599,
+      mutate(date_end = date + 3599,
                     date = as.integer(date),
                     date_end = as.integer(date_end),
                     summary = 1L,
                     validity = NA) %>% 
-      dplyr::inner_join(df_processes, by = c("site", "variable")) 
+      inner_join(df_processes, by = c("site", "variable")) 
     
     # Delete observations
     if (verbose) message("Deleting old observations...")

@@ -26,9 +26,9 @@ insert_aurn_data <- function(con, site, start, end = NA,
   
   # Get look-up tables
   df_processes <- import_processes(con, type = "minimal") %>% 
-    dplyr::select(process, 
-                  site,
-                  variable)
+    select(process, 
+           site,
+           variable)
   
   # Get data
   if (verbose) message("Downloading AURN data with openair...")
@@ -40,12 +40,12 @@ insert_aurn_data <- function(con, site, start, end = NA,
     # Make longer and join, inner join will only keep those in processes table
     df <- df %>% 
       tidyr::gather(variable, value, -date, -site, na.rm = TRUE) %>% 
-      dplyr::mutate(date_end = date + 3599,
-                    date = as.integer(date),
-                    date_end = as.integer(date_end),
-                    summary = 1L,
-                    validity = NA) %>% 
-      dplyr::inner_join(df_processes, by = c("site", "variable")) 
+      mutate(date_end = date + 3599,
+             date = as.integer(date),
+             date_end = as.integer(date_end),
+             summary = 1L,
+             validity = NA) %>% 
+      inner_join(df_processes, by = c("site", "variable")) 
     
     # Delete observations
     if (verbose) message("Deleting old observations...")
@@ -87,8 +87,12 @@ download_aurn <- function(site, start = 1990, end = NA) {
   suppressWarnings(
     suppressMessages(
       quiet(
-        df <- openair::importAURN(site, year = start:end, verbose = FALSE,
-                                  hc = TRUE)
+        df <- openair::importAURN(
+          site, 
+          year = start:end, 
+          verbose = FALSE,
+          hc = TRUE
+        )
       )
     )
   )
@@ -108,12 +112,14 @@ download_aurn <- function(site, start = 1990, end = NA) {
   )
   
   # Join look-up
-  df_names <- dplyr::left_join(df_names, load_openair_variable_helper(), 
-                               by = "variable")
+  df_names <- left_join(df_names, load_openair_variable_helper(), by = "variable")
   
   # Catch non-matching names
   df_names$variable_smonitor <- ifelse(
-    is.na(df_names$variable_smonitor), df_names$variable, df_names$variable_smonitor)
+    is.na(df_names$variable_smonitor), 
+    df_names$variable, 
+    df_names$variable_smonitor
+  )
   
   # Overwrite names
   names(df) <- df_names$variable_smonitor

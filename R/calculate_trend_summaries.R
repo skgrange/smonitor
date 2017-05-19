@@ -48,8 +48,13 @@ calculate_trend_summaries_worker <- function(con, df, interval, verbose) {
   # Get observations
   df <- tryCatch({
     
-    import_by_process(con, process, site_name = FALSE, date_end = FALSE, 
-                      valid_only = TRUE)
+    import_by_process(
+      con, 
+      process, 
+      site_name = FALSE, 
+      date_end = FALSE,
+      valid_only = TRUE
+    )
     
   }, error = function(e) {
     
@@ -60,31 +65,40 @@ calculate_trend_summaries_worker <- function(con, df, interval, verbose) {
   if (nrow(df) != 0) {
     
     # Means
-    df_mean <- threadr::aggregate_by_date(df, interval = interval, 
-                                          by = c("site", "variable", "summary"),
-                                          summary = "mean")
+    df_mean <- threadr::aggregate_by_date(
+      df, 
+      interval = interval, 
+      by = c("site", "variable", "summary"),
+      summary = "mean"
+    )
     
     # Counts
-    df_count <- threadr::aggregate_by_date(df, interval = interval, 
-                                           by = c("site", "variable", "summary"),
-                                           summary = "count", pad = FALSE) %>% 
-      dplyr::rename(count = value)
+    df_count <- threadr::aggregate_by_date(
+      df, 
+      interval = interval, 
+      by = c("site", "variable", "summary"),
+      summary = "count", 
+      pad = FALSE
+    ) %>% 
+      rename(count = value)
     
     # Join the summaries together
     df <- df_mean %>% 
-      dplyr::left_join(
-        df_count, by = c("date", "date_end", "site", "variable", "summary")) %>% 
-      dplyrmutate(count = ifelse(is.na(count), 0, count),
-                  date_insert = as.integer(NA)) %>% 
-      dplyr:select(date_insert,
-                   date,
-                   date_end,
-                   summary,
-                   everything()) %>% 
-      dplyr::arrange(site,
-                     summary,
-                     variable,
-                     ate)
+      left_join(
+        df_count, 
+        by = c("date", "date_end", "site", "variable", "summary")
+      ) %>% 
+      mutate(count = ifelse(is.na(count), 0, count),
+             date_insert = as.integer(NA)) %>% 
+      select(date_insert,
+             date,
+             date_end,
+             summary,
+             everything()) %>% 
+      arrange(site,
+              summary,
+              variable,
+              ate)
     
   } else {
     

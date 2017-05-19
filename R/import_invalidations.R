@@ -8,8 +8,8 @@
 import_invalidations <- function(con, tz = "UTC") {
   
   databaser::db_read_table(con, "invalidations") %>%
-    dplyr::mutate(date_start = lubridate::ymd_hm(date_start, tz = tz, truncated = 3),
-                  date_end = lubridate::ymd_hm(date_end, tz = tz, truncated = 3))
+    mutate(date_start = lubridate::ymd_hm(date_start, tz = tz, truncated = 3),
+           date_end = lubridate::ymd_hm(date_end, tz = tz, truncated = 3))
   
 }
 

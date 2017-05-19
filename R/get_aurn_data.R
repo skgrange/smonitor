@@ -31,10 +31,10 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   
   # Do
   df <- suppressWarnings(
-    dplyr::data_frame(url = url) %>% 
-      dplyr::rowwise() %>% 
-      dplyr::do(get_aurn_data_worker(.$url, print_query = print_query)) %>% 
-      dplyr::ungroup()
+    data_frame(url = url) %>% 
+      rowwise() %>% 
+      do(get_aurn_data_worker(.$url, print_query = print_query)) %>% 
+      ungroup()
   )
   
   # Immediate name cleaning
@@ -53,12 +53,14 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   )
   
   # Join look-up
-  df_names <- dplyr::left_join(df_names, load_openair_variable_helper(), 
-                               by = "variable")
+  df_names <- left_join(df_names, load_openair_variable_helper(), by = "variable")
   
   # Catch non-matching names
-  df_names$variable_smonitor <- ifelse(is.na(df_names$variable_smonitor), 
-    df_names$variable, df_names$variable_smonitor)
+  df_names$variable_smonitor <- ifelse(
+    is.na(df_names$variable_smonitor), 
+    df_names$variable, 
+    df_names$variable_smonitor
+  )
   
   # Overwrite names
   names(df) <- df_names$variable_smonitor
@@ -69,8 +71,13 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   # Reshape
   if (longer) {
     
-    df <- tidyr::gather(df, variable, value, -date, -site, -site_name, 
-                        na.rm = TRUE)
+    df <- tidyr::gather(
+      df, 
+      variable, 
+      value, 
+      -date, -site, -site_name, 
+      na.rm = TRUE
+    )
     
   }
   

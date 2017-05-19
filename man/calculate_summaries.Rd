@@ -40,7 +40,7 @@ calculate_summaries(con, data_look_up, start = 2014, start = 2014)
 
 }
 \seealso{
-\code{\link{timeAverage}}, \code{\link{dplyr::summarise}}
+\code{\link{timeAverage}}, \code{\link{summarise}}
 }
 \author{
 Stuart K. Grange

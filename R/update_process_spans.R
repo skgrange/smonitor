@@ -9,9 +9,6 @@
 #' @param na.rm Should missing values (\code{NA}/\code{NULL}) be omited from the
 #' aggregation functions? 
 #' 
-#' @seealso \code{\link{calculate_process_spans}}, 
-#' \code{\link{update_site_spans}}
-#' 
 #' @author Stuart K. Grange
 #' 
 #' @export
