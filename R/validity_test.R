@@ -34,6 +34,10 @@ validity_test <- function(df, df_look, valid_value = NA) {
     # Drop test variable
     df$test <- NULL
     
+  } else {
+    
+    df$validity <- valid_value
+    
   }
   
   # Return

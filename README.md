@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/skgrange/smonitor.svg?branch=master)](https://travis-ci.org/skgrange/smonitor)
 
+![](inst/extdata/images/icon_small.png)
+
 ## Introduction
 
 **smonitor** is a framework, and a collection of functions which operate on this framework to allow for maintenance of air quality monitoring data. **smonitor** is an R package which provides the things need to service a specific, but simple data model (also known as a schema) implemented with a SQL database. Although the development reflects the management of air quality monitoring data, the functions and data model are utilitarian enough to be applied to other types of time-series measurements. 

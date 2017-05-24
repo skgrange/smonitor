@@ -156,14 +156,14 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   # And variable order
   df <- select(
     df, 
-    matches("date_insert"),
-    matches("date"), 
-    matches("date_end"), 
-    matches("process"), 
-    matches("summary"),
-    matches("validity"),
-    matches("value"),
-    everything()
+    dplyr::matches("date_insert"),
+    dplyr::matches("date"), 
+    dplyr::matches("date_end"), 
+    dplyr::matches("process"), 
+    dplyr::matches("summary"),
+    dplyr::matches("validity"),
+    dplyr::matches("value"),
+    dplyr::everything()
   )
   
   return(df)
