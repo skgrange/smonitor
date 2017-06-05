@@ -4,7 +4,7 @@
 \alias{import_by_site}
 \title{Function to import data from an \strong{smonitor} database based on sites.}
 \usage{
-import_by_site(con, site, variable = NA, start = 1970, end = NA,
+import_by_site(con, site = NA, variable = NA, start = 1970, end = NA,
   period = "hour", valid_only = TRUE, pad = TRUE, tz = "UTC",
   spread = FALSE, date_end = TRUE, date_insert = FALSE,
   site_name = TRUE, print_query = FALSE)

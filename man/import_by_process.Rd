@@ -4,9 +4,10 @@
 \alias{import_by_process}
 \title{Function to import observational data from a \strong{smonitor} database.}
 \usage{
-import_by_process(con, process, summary = NA, start = 1969, end = NA,
-  tz = "UTC", valid_only = TRUE, date_end = TRUE, date_insert = FALSE,
-  site_name = TRUE, warn = TRUE, print_query = FALSE)
+import_by_process(con, process = NA, summary = NA, start = 1969,
+  end = NA, tz = "UTC", valid_only = TRUE, date_end = TRUE,
+  date_insert = FALSE, site_name = TRUE, warn = TRUE,
+  print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -36,7 +37,7 @@ variable being \code{1} or missing (\code{NULL} or \code{NA}).}
 Default is \code{TRUE}.}
 
 \item{date_insert}{Should the return include the \code{date_insert} variable? 
-Default is \code{TRUE}.}
+Default is \code{FALSE}.}
 
 \item{site_name}{Should the return include the \code{site_name} variable? 
 Default is \code{TRUE}.}
@@ -54,7 +55,7 @@ types.
 \strong{smonitor}.
 }
 \seealso{
-\code{\link{import_by_site}}
+\code{\link{import_by_site}} for a higher-level importing function
 }
 \author{
 Stuart K. Grange

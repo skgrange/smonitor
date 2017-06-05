@@ -1,7 +1,9 @@
 #' Function to import \code{`processes`} table from a \strong{smonitor} database. 
 #' 
 #' @param con A \strong{smonitor} database connection. 
+#' 
 #' @param type Type of query to run; either \code{"full"} or \code{"minimal"}. 
+#' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
 #' @author Stuart K. Grange

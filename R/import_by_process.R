@@ -30,7 +30,7 @@
 #' Default is \code{TRUE}. 
 #' 
 #' @param date_insert Should the return include the \code{date_insert} variable? 
-#' Default is \code{TRUE}. 
+#' Default is \code{FALSE}. 
 #' 
 #' @param site_name Should the return include the \code{site_name} variable? 
 #' Default is \code{TRUE}. 
@@ -42,15 +42,20 @@
 #' @return Data frame containing decoded observataion data with correct data 
 #' types. 
 #' 
-#' @seealso \code{\link{import_by_site}}
+#' @seealso \code{\link{import_by_site}} for a higher-level importing function
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @export
-import_by_process <- function(con, process, summary = NA, start = 1969, end = NA,
-                              tz = "UTC", valid_only = TRUE, date_end = TRUE, 
-                              date_insert = FALSE, site_name = TRUE, 
-                              warn = TRUE, print_query = FALSE) {
+import_by_process <- function(con, process = NA, summary = NA, start = 1969, 
+                              end = NA, tz = "UTC", valid_only = TRUE, 
+                              date_end = TRUE, date_insert = FALSE, 
+                              site_name = TRUE, warn = TRUE, 
+                              print_query = FALSE) {
+  
+  # Check
+  if (is.na(process[1])) 
+    stop("The 'process' argument must be used...", call. = FALSE)
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -95,13 +100,13 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   # Get observations
   df <- import_by_process_observation_table(
     con, 
-    process, 
-    summary, 
-    start,
-    end,
-    date_end, 
-    date_insert, 
-    print_query
+    process = process, 
+    summary = summary, 
+    start = start,
+    end = end,
+    date_end = date_end, 
+    date_insert = date_insert, 
+    print_query = print_query
   )
   
   # Check for data
@@ -154,17 +159,15 @@ import_by_process <- function(con, process, summary = NA, start = 1969, end = NA
   df <- arrange(df, process, date)
   
   # And variable order
-  df <- select(
-    df, 
-    dplyr::matches("date_insert"),
-    dplyr::matches("date"), 
-    dplyr::matches("date_end"), 
-    dplyr::matches("process"), 
-    dplyr::matches("summary"),
-    dplyr::matches("validity"),
-    dplyr::matches("value"),
-    dplyr::everything()
-  )
+  df <- select(df, 
+               dplyr::matches("date_insert"),
+               dplyr::matches("date"), 
+               dplyr::matches("date_end"), 
+               dplyr::matches("process"), 
+               dplyr::matches("summary"),
+               dplyr::matches("validity"),
+               dplyr::matches("value"),
+               dplyr::everything())
   
   return(df)
   
@@ -182,7 +185,8 @@ import_by_process_process_table <- function(con, process, site_name, print_query
     FROM processes 
     LEFT JOIN sites
     ON processes.site = sites.site
-    WHERE process IN (", process, ")")
+    WHERE process IN (", process, ")"
+  )
   
   # Clean
   sql_processes <- threadr::str_trim_many_spaces(sql_processes)
@@ -217,7 +221,8 @@ import_by_process_observation_table <- function(con, process, summary, start,
       observations.validity
       FROM observations
       WHERE observations.process IN (", process, ")
-      AND observations.date BETWEEN ", start, " AND ", end)
+      AND observations.date BETWEEN ", start, " AND ", end
+    )
     
   } else {
     
@@ -232,18 +237,33 @@ import_by_process_observation_table <- function(con, process, summary, start,
       FROM observations
       WHERE observations.process IN (", process, ")
       AND observations.date BETWEEN ", start, " AND ", end, "
-      AND observations.summary IN (", summary, ")")
+      AND observations.summary IN (", summary, ")"
+    )
     
   }
   
   # Drop date_end from query
-  if (!date_end)
-    sql_observations <- stringr::str_replace(sql_observations, "observations.date_end,", "")
-  
+  if (!date_end) {
+    
+    sql_observations <- stringr::str_replace(
+      sql_observations, 
+      "observations.date_end,", 
+      ""
+    )
+    
+  }
+
   # Drop date_insert from query
-  if (!date_insert)
-    sql_observations <- stringr::str_replace(sql_observations, "observations.date_insert,", "")
-  
+  if (!date_insert) {
+    
+    sql_observations <- stringr::str_replace(
+      sql_observations, 
+      "observations.date_insert,", 
+      ""
+    )
+    
+  }
+    
   # Clean sql
   sql_observations <- threadr::str_trim_many_spaces(sql_observations)
   

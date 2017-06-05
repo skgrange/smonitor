@@ -44,11 +44,14 @@
 #' @author Stuart K. Grange
 #' 
 #' @export
-import_by_site <- function(con, site, variable = NA, start = 1970, end = NA, 
+import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA, 
                            period = "hour", valid_only = TRUE, pad = TRUE, 
                            tz = "UTC", spread = FALSE, date_end = TRUE,
                            date_insert = FALSE, site_name = TRUE, 
                            print_query = FALSE) {
+  
+  # Check
+  if (is.na(site[1])) stop("The 'site' argument must be used...", call. = FALSE)
   
   # Parse arguments
   site <- stringr::str_trim(site)
@@ -66,7 +69,7 @@ import_by_site <- function(con, site, variable = NA, start = 1970, end = NA,
   summary <- ifelse(period == "hour", 1, summary)
   summary <- ifelse(period == "day", 20, summary)
   
-  # Time padder requires a string for seq
+  # Time padder requires a string for sequence creation
   if (summary == 15) {
     
     interval_pad <- "15 min"

@@ -11,6 +11,12 @@ import_summaries(con, extra = TRUE)
 
 \item{extra}{Return extra data? Default is \code{TRUE}.}
 }
+\value{
+Data frame.
+}
 \description{
 Function to import \code{`summaries`} table from a \strong{smonitor} database.
+}
+\author{
+Stuart K. Grange
 }

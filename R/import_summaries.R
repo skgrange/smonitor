@@ -1,7 +1,12 @@
 #' Function to import \code{`summaries`} table from a \strong{smonitor} database. 
 #' 
 #' @param con Database connection. 
+#' 
 #' @param extra Return extra data? Default is \code{TRUE}.
+#' 
+#' @author Stuart K. Grange
+#' 
+#' @return Data frame. 
 #' 
 #' @export
 import_summaries <- function(con, extra = TRUE) {
@@ -16,11 +21,19 @@ import_summaries <- function(con, extra = TRUE) {
                           summaries.summary")
   
   # Only a few variables
-  if (!extra)
-    df <- df[, c("process", "summary", "summary_name", "site", "site_name", 
-                 "variable", "source", "validity_threshold", "period")]
+  if (!extra) {
+    
+    # What variables
+    variables <- c(
+      "process", "summary", "summary_name", "site", "site_name", "variable", 
+      "source_name_summary", "validity_threshold", "period"
+    )
+    
+    # Select
+    df <- df[, variables]
+    
+  }
   
-  # Return
-  df
+  return(df)
   
 }
