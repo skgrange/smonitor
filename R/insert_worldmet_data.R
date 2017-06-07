@@ -91,32 +91,67 @@ download_noaa <- function(site, start = 1990, end = NA) {
   # Current year
   if (is.na(end)) end <- lubridate::year(lubridate::today())
   
-  # Download
-  # importNOAA is not vectorised over site
-  df <- plyr::ldply(site, worldmet::importNOAA, year = start:end, hourly = TRUE)
+  # Build mapping data frame
+  df_map <- expand.grid(
+    site,
+    start:end
+  )
+  
+  names(df_map) <- c("site", "year")
+  
+  # Get and clean
+  df <- df_map %>% 
+    rowwise() %>% 
+    do(download_noaa_worker(.$site, .$year)) %>% 
+    ungroup()
+  
+  return(df)
+  
+}
+
+
+download_noaa_worker <- function(site, year) {
+  
+  # message(
+  #   to_json(
+  #     list(
+  #       site = site,
+  #       year = year
+  #     )
+  #   )
+  # )
+  
+  # Get data
+  suppressWarnings(
+    df <- worldmet::importNOAA(code = site, year = year)
+  )
   
   # Just in case, may not be needed
   closeAllConnections()
   
-  # Drop and rename
-  df <- df %>% 
-    select(-usaf,
-           -wban,
-           -station,
-           -lat,
-           -lon,
-           -elev) %>% 
-    rename(site_code = code)
+  # Clean
+  if (nrow(df) != 0) {
+    
+    # Drop and rename
+    df <- df %>% 
+      select(-dplyr::matches("usaf"),
+             -dplyr::matches("wban"),
+             -dplyr::matches("station"),
+             -dplyr::matches("lat"),
+             -dplyr::matches("lon"),
+             -dplyr::matches("elev")) %>% 
+      rename(site_code = code)
+    
+    # Fix names
+    # Other dirty names will still be present
+    names(df) <- ifelse(names(df) == "ceil_hgt", "ceiling_height", names(df))
+    names(df) <- ifelse(names(df) == "air_temp", "temp", names(df))
+    names(df) <- ifelse(names(df) == "atmos_pres", "pressure", names(df))
+    names(df) <- ifelse(names(df) == "RH", "rh", names(df))
+    names(df) <- ifelse(names(df) == "cl", "cloud_cover", names(df))
+    
+  }
   
-  # Fix names
-  # Other dirty names will still be present
-  names(df) <- ifelse(names(df) == "ceil_hgt", "ceiling_height", names(df))
-  names(df) <- ifelse(names(df) == "air_temp", "temp", names(df))
-  names(df) <- ifelse(names(df) == "atmos_pres", "pressure", names(df))
-  names(df) <- ifelse(names(df) == "RH", "rh", names(df))
-  names(df) <- ifelse(names(df) == "cl", "cloud_cover", names(df))
-  
-  # Return
-  df
+  return(df)
   
 }
