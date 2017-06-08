@@ -99,35 +99,11 @@ download_noaa <- function(site, start = 1990, end = NA) {
   
   names(df_map) <- c("site", "year")
   
-  # Get and clean
+  # Get
   df <- df_map %>% 
     rowwise() %>% 
     do(download_noaa_worker(.$site, .$year)) %>% 
     ungroup()
-  
-  return(df)
-  
-}
-
-
-download_noaa_worker <- function(site, year) {
-  
-  # message(
-  #   to_json(
-  #     list(
-  #       site = site,
-  #       year = year
-  #     )
-  #   )
-  # )
-  
-  # Get data
-  suppressWarnings(
-    df <- worldmet::importNOAA(code = site, year = year)
-  )
-  
-  # Just in case, may not be needed
-  closeAllConnections()
   
   # Clean
   if (nrow(df) != 0) {
@@ -151,6 +127,28 @@ download_noaa_worker <- function(site, year) {
     names(df) <- ifelse(names(df) == "cl", "cloud_cover", names(df))
     
   }
+  
+  return(df)
+  
+}
+
+
+download_noaa_worker <- function(site, year) {
+  
+  # message(
+  #   to_json(
+  #     list(
+  #       site = site,
+  #       year = year
+  #     )
+  #   )
+  # )
+  
+  # Get data
+  df <- worldmet::importNOAA(code = site, year = year)
+  
+  # Just in case, may not be needed
+  closeAllConnections()
   
   return(df)
   

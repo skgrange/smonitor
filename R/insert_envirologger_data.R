@@ -22,6 +22,8 @@
 #' 
 #' @author Stuart K. Grange
 #' 
+#' @return Invisible. 
+#' 
 #' @export
 insert_envirologger_data <- function(con, user, key, server, station, 
                                      start, end = NA) {
@@ -53,48 +55,58 @@ insert_envirologger_data <- function(con, user, key, server, station,
     end = end
   )
   
-  # Clean data
-  df <- envirologgerr::clean_envirologger_data(df)
-  
-  # Site, not station bitte
-  df <- df %>% 
-    left_join(df_sites_look_up, by = "station") %>% 
-    select(-station)
-  
-  # Only processes in table will be kept
-  df <- df %>% 
-    inner_join(df_processes, by = c("site", "label", "sensor", "variable"))
-  
-  # Transform data frame for smonitor
-  df <- df %>% 
-    mutate(date = as.integer(date),
-           date_end = NA, 
-           validity = NA,
-           summary = 0L) %>% 
-    select(date,
-           date_end,
-           process,
-           summary,
-           validity,
-           value)
-  
-  if (nrow(df) > 0) {
+  if (nrow(df) != 0) {
     
-    # Delete observations
-    message("Deleting old observations...")
+    # Clean data
+    df <- envirologgerr::clean_envirologger_data(df)
     
-    # Does the grouping
-    delete_observations(con, df, match = "between", convert = FALSE, 
-                        progress = "time")
+    # Site, not station bitte
+    df <- df %>% 
+      left_join(df_sites_look_up, by = "station") %>% 
+      select(-station)
     
-    # Insert
-    message("Inserting new observations...")
-    insert_observations(con, df)
+    # Only processes in table will be kept
+    df <- df %>% 
+      inner_join(df_processes, by = c("site", "label", "sensor", "variable"))
+    
+    # Transform data frame for smonitor
+    df <- df %>% 
+      mutate(date = as.integer(date),
+             date_end = NA, 
+             validity = NA,
+             summary = 0L) %>% 
+      select(date,
+             date_end,
+             process,
+             summary,
+             validity,
+             value)
+    
+    if (nrow(df) > 0) {
+      
+      # Delete observations
+      message("Deleting old observations...")
+      
+      # Does the grouping
+      delete_observations(con, df, match = "between", convert = FALSE, 
+                          progress = "time")
+      
+      # Insert
+      message("Inserting new observations...")
+      insert_observations(con, df)
+      
+    } else {
+      
+      message("No data inserted...")
+      
+    }
     
   } else {
     
-    message("No data inserted...")
+    message("No data inserted because API returned no data...")
     
   }
+  
+  # No return
   
 }
