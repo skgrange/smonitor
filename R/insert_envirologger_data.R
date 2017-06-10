@@ -12,8 +12,6 @@
 #' 
 #' @param key An Envirologger API key for \code{user}. 
 #' 
-#' @param server An Envirologger API server code to use for download.
-#' 
 #' @param station A vector of station codes to download.
 #' 
 #' @param start Start date to download and insert. 
@@ -25,8 +23,7 @@
 #' @return Invisible. 
 #' 
 #' @export
-insert_envirologger_data <- function(con, user, key, server, station, 
-                                     start, end = NA) {
+insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
   
   # Load look-up tables
   # Sites
@@ -36,29 +33,22 @@ insert_envirologger_data <- function(con, user, key, server, station,
   
   # Process keys
   df_processes <- import_processes(con) %>% 
-    filter(service == 1) %>% 
     select(process,
            site,
            variable,
-           label = envirologger_label,
-           sensor = envirologger_sensor)
+           channel_number = envirologger_channel_number)
   
   # Get observations with API
   message("Getting new observations...")
-  
   df <- envirologgerr::get_envirologger_data(
     user = user, 
     key = key, 
-    server = server, 
     station = station, 
     start = start, 
     end = end
   )
   
   if (nrow(df) != 0) {
-    
-    # Clean data
-    df <- envirologgerr::clean_envirologger_data(df)
     
     # Site, not station bitte
     df <- df %>% 
@@ -67,11 +57,11 @@ insert_envirologger_data <- function(con, user, key, server, station,
     
     # Only processes in table will be kept
     df <- df %>% 
-      inner_join(df_processes, by = c("site", "label", "sensor", "variable"))
+      inner_join(df_processes, by = c("site", "channel_number"))
     
     # Transform data frame for smonitor
     df <- df %>% 
-      mutate(date = as.integer(date),
+      mutate(date = as.numeric(date),
              date_end = NA, 
              validity = NA,
              summary = 0L) %>% 
@@ -82,14 +72,20 @@ insert_envirologger_data <- function(con, user, key, server, station,
              validity,
              value)
     
+    # Join may drop all observations
     if (nrow(df) > 0) {
       
       # Delete observations
       message("Deleting old observations...")
       
       # Does the grouping
-      delete_observations(con, df, match = "between", convert = FALSE, 
-                          progress = "time")
+      delete_observations(
+        con, 
+        df, 
+        match = "between", 
+        convert = FALSE, 
+        progress = "time"
+      )
       
       # Insert
       message("Inserting new observations...")
