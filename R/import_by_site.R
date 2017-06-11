@@ -136,6 +136,9 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     print_query = print_query
   )
   
+  # Return empty data frame here if no observations
+  if (nrow(df) == 0) return(df)
+  
   # Drop all NAs for padding and reshaping
   df <- df[!is.na(df$value), ]
   
