@@ -66,8 +66,14 @@ update_validity_worker <- function(con, process, summary, df_look, delete) {
   # Catch is for when database contains no data for a process and gives an error
   df <- tryCatch({
     
-    import_by_process(con, process, summary = summary, start = 1965, end = 2020, 
-                      valid_only = FALSE) %>% 
+    import_by_process(
+      con, 
+      process, 
+      summary = summary, 
+      start = 1965, 
+      end = 2020, 
+      valid_only = FALSE
+    ) %>% 
       mutate(date = as.numeric(date),
              date_end = as.numeric(date_end))
     

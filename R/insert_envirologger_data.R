@@ -20,7 +20,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @return Invisible. 
+#' @return Invisible, a database insert. 
 #' 
 #' @export
 insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
@@ -33,13 +33,14 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
   
   # Process keys
   df_processes <- import_processes(con) %>% 
+    filter(service != 0 | is.na(service)) %>% 
     select(process,
            site,
            variable,
            channel_number = envirologger_channel_number)
   
   # Get observations with API
-  message("Getting new observations...")
+  message("Getting new observations.")
   df <- envirologgerr::get_envirologger_data(
     user = user, 
     key = key, 
@@ -76,7 +77,7 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
     if (nrow(df) > 0) {
       
       # Delete observations
-      message("Deleting old observations...")
+      message("Deleting old observations.")
       
       # Does the grouping
       delete_observations(
@@ -88,18 +89,18 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
       )
       
       # Insert
-      message("Inserting new observations...")
+      message("Inserting new observations.")
       insert_observations(con, df)
       
     } else {
       
-      message("No data inserted...")
+      message("No data inserted.")
       
     }
     
   } else {
     
-    message("No data inserted because API returned no data...")
+    message("No data inserted because API returned no data.")
     
   }
   

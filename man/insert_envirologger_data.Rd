@@ -21,7 +21,7 @@ insert_envirologger_data(con, user, key, station, start, end = NA)
 \item{end}{End date to download and insert.}
 }
 \value{
-Invisible.
+Invisible, a database insert.
 }
 \description{
 Site-variable combinations must to be present in the database's process table,
