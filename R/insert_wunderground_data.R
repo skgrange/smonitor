@@ -16,13 +16,13 @@
 #' 
 #' @param validity Should the validity variable be updated? Not implemented yet. 
 #' 
-#' @param verbose Should the function give messages? Default is \code{FALSE}. 
+#' @param progress Type of progress bar to display. 
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @export
 insert_wunderground_data <- function(con, site, start, end = NA, validity = FALSE,
-                                     verbose = FALSE) {
+                                     progress = "time") {
   
   # For dplyr
   site_vector <- site
@@ -43,8 +43,9 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
         x, 
         start = start, 
         end = end, 
-        verbose = verbose
-      )
+        verbose = FALSE
+      ),
+    .progress = progress
   )
   
   if (nrow(df) != 0) {
@@ -78,8 +79,13 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
       message("Deleting old observations...")
       
       # Does the grouping
-      delete_observations(con, df, match = "between", convert = FALSE, 
-                          progress = "none")
+      delete_observations(
+        con, 
+        df, 
+        match = "between",
+        convert = FALSE, 
+        progress = "none"
+      )
       
       # Insert
       message("Inserting new observations...")
@@ -100,7 +106,6 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
 }
 
 
-# No export at the moment
 insert_wunderground_data_frame <- function(con, df) {
   
   if (length(unique(df$site)) != 1) 
@@ -144,8 +149,13 @@ insert_wunderground_data_frame <- function(con, df) {
     message("Deleting old observations...")
     
     # Does the grouping
-    delete_observations(con, df, match = "between", convert = FALSE, 
-                        progress = "none")
+    delete_observations(
+      con, 
+      df, 
+      match = "between", 
+      convert = FALSE, 
+      progress = progress
+    )
     
     # Insert
     message("Inserting new observations...")

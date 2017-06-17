@@ -6,7 +6,7 @@
 \strong{smonitor} database.}
 \usage{
 insert_wunderground_data(con, site, start, end = NA, validity = FALSE,
-  verbose = FALSE)
+  progress = "time")
 }
 \arguments{
 \item{con}{Database connection.}
@@ -19,7 +19,7 @@ insert_wunderground_data(con, site, start, end = NA, validity = FALSE,
 
 \item{validity}{Should the validity variable be updated? Not implemented yet.}
 
-\item{verbose}{Should the function give messages? Default is \code{FALSE}.}
+\item{progress}{Type of progress bar to display.}
 }
 \description{
 Site-variable combinations need to be present in the database's process table,
