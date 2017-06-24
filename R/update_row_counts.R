@@ -16,10 +16,10 @@
 update_row_counts <- function(con, estimate = FALSE, read = FALSE) {
   
   # Get all tables
-  table <- dplyr::db_list_tables(con)
+  table <- databaser::db_list_tables(con)
   
   # But do not do `row_counts` table
-  table <- grep("row_counts", table, value = TRUE, invert = TRUE)
+  table <- setdiff(table, "row_counts")
   
   # Get counts of all tables
   df <- databaser::db_count_rows(con, table = table, estimate = estimate)

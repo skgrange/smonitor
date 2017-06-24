@@ -30,7 +30,7 @@ update_date_span_variables <- function(con, tz = "UTC", na.rm = FALSE,
   # Message text logic
   if (verbose) {
     
-    if (dplyr::db_has_table(con, "row_counts")) {
+    if (DBI::dbExistsTable(con, "row_counts")) {
       
       message("Replacing `row_counts` table...")
       
