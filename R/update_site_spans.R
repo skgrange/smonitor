@@ -43,6 +43,9 @@ update_site_spans <- function(con, tz = "UTC") {
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
   
+  # Update variables to be null before insert
+  databaser::db_execute(con, "UPDATE sites SET date_start = NULL, date_end = NULL")
+  
   # Use statements
   databaser::db_execute(con, sql)
   

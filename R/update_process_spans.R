@@ -33,6 +33,12 @@ update_process_spans <- function(con, tz = "UTC", na.rm = FALSE) {
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
   
+  # Update variables to be null before insert
+  databaser::db_execute(
+    con, 
+    "UPDATE processes SET date_start = NULL, date_end = NULL"
+  )
+  
   # Use statements
   databaser::db_execute(con, sql)
   

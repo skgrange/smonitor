@@ -50,7 +50,8 @@ update_validity <- function(con, process, summary = 0, tz = "UTC",
       process = x, 
       summary = summary, 
       df_look = df_look, 
-      delete = delete), 
+      delete = delete
+    ), 
     .progress = progress
   )
   
@@ -90,8 +91,7 @@ update_validity_worker <- function(con, process, summary, df_look, delete) {
     df <- validity_test(df, df_look)
     
     # Delete old observations
-    delete_observations(con, df, match = delete, convert = FALSE, 
-                        progress = "none")
+    delete_observations(con, df, match = delete, progress = "none")
     
     # Insert new observations
     insert_observations(con, df)

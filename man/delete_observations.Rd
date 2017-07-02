@@ -6,7 +6,7 @@
 \strong{smonitor} database.}
 \usage{
 delete_observations(con, df, groups = c("process", "summary"),
-  match = "between", convert = TRUE, progress = "time")
+  match = "between", progress = "none")
 }
 \arguments{
 \item{con}{Database connection.}
@@ -22,11 +22,7 @@ is \code{c("process", "summary")} and should not need changing.}
 \code{"all"} are supported. Beware that \code{"all"} will remove all 
 observations associated with a process.}
 
-\item{convert}{Should dates be coverted to integers for the unix time/date 
-match for the database? Default is \code{TRUE} but is not necessary if dates 
-in \code{df} are already in unix time format.}
-
-\item{progress}{Type of progress bar to display. Default is \code{"time"}.}
+\item{progress}{Type of progress bar to display.}
 }
 \description{
 \code{delete_observations} is generally used immediately before a database 

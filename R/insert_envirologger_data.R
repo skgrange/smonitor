@@ -84,7 +84,6 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
         con, 
         df, 
         match = "between", 
-        convert = FALSE, 
         progress = "time"
       )
       

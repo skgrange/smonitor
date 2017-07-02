@@ -83,7 +83,6 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
         con, 
         df, 
         match = "between",
-        convert = FALSE, 
         progress = "none"
       )
       
@@ -153,7 +152,6 @@ insert_wunderground_data_frame <- function(con, df) {
       con, 
       df, 
       match = "between", 
-      convert = FALSE, 
       progress = progress
     )
     

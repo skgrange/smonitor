@@ -8,11 +8,14 @@
 insert_observations(con, df, message = FALSE)
 }
 \arguments{
-\item{con}{Database connection}
+\item{con}{Database connection.}
 
 \item{df}{Data frame containing observations to be inserted.}
 
 \item{message}{Should a message of counts and size be displayed?}
+}
+\value{
+Invisible, an insert into a database table.
 }
 \description{
 \code{insert_observations} will handle the variable/column order, the date 
@@ -32,5 +35,5 @@ insert_observations(con, data_test, message = TRUE)
 
 }
 \author{
-Stuart K. Grange
+Stuart K. Grange.
 }

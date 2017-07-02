@@ -56,8 +56,7 @@ insert_worldmet_data <- function(con, site, start, end = NA,
     
     # Delete observations
     if (verbose) message("Deleting old observations...")
-    delete_observations(con, df, match = "between", convert = FALSE, 
-                        progress = "none")
+    delete_observations(con, df, match = "between", progress = "none")
     
     # Insert
     if (verbose) message("Inserting new observations...")
