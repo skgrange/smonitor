@@ -15,8 +15,8 @@
 #' @param end End date to import. 
 #' 
 #' @param period Averaging period. Default is \code{"hour"}. \code{period} can
-#' also take the value \code{"any"} which will return all periods, but 
-#' \code{pad} argument will be ignored.
+#' also take the value \code{NA} which will return all periods, but \code{pad} 
+#' argument will be ignored.
 #' 
 #' @param valid_only Should only valid data be returned? Default is \code{TRUE}. 
 #' 
@@ -70,18 +70,10 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   summary <- ifelse(period == "day", 20, summary)
   
   # Time padder requires a string for sequence creation
-  if (summary == 15) {
-    
-    interval_pad <- "15 min"
-    
-  } else {
-    
-    interval_pad <- period
-    
-  }
+  interval_pad <- ifelse(summary == 15, "15 min", period)
   
   # Does not make sense to pad data in these situations
-  if (period %in% c("all", "any", "source")) pad <- FALSE
+  if (period == "source" | is.na(period)) pad <- FALSE
   
   # Get process keys
   # Build sql, only really need process here

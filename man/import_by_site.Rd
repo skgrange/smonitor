@@ -22,8 +22,8 @@ be returned.}
 \item{end}{End date to import.}
 
 \item{period}{Averaging period. Default is \code{"hour"}. \code{period} can
-also take the value \code{"any"} which will return all periods, but 
-\code{pad} argument will be ignored.}
+also take the value \code{NA} which will return all periods, but \code{pad} 
+argument will be ignored.}
 
 \item{valid_only}{Should only valid data be returned? Default is \code{TRUE}.}
 
