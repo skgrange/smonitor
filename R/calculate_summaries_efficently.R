@@ -46,18 +46,25 @@ calculate_summaries_efficently <- function(con, df_map, start = NA, end = NA,
                                            tz = "UTC", insert = TRUE, 
                                            verbose = FALSE, progress = "none") {
   
-  if (!all(c("summary", "aggregation_function", "validity_threshold") %in% 
-          names(df_map))) {
-    
-    stop("Mandatory variables not present in mapping data frame", call. = FALSE)
-    
-  }
+  # Check input
+  variables_needed <- c("summary", "aggregation_function", "validity_threshold")
   
-  plyr::d_ply(df_map, c("summary", "aggregation_function", "validity_threshold"),
-              function(x) 
-                calculate_summaries_efficently_worker(
-                  con, x, start, end, tz, verbose, insert), 
-              .progress = progress)
+  if (!all(variables_needed %in% names(df_map)))
+    stop("Mandatory variables not present in mapping data frame", call. = FALSE)
+  
+  plyr::d_ply(
+    df_map, 
+    c("summary", "aggregation_function", "validity_threshold"),
+    function(x) calculate_summaries_efficently_worker(
+      con, 
+      x, 
+      start, 
+      end, 
+      tz, 
+      verbose, 
+      insert),
+    .progress = progress
+  )
   
   # No return
   
@@ -102,9 +109,17 @@ calculate_summaries_efficently_worker <- function(con, df_map, start, end, tz,
   }
   
   # Import source data
-  df <- import_by_process(con, process = processes, summary = source_summary,
-                          start = start, end = end, date_end = FALSE, 
-                          site_name = FALSE, date_insert = FALSE, warn = FALSE)
+  df <- import_by_process(
+    con, 
+    process = processes, 
+    summary = source_summary,
+    start = start, 
+    end = end, 
+    date_end = FALSE, 
+    site_name = FALSE, 
+    date_insert = FALSE, 
+    warn = FALSE
+  )
   
   # Only continue if observations are present
   if (nrow(df) != 0) {
@@ -118,15 +133,25 @@ calculate_summaries_efficently_worker <- function(con, df_map, start, end, tz,
       pad_unit <- ifelse(grepl("month|monthly", source_summary_name), "month", pad_unit)
       
       # Pad
-      df <- threadr::time_pad(df, interval = pad_unit, by = "process", 
-                              round = "year", warn = FALSE, full = TRUE)
+      df <- threadr::time_pad(
+        df, 
+        interval = pad_unit, 
+        by = "process", 
+        round = "year", 
+        warn = FALSE, 
+        full = TRUE
+      )
       
     }
     
     # Aggregate/summarise data with mapping table
     df_agg <- threadr::aggregate_by_date(
-      df, interval = period, by = "process", summary = aggregation_function,
-      threshold = validity_threshold) %>% 
+      df, 
+      interval = period, 
+      by = "process",
+      summary = aggregation_function,
+      threshold = validity_threshold
+    ) %>% 
       mutate(summary = summary,
              validity = NA)
     
