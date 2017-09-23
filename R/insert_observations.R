@@ -59,6 +59,7 @@ insert_observations <- function(con, df, message = FALSE) {
   
   # Add variable
   date_insert <- lubridate::now()
+  date_insert <- round(date_insert)
   df$date_insert <- as.numeric(date_insert)
   
   # Do some checking

@@ -23,8 +23,10 @@ update_variables_monitored <- function(con) {
   
   # Build some sql
   sql <- stringr::str_c(
-    "UPDATE sites SET variables_monitored='", df$variables_monitored, "'
-    WHERE site='", df$site, "'"
+    "UPDATE sites SET variables_monitored='", 
+    df$variables_monitored, "'
+    WHERE site='", 
+    df$site, "'"
   )
   
   # Clean
@@ -34,16 +36,22 @@ update_variables_monitored <- function(con) {
   # Do
   databaser::db_execute(con, sql)
   
+  # No return
+  
 }
 
 
 # Nest the vector
 nest_variable_vectors <- function(df) {
   
+  # Get variables
   variables <- sort(unique(df$variable))
   variables <- stringr::str_c(variables, collapse = "; ")
+  
+  # Get observation count too
   observation_count <- sum(as.numeric(df$observation_count), na.rm = TRUE)
   
+  # Build data frame
   df <- data.frame(
     site = df$site[1],
     variables_monitored = variables,
@@ -51,7 +59,6 @@ nest_variable_vectors <- function(df) {
     stringsAsFactors = FALSE
   )
   
-  # Return
-  df
+  return(df)
   
 }
