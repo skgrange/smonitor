@@ -6,15 +6,19 @@
 \code{observation_count} for processes and then update the \code{`processes`}
 table for an \strong{smonitor} database.}
 \usage{
-update_process_spans(con, tz = "UTC", na.rm = FALSE)
+update_process_spans(con, process = NA, na.rm = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
-\item{tz}{Time-zone to parse the dates to.}
+\item{process}{A process vector to update. Default is \code{NA} which will 
+cause the database to update all process keys.}
 
 \item{na.rm}{Should missing values (\code{NA}/\code{NULL}) be omited from the
 aggregation functions?}
+}
+\value{
+Invisible.
 }
 \description{
 Function to calculate \code{date_start}, \code{date_end}, and 

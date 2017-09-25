@@ -5,18 +5,22 @@
 \title{Function to update the \code{date_start}, \code{date_end}, variables in the
 \code{`processes`} and \code{`sites`} tables in a \strong{smonitor} database.}
 \usage{
-update_date_span_variables(con, tz = "UTC", na.rm = FALSE,
+update_date_span_variables(con, na.rm = FALSE, row_counts = FALSE,
   verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
-\item{tz}{Time-zone Time-zone for the dates to be represented as.}
-
 \item{na.rm}{Should missing values (\code{NA}/\code{NULL}) be omited from the
 aggregation functions?}
 
+\item{row_counts}{Should the \code{`row_counts`} table be updated (or 
+inserted)?}
+
 \item{verbose}{Should the function give messages?}
+}
+\value{
+Invisible.
 }
 \description{
 \code{update_date_span_variables} will also insert (or replace) the 

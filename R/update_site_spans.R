@@ -5,20 +5,22 @@
 #' it queries the \code{`processes`} table rather than \code{`observations`}. 
 #' 
 #' @param con Database connection. 
-#' @param tz Time-zone to parse the dates to.
 #' 
 #' @seealso \code{\link{update_process_spans}}
 #'
 #' @export
-update_site_spans <- function(con, tz = "UTC") {
+update_site_spans <- function(con) {
   
   # Get data and transform
-  df <- databaser::db_get(con, "SELECT site,
-                                date_start, 
-                                date_end
-                                FROM processes") %>% 
-    mutate(date_start = lubridate::ymd_hms(date_start, tz = tz, truncated = 3),
-           date_end = lubridate::ymd_hms(date_end, tz = tz, truncated = 3))
+  df <- databaser::db_get(
+    con, 
+    "SELECT site,
+    date_start, 
+    date_end
+    FROM processes"
+  ) %>% 
+    mutate(date_start = as.numeric(date_start),
+           date_end = as.numeric(date_end))
   
   # Summarise
   df <- df %>% 
@@ -26,7 +28,9 @@ update_site_spans <- function(con, tz = "UTC") {
     summarise(date_start = min(date_start, na.rm = TRUE),
               date_end = max(date_end, na.rm = TRUE)) %>% 
     ungroup() %>% 
-    mutate(date_start = stringr::str_replace_na(date_start),
+    mutate(date_start = ifelse(is.infinite(date_start), NA, date_start),
+           date_end = ifelse(is.infinite(date_end), NA, date_end),
+           date_start = stringr::str_replace_na(date_start),
            date_end = stringr::str_replace_na(date_end))
   
   # Build update statements

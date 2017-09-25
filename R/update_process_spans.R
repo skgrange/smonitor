@@ -4,18 +4,26 @@
 #' 
 #' @param con Database connection. 
 #' 
-#' @param tz Time-zone to parse the dates to.
+#' @param process A process vector to update. Default is \code{NA} which will 
+#' cause the database to update all process keys. 
 #' 
 #' @param na.rm Should missing values (\code{NA}/\code{NULL}) be omited from the
 #' aggregation functions? 
 #' 
 #' @author Stuart K. Grange
 #' 
+#' @return Invisible. 
+#' 
 #' @export
-update_process_spans <- function(con, tz = "UTC", na.rm = FALSE) {
+update_process_spans <- function(con, process = NA, na.rm = FALSE) {
   
   # Calculate process spans
-  df <- calculate_process_spans(con, tz = tz, na.rm = na.rm) %>% 
+  df <- calculate_process_spans(
+    con, 
+    process = process, 
+    tz = tz, 
+    na.rm = na.rm
+  ) %>% 
     mutate(date_start = stringr::str_replace_na(date_start), 
            date_end = stringr::str_replace_na(date_end))
   
@@ -25,7 +33,8 @@ update_process_spans <- function(con, tz = "UTC", na.rm = FALSE) {
      SET date_start='", df$date_start, 
     "',date_end='", df$date_end, 
     "',observation_count=", df$observation_count,
-    " WHERE process=", df$process, "")
+    " WHERE process=", df$process, ""
+  )
   
   # No quotes for NULL
   sql <- stringr::str_replace_all(sql, "'NA'", "NULL")
@@ -33,11 +42,16 @@ update_process_spans <- function(con, tz = "UTC", na.rm = FALSE) {
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
   
-  # Update variables to be null before insert
-  databaser::db_execute(
-    con, 
-    "UPDATE processes SET date_start = NULL, date_end = NULL"
-  )
+  # Update variables to be null before insert, only when all processes are 
+  # Done
+  if (is.na(process[1])) {
+    
+    databaser::db_execute(
+      con, 
+      "UPDATE processes SET date_start = NULL, date_end = NULL"
+    )
+    
+  } 
   
   # Use statements
   databaser::db_execute(con, sql)
@@ -47,45 +61,78 @@ update_process_spans <- function(con, tz = "UTC", na.rm = FALSE) {
 }
 
 
-calculate_process_spans <- function(con, tz, na.rm) {
+calculate_process_spans <- function(con, process, tz, na.rm) {
   
   # Build sql
-  sql <- "SELECT process, 
+  if (is.na(process[1])) {
+    
+    sql <- "SELECT process, 
          MIN(date) AS date_start, 
          MAX(date) AS date_end,
-         CAST(COUNT(*) AS TEXT) AS observation_count
+         CAST(COUNT(*) AS REAL) AS observation_count
          FROM observations 
          GROUP BY process 
          ORDER BY process"
+    
+  } else {
+    
+    sql <- stringr::str_c(
+      "SELECT process, 
+      MIN(date) AS date_start, 
+      MAX(date) AS date_end,
+      CAST(COUNT(*) AS REAL) AS observation_count
+      FROM observations", 
+      " WHERE process IN (", 
+      stringr::str_c(process, collapse = ","),
+      ") GROUP BY process 
+      ORDER BY process"
+    )
+    
+  }
   
   # Omit NULL values
   if (na.rm) {
     
     sql <- stringr::str_replace(
-      sql, "FROM observations", " FROM observations WHERE value IS NOT NULL ")
+      sql, 
+      "FROM observations", 
+      " FROM observations WHERE value IS NOT NULL "
+    )
+    
+    # Extra catch for when processes are specified
+    sql <- stringr::str_replace(sql, "WHERE process", " AND process ")
     
   }
   
-  # Clean
+  # Clean query
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Get table
-  df <- databaser::db_get(con, sql) %>% 
-    mutate(date_start = threadr::parse_unix_time(date_start, tz = tz), 
-           date_end = threadr::parse_unix_time(date_end, tz = tz))
+  df <- databaser::db_get(con, sql)
   
-  # sql group by will not return groups with no data
-  df_processes <- databaser::db_get(con, "SELECT process 
-                                          FROM processes 
-                                          ORDER BY process")
+  # If no processes are given, do all the processes
+  if (is.na(process[1])) {
+    
+    # sql group by will not return groups with no data
+    df_processes <- databaser::db_get(
+      con,
+      "SELECT process
+       FROM processes
+       ORDER BY process"
+    )
+
+    # Join and add observation counts if missing
+    df <- df_processes %>%
+      left_join(df, by = "process") %>%
+      mutate(
+        observation_count = ifelse(
+          is.na(observation_count),
+          0,
+          observation_count)
+      )
+    
+  }
   
-  # Join and add observation counts if missing
-  df <- df_processes %>% 
-    left_join(df, by = "process") %>% 
-    mutate(observation_count = ifelse(
-      is.na(observation_count), 0, observation_count))
-  
-  # Return
-  df
+  return(df)
   
 }

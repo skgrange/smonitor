@@ -6,44 +6,51 @@
 #' 
 #' @param con Database connection.
 #' 
-#' @param tz Time-zone Time-zone for the dates to be represented as. 
-#' 
 #' @param na.rm Should missing values (\code{NA}/\code{NULL}) be omited from the
 #' aggregation functions? 
+#' 
+#' @param row_counts Should the \code{`row_counts`} table be updated (or 
+#' inserted)? 
 #' 
 #' @param verbose Should the function give messages?
 #' 
 #' @author Stuart K. Grange
 #' 
+#' @return Invisible. 
+#' 
 #' @export
-update_date_span_variables <- function(con, tz = "UTC", na.rm = FALSE, 
+update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE, 
                                        verbose = FALSE) {
   
   # Do
   if (verbose) message("Updating `processes` table...")
-  update_process_spans(con, tz = tz, na.rm = na.rm)
+  update_process_spans(con, na.rm = na.rm)
   
   if (verbose) message("Updating `sites` table...")
-  update_site_spans(con, tz = tz)
+  update_site_spans(con)
   
   # Also row counts
-  # Message text logic
-  if (verbose) {
+  if (row_counts) {
     
-    if (databaser::db_table_exists(con, "row_counts")) {
+    # Message text logic
+    if (verbose) {
       
-      message("Replacing `row_counts` table...")
-      
-    } else {
-      
-      message("Inserting a `row_counts` table...")
+      if (databaser::db_table_exists(con, "row_counts")) {
+        
+        message("Replacing `row_counts` table...")
+        
+      } else {
+        
+        message("Inserting a `row_counts` table...")
+        
+      }
       
     }
     
+    # Do
+    update_row_counts(con)
+    
   }
-  
-  # Do
-  update_row_counts(con)
   
   # No return
   
