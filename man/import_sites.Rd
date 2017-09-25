@@ -4,15 +4,22 @@
 \alias{import_sites}
 \title{Function to import \code{`sites`} table from a \strong{smonitor} database.}
 \usage{
-import_sites(con, extra = TRUE, print_query = FALSE)
+import_sites(con, tz = "UTC", print_query = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
-\item{extra}{Return extra data? Default is \code{TRUE}.}
+\item{tz}{What time zone should the \code{date_start} and \code{date_end}
+variables be represented as?}
 
-\item{print_query}{Should the SQL query string be printed?}
+\item{print_query}{Should the SQL query be printed?}
+}
+\value{
+Data frame.
 }
 \description{
 Function to import \code{`sites`} table from a \strong{smonitor} database.
+}
+\author{
+Stuart K. Grange
 }

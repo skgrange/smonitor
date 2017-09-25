@@ -2,37 +2,24 @@
 #' 
 #' @param con Database connection. 
 #' 
-#' @param extra Return extra data? Default is \code{TRUE}.
-#' 
 #' @author Stuart K. Grange
 #' 
 #' @return Data frame. 
 #' 
 #' @export
-import_summaries <- function(con, extra = TRUE) {
+import_summaries <- function(con) {
   
   # Get look-up table
-  df <- databaser::db_get(con, "SELECT summaries.*,
-                          sites.site_name
-                          FROM summaries
-                          LEFT JOIN sites
-                          ON summaries.site = sites.site
-                          ORDER BY summaries.process, 
-                          summaries.summary")
-  
-  # Only a few variables
-  if (!extra) {
-    
-    # What variables
-    variables <- c(
-      "process", "summary", "summary_name", "site", "site_name", "variable", 
-      "source_name_summary", "validity_threshold", "period"
-    )
-    
-    # Select
-    df <- df[, variables]
-    
-  }
+  df <- databaser::db_get(
+    con, 
+    "SELECT summaries.*,
+    sites.site_name
+    FROM summaries
+    LEFT JOIN sites
+    ON summaries.site = sites.site
+    ORDER BY summaries.process,
+    summaries.summary"
+  )
   
   return(df)
   

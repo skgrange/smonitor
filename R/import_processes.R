@@ -2,54 +2,28 @@
 #' 
 #' @param con A \strong{smonitor} database connection. 
 #' 
-#' @param type Type of query to run; either \code{"full"} or \code{"minimal"}. 
+#' @param tz What time zone should the \code{date_start} and \code{date_end}
+#' variables be represented as? 
 #' 
-#' @param print_query Should the SQL query string be printed? 
+#' @param print_query Should the SQL query be printed?
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @importFrom stringr str_c
+#' @return Data frame. 
 #' 
 #' @export
-import_processes <- function(con, type = "full", print_query = FALSE) {
+import_processes <- function(con, tz = "UTC", print_query = FALSE) {
   
-  # Check
-  types_allowed <- c("full", "minimal")
-  
-  if (!type %in% types_allowed)
-    stop("'type' not recognised.", call. = FALSE)
-  
-  # Different queries
-  if (type == "full") {
-    
-    # Get everything from processes and things from sites
-    sql <- str_c("SELECT processes.*, 
-                  sites.site_name, 
-                  sites.region, 
-                  sites.country,
-                  sites.site_type
-                  FROM processes
-                  LEFT JOIN sites
-                  ON processes.site = sites.site
-                  ORDER BY processes.process")
-    
-  }
-  
-  if (type == "minimal") {
-    
-    # Minimal things
-    sql <- str_c("SELECT processes.process, 
-                 processes.site,
-                 processes.variable,
-                 processes.period,
-                 sites.site_name, 
-                 sites.site_type
-                 FROM processes 
-                 LEFT JOIN sites
-                 ON processes.site = sites.site
-                 ORDER BY processes.process")
-    
-  }
+  # Get everything from processes and things from sites
+  sql <- "SELECT processes.*, 
+          sites.site_name, 
+          sites.region, 
+          sites.country,
+          sites.site_type
+          FROM processes
+          LEFT JOIN sites
+          ON processes.site = sites.site
+          ORDER BY processes.process"
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
@@ -59,8 +33,14 @@ import_processes <- function(con, type = "full", print_query = FALSE) {
   
   # Query
   df <- databaser::db_get(con, sql)
-    
-  # Return
-  df
+  
+  # Parse dates
+  df$date_start <- suppressWarnings(as.numeric(df$date_start))
+  df$date_end <- suppressWarnings(as.numeric(df$date_end))
+  
+  df$date_start <- threadr::parse_unix_time(df$date_start, tz = tz)
+  df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  
+  return(df)
   
 }

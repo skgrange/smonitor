@@ -1,14 +1,21 @@
 #' Function to import \code{`sites`} table from a \strong{smonitor} database. 
 #' 
 #' @param con Database connection. 
-#' @param extra Return extra data? Default is \code{TRUE}.
-#' @param print_query Should the SQL query string be printed? 
+#' 
+#' @param tz What time zone should the \code{date_start} and \code{date_end}
+#' variables be represented as? 
+#' 
+#' @param print_query Should the SQL query be printed?
+#' 
+#' @author Stuart K. Grange
+#' 
+#' @return Data frame. 
 #' 
 #' @export
-import_sites <- function(con, extra = TRUE, print_query = FALSE) {
+import_sites <- function(con, tz = "UTC", print_query = FALSE) {
   
   # Statement
-  sql <- "SELECT sites.*
+  sql <- "SELECT *
           FROM sites 
           ORDER BY site"
   
@@ -21,12 +28,13 @@ import_sites <- function(con, extra = TRUE, print_query = FALSE) {
   # Get look-up table
   df <- databaser::db_get(con, sql)
   
-  # Only a few variables
-  if (!extra)
-    df <- df[, c("site", "site_name", "latitude", "longitude", "elevation", 
-                 "region", "site_type")]
+  # Parse dates
+  df$date_start <- suppressWarnings(as.numeric(df$date_start))
+  df$date_end <- suppressWarnings(as.numeric(df$date_end))
   
-  # Return
-  df
+  df$date_start <- threadr::parse_unix_time(df$date_start, tz = tz)
+  df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  
+  return(df)
   
 }

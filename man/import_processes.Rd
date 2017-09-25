@@ -4,14 +4,18 @@
 \alias{import_processes}
 \title{Function to import \code{`processes`} table from a \strong{smonitor} database.}
 \usage{
-import_processes(con, type = "full", print_query = FALSE)
+import_processes(con, tz = "UTC", print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
 
-\item{type}{Type of query to run; either \code{"full"} or \code{"minimal"}.}
+\item{tz}{What time zone should the \code{date_start} and \code{date_end}
+variables be represented as?}
 
-\item{print_query}{Should the SQL query string be printed?}
+\item{print_query}{Should the SQL query be printed?}
+}
+\value{
+Data frame.
 }
 \description{
 Function to import \code{`processes`} table from a \strong{smonitor} database.

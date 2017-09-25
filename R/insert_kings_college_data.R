@@ -25,7 +25,7 @@ insert_kings_college_data <- function(con, site, start, end = NA,
   if (is.na(end)) end <- lubridate::year(lubridate::today())
   
   # Get look-up tables
-  df_processes <- import_processes(con, type = "minimal") %>% 
+  df_processes <- import_processes(con) %>% 
     select(process, 
                   site,
                   variable)

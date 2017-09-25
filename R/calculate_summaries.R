@@ -55,7 +55,7 @@ summary_calculator <- function(con, df_map, start, end, insert, tz) {
   df_map <- threadr::base_df(df_map)
   
   # Get mapping table
-  df_look <- import_summaries(con, extra = TRUE)
+  df_look <- import_summaries(con)
   
   # Filter mapping table
   df_look <- df_look[df_look$process == df_map$process & 

@@ -4,12 +4,10 @@
 \alias{import_summaries}
 \title{Function to import \code{`summaries`} table from a \strong{smonitor} database.}
 \usage{
-import_summaries(con, extra = TRUE)
+import_summaries(con)
 }
 \arguments{
 \item{con}{Database connection.}
-
-\item{extra}{Return extra data? Default is \code{TRUE}.}
 }
 \value{
 Data frame.

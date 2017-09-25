@@ -5,14 +5,18 @@
 \title{Function to import \code{`aggregations`} table from a \strong{smonitor} 
 database.}
 \usage{
-import_aggregations(con, extra = TRUE)
+import_aggregations(con)
 }
 \arguments{
 \item{con}{Database connection.}
-
-\item{extra}{Return extra data? Default is \code{TRUE}.}
+}
+\value{
+Data frame.
 }
 \description{
 Function to import \code{`aggregations`} table from a \strong{smonitor} 
 database.
+}
+\author{
+Stuart K. Grange
 }

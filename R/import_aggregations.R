@@ -2,19 +2,21 @@
 #' database. 
 #' 
 #' @param con Database connection. 
-#' @param extra Return extra data? Default is \code{TRUE}.
+#' 
+#' @author Stuart K. Grange
+#' 
+#' @return Data frame. 
 #' 
 #' @export
-import_aggregations <- function(con, extra = TRUE) {
+import_aggregations <- function(con) {
   
   # Get look-up table
-  df <- databaser::db_get(con, "SELECT aggregations.*
-                          FROM aggregations")
+  df <- databaser::db_get(
+    con, 
+    "SELECT *
+    FROM aggregations"
+  )
   
-  # Only a few variables
-  if (!extra) df <- df[, c("summary", "summary_name")]
-  
-  # Return
-  df
+  return(df)
   
 }
