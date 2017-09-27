@@ -27,34 +27,38 @@ update_process_spans <- function(con, process = NA, na.rm = FALSE) {
     mutate(date_start = stringr::str_replace_na(date_start), 
            date_end = stringr::str_replace_na(date_end))
   
-  # Build update statements
-  sql <- stringr::str_c(
-    "UPDATE processes
-     SET date_start=", df$date_start, 
-    ",date_end=", df$date_end, 
-    ",observation_count=", df$observation_count,
-    " WHERE process=", df$process, ""
-  )
-  
-  # No quotes for NULL
-  sql <- stringr::str_replace_all(sql, "'NA'", "NULL")
-  
-  # Clean
-  sql <- threadr::str_trim_many_spaces(sql)
-  
-  # Update variables to be null before insert, only when all processes are 
-  # Done
-  if (is.na(process[1])) {
+  if (nrow(df) != 0) {
     
-    databaser::db_execute(
-      con, 
-      "UPDATE processes SET date_start = NULL, date_end = NULL"
+    # Build update statements
+    sql <- stringr::str_c(
+      "UPDATE processes
+     SET date_start=", df$date_start, 
+      ",date_end=", df$date_end, 
+      ",observation_count=", df$observation_count,
+      " WHERE process=", df$process, ""
     )
     
-  } 
-  
-  # Use statements
-  databaser::db_execute(con, sql)
+    # No quotes for NULL
+    sql <- stringr::str_replace_all(sql, "NA", "NULL")
+    
+    # Clean
+    sql <- threadr::str_trim_many_spaces(sql)
+    
+    # Update variables to be null before insert, only when all processes are 
+    # Done
+    if (is.na(process[1])) {
+      
+      databaser::db_execute(
+        con, 
+        "UPDATE processes SET date_start = NULL, date_end = NULL"
+      )
+      
+    } 
+    
+    # Use statements
+    databaser::db_execute(con, sql)
+    
+  }
   
   # No return
   
