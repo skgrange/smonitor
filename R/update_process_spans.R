@@ -23,11 +23,13 @@ update_process_spans <- function(con, process = NA, na.rm = FALSE) {
     process = process, 
     tz = tz, 
     na.rm = na.rm
-  ) %>% 
-    mutate(date_start = stringr::str_replace_na(date_start), 
-           date_end = stringr::str_replace_na(date_end))
+  ) 
   
   if (nrow(df) != 0) {
+    
+    df <- df %>% 
+      mutate(date_start = stringr::str_replace_na(date_start), 
+             date_end = stringr::str_replace_na(date_end))
     
     # Build update statements
     sql <- stringr::str_c(
