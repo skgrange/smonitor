@@ -42,13 +42,16 @@ update_site_spans <- function(con) {
   )
   
   # Make nulls
-  sql <- stringr::str_replace_all(sql, "'NA'", "NULL")
+  sql <- stringr::str_replace_all(sql, "NA", "NULL")
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
   
   # Update variables to be null before insert
-  databaser::db_execute(con, "UPDATE sites SET date_start = NULL, date_end = NULL")
+  databaser::db_execute(
+    con, 
+    "UPDATE sites SET date_start = NULL, date_end = NULL"
+  )
   
   # Use statements
   databaser::db_execute(con, sql)
