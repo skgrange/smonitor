@@ -30,9 +30,9 @@ update_process_spans <- function(con, process = NA, na.rm = FALSE) {
   # Build update statements
   sql <- stringr::str_c(
     "UPDATE processes
-     SET date_start='", df$date_start, 
-    "',date_end='", df$date_end, 
-    "',observation_count=", df$observation_count,
+     SET date_start=", df$date_start, 
+    ",date_end=", df$date_end, 
+    ",observation_count=", df$observation_count,
     " WHERE process=", df$process, ""
   )
   

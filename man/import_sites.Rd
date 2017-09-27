@@ -20,6 +20,15 @@ Data frame.
 \description{
 Function to import \code{`sites`} table from a \strong{smonitor} database.
 }
+\examples{
+\dontrun{
+
+# Import sites from a smonitor database
+data_sites <- import_processes(con)
+
+}
+
+}
 \author{
 Stuart K. Grange
 }

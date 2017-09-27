@@ -20,10 +20,9 @@ check_process_keys <- function(con, process) {
      WHERE process IN (", process_collapsed, ")"
   )
   
-  processes_matched <- databaser::db_get(con, sql)[, 1]
+  df <- databaser::db_get(con, sql)
   
-  if (length(processes_matched) != 0) 
-    stop("Duplicate process keys...", call. = FALSE)
+  if (nrow(df) != 0) stop("Duplicate process keys...", call. = FALSE)
   
   # No return
   

@@ -6,6 +6,14 @@
 #' 
 #' @return Data frame. 
 #' 
+#' @examples 
+#' \dontrun{
+#' 
+#' # Import summaries from a smonitor database
+#' data_summaries <- import_summaries(con)
+#' 
+#' }
+#' 
 #' @export
 import_summaries <- function(con) {
   

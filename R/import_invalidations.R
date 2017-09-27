@@ -2,7 +2,21 @@
 #' database. 
 #' 
 #' @param con Database connection. 
-#' @param tz What time-zone should the dates be in? Default is \code{"UTC"}. 
+#' 
+#' @param tz What time zone should the \code{date_start} and \code{date_end}
+#' variables be represented as?  
+#' 
+#' @author Stuart K. Grange
+#' 
+#' @return Data frame. 
+#' 
+#' @examples 
+#' \dontrun{
+#' 
+#' # Import invalidations from a smonitor database
+#' data_invalidations <- import_invalidations(con)
+#' 
+#' }
 #' 
 #' @export
 import_invalidations <- function(con, tz = "UTC") {
@@ -11,16 +25,4 @@ import_invalidations <- function(con, tz = "UTC") {
     mutate(date_start = lubridate::ymd_hms(date_start, tz = tz, truncated = 4),
            date_end = lubridate::ymd_hms(date_end, tz = tz, truncated = 4))
   
-}
-
-
-#' @export
-import_invalidation <- function(con, tz = "UTC") {
-
-  # Message
-  .Deprecated("import_invalidation", package = "importr")
-
-  # Use function
-  import_invalidations(con, tz = "UTC")
-
 }

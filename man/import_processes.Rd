@@ -20,6 +20,15 @@ Data frame.
 \description{
 Function to import \code{`processes`} table from a \strong{smonitor} database.
 }
+\examples{
+\dontrun{
+
+# Import processes from a smonitor database
+data_processes <- import_processes(con)
+
+}
+
+}
 \author{
 Stuart K. Grange
 }

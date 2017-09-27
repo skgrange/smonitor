@@ -7,6 +7,14 @@
 #' 
 #' @return Data frame. 
 #' 
+#' @examples 
+#' \dontrun{
+#' 
+#' # Import aggregations from a smonitor database
+#' data_aggregations <- import_aggregations(con)
+#' 
+#' }
+#' 
 #' @export
 import_aggregations <- function(con) {
   
@@ -14,7 +22,8 @@ import_aggregations <- function(con) {
   df <- databaser::db_get(
     con, 
     "SELECT *
-    FROM aggregations"
+    FROM aggregations
+    ORDER BY summary"
   )
   
   return(df)

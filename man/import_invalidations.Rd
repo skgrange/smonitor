@@ -10,9 +10,25 @@ import_invalidations(con, tz = "UTC")
 \arguments{
 \item{con}{Database connection.}
 
-\item{tz}{What time-zone should the dates be in? Default is \code{"UTC"}.}
+\item{tz}{What time zone should the \code{date_start} and \code{date_end}
+variables be represented as?}
+}
+\value{
+Data frame.
 }
 \description{
 Function to import \code{`invalidations`} table from a \strong{smonitor} 
 database.
+}
+\examples{
+\dontrun{
+
+# Import invalidations from a smonitor database
+data_invalidations <- import_invalidations(con)
+
+}
+
+}
+\author{
+Stuart K. Grange
 }

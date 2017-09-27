@@ -15,6 +15,15 @@ Data frame.
 \description{
 Function to import \code{`summaries`} table from a \strong{smonitor} database.
 }
+\examples{
+\dontrun{
+
+# Import summaries from a smonitor database
+data_summaries <- import_summaries(con)
+
+}
+
+}
 \author{
 Stuart K. Grange
 }

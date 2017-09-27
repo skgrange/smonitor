@@ -11,6 +11,14 @@
 #' 
 #' @return Data frame. 
 #' 
+#' @examples 
+#' \dontrun{
+#' 
+#' # Import sites from a smonitor database
+#' data_sites <- import_processes(con)
+#' 
+#' }
+#' 
 #' @export
 import_sites <- function(con, tz = "UTC", print_query = FALSE) {
   

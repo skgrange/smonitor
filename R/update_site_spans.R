@@ -36,9 +36,9 @@ update_site_spans <- function(con) {
   # Build update statements
   sql <- stringr::str_c(
     "UPDATE sites
-     SET date_start='", df$date_start, 
-    "',date_end='", df$date_end, 
-    "' WHERE site='", df$site, "'"
+     SET date_start=", df$date_start, 
+    ",date_end=", df$date_end, 
+    " WHERE site='", df$site, "'"
   )
   
   # Make nulls

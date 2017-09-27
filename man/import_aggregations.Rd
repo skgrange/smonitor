@@ -17,6 +17,15 @@ Data frame.
 Function to import \code{`aggregations`} table from a \strong{smonitor} 
 database.
 }
+\examples{
+\dontrun{
+
+# Import aggregations from a smonitor database
+data_aggregations <- import_aggregations(con)
+
+}
+
+}
 \author{
 Stuart K. Grange
 }

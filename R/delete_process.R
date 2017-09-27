@@ -7,6 +7,7 @@
 #' @author Stuart K. Grange
 #' 
 #' @param con Database connection. 
+#' 
 #' @param process A vector of processes. 
 #' 
 #' @export
@@ -18,7 +19,8 @@ delete_process <- function(con, process) {
   # Build statement
   sql <- stringr::str_c(
     "DELETE FROM observations
-     WHERE process IN (", process, ")")
+     WHERE process IN (", process, ")"
+  )
   
   # Clean
   sql <- threadr::str_trim_many_spaces(sql)
