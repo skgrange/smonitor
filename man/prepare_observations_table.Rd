@@ -5,10 +5,15 @@
 \title{Function to prepare a data frame for insert into the \code{`observation`} 
 table in a \strong{smonitor} database.}
 \usage{
-prepare_observations_table(df)
+prepare_observations_table(df, drop = FALSE, convert = FALSE)
 }
 \arguments{
 \item{df}{Data frame.}
+
+\item{drop}{Should variables not contained in an \code{`observations`} table 
+be dropped?}
+
+\item{convert}{Should the variables be coerced into the correct data types?}
 }
 \value{
 Data frame.

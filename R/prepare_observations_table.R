@@ -1,16 +1,19 @@
 #' Function to prepare a data frame for insert into the \code{`observation`} 
 #' table in a \strong{smonitor} database. 
 #' 
-#' @param df Data frame. 
+#' @param df Data frame.
+#' 
+#' @param drop Should variables not contained in an \code{`observations`} table 
+#' be dropped? 
+#' 
+#' @param convert Should the variables be coerced into the correct data types? 
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @return Data frame. 
 #'
 #' @export
-prepare_observations_table <- function(df) {
-  
-  # , convert = TRUE
+prepare_observations_table <- function(df, drop = FALSE, convert = FALSE) {
   
   # Build template data frame
   names <- c(
@@ -18,6 +21,14 @@ prepare_observations_table <- function(df) {
     "value"
   )
   
+  # Only the variables which are in `observations`, do this before binding
+  if (drop) {
+    
+    index <- which(names(df) %in% names)
+    df <- df[, index]
+     
+  }
+    
   # Make data frame
   df_smonitor <- data.frame(
     matrix(ncol = length(names), nrow = 0)
@@ -29,10 +40,18 @@ prepare_observations_table <- function(df) {
   # Correct order of variables
   df <- dplyr::bind_rows(df_smonitor, df)
   
-  # any(grepl("date", names(df)))
-  # any(grepl("date_end", names(df)))
-  # any(grepl("process", names(df)))
-  # any(grepl("summ", names(df)))
+  # Correct data types
+  if (convert) {
+    
+    df$date_insert <- as.numeric(df$date_insert)
+    df$date <- as.numeric(df$date)
+    df$date_end <- as.numeric(df$date_end)
+    df$process <- as.integer(df$process)
+    df$summary <- as.integer(df$summary)
+    df$validity <- as.integer(df$validity)
+    # value? 
+    
+  }
   
   return(df)
   

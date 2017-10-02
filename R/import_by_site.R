@@ -158,7 +158,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
         select(-process,
                -summary,
                -validity) %>%
-        spread(variable, value)
+        tidyr::spread(variable, value)
       
     }, error = function(e) {
       
