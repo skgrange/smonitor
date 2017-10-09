@@ -6,10 +6,18 @@
 #' 
 #' @param con Database connection. 
 #' 
-#' @seealso \code{\link{update_process_spans}}
+#' @param variables_monitored Should the \code{variables_monitored} variable 
+#' also be updated? 
+#' 
+#' @seealso \code{\link{update_process_spans}}, 
+#' \code{\link{update_date_span_variables}}
+#' 
+#' @return Invisible. 
+#' 
+#' @author Stuart K. Grange
 #'
 #' @export
-update_site_spans <- function(con) {
+update_site_spans <- function(con, variables_monitored = FALSE) {
   
   # Get data and transform
   df <- databaser::db_get(
@@ -55,6 +63,9 @@ update_site_spans <- function(con) {
   
   # Use statements
   databaser::db_execute(con, sql)
+  
+  # Also update variables monitored
+  if (variables_monitored) update_variables_monitored(con)
   
   # No return
   

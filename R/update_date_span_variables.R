@@ -20,6 +20,7 @@
 #' 
 #' @export
 update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE, 
+                                       variables_monitored = TRUE, 
                                        verbose = FALSE) {
   
   # Do
@@ -27,7 +28,7 @@ update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE,
   update_process_spans(con, na.rm = na.rm)
   
   if (verbose) message("Updating `sites` table...")
-  update_site_spans(con)
+  update_site_spans(con, variables_monitored = variables_monitored)
   
   # Also row counts
   if (row_counts) {

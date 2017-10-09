@@ -10,6 +10,9 @@ update_variables_monitored(con)
 \arguments{
 \item{con}{Database connection.}
 }
+\value{
+Invisible.
+}
 \description{
 Function to update the \code{variables_monitored} variable in the 
 \code{`process`} table of an \strong{smonitor} database.

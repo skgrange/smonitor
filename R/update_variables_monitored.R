@@ -5,6 +5,8 @@
 #' 
 #' @author Stuart K. Grange
 #' 
+#' @return Invisible. 
+#' 
 #' @export
 update_variables_monitored <- function(con) {
   

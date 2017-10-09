@@ -5,15 +5,25 @@
 \title{Function to update \code{date_start} and \code{date_end}, for sites and then
 update the \code{`sites`} table for an \strong{smonitor} database.}
 \usage{
-update_site_spans(con)
+update_site_spans(con, variables_monitored = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
+
+\item{variables_monitored}{Should the \code{variables_monitored} variable 
+also be updated?}
+}
+\value{
+Invisible.
 }
 \description{
 Use \code{update_site_span} after \code{\link{update_process_spans}} because 
 it queries the \code{`processes`} table rather than \code{`observations`}.
 }
 \seealso{
-\code{\link{update_process_spans}}
+\code{\link{update_process_spans}}, 
+\code{\link{update_date_span_variables}}
+}
+\author{
+Stuart K. Grange
 }

@@ -6,7 +6,7 @@
 \code{`processes`} and \code{`sites`} tables in a \strong{smonitor} database.}
 \usage{
 update_date_span_variables(con, na.rm = FALSE, row_counts = FALSE,
-  verbose = FALSE)
+  variables_monitored = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
