@@ -2,8 +2,8 @@ Package: smonitor
 Type: Package
 Title: A framework and a collection of functions to allow for maintenance 
     of air quality monitoring data
-Version: 0.2.3
-Date: 2017-10-07
+Version: 0.2.5
+Date: 2017-10-23
 Authors@R: person("Stuart", "Grange", email = "s.k.grange@gmail.com", 
     role = c("cre", "aut"))
 Maintainer: Stuart K. Grange <s.k.grange@gmail.com>
