@@ -16,6 +16,7 @@ test_smonitor_integrity <- function(con) {
   message(stringr::str_c("This database is ", database_name, "..."))
   message(stringr::str_c("The database size is ", database_size, " (MB)..."))
   
+  # Get table list
   tables <- databaser::db_list_tables(con)
   
   # Test for needed tables
@@ -32,7 +33,7 @@ test_smonitor_integrity <- function(con) {
   
   if (length(tables_missing) != 0) {
 
-    message("There are missing smonitor core tables...")
+    message("There are missing smonitor core tables, this should be fixed...")
     
     # For return
     tables_missing <- stringr::str_c(tables_missing, collapse = "; ")
@@ -42,7 +43,7 @@ test_smonitor_integrity <- function(con) {
     message("There are no missing smonitor tables...")
     
     # For return
-    tables_missing <- NA
+    tables_missing <- FALSE
     
   }
   
@@ -51,7 +52,7 @@ test_smonitor_integrity <- function(con) {
   
   if (sites_duplicated) {
     
-    message("There are duplicated sites in `sites`...")
+    message("There are duplicated sites in `sites`, this is an error and should be fixed...")
     
   } else {
     
@@ -64,7 +65,7 @@ test_smonitor_integrity <- function(con) {
   
   if (sites_duplicated) {
     
-    message("There are duplicated processes in `processes`...")
+    message("There are duplicated processes in `processes`, this is a critical error and should not occur...")
     
   } else {
     
@@ -77,23 +78,25 @@ test_smonitor_integrity <- function(con) {
   
   if (length(sites_with_no_processes) != 0) {
     
-    message("There are sites which do not have processes...")
+    message("There are sites which do not have processes, this is usually fine...")
     sites_with_no_processes <- stringr::str_c(sites_with_no_processes, collapse = "; ")
     
   } else {
     
-    message("All sites have processes...")
-    sites_with_no_processes <- NA
+    message("All sites have associated processes...")
+    sites_with_no_processes <- FALSE
     
   }
   
+  # test if all processes in observations are present in process
   
-  dates <- databaser::db_get(con, "SELECT date FROM observations WHERE date IS NULL")[, 1]
-  dates_missing <- ifelse(length(dates) != 0, TRUE, FALSE)
+  
+  dates <- databaser::db_get(con, "SELECT date FROM observations WHERE date IS NULL LIMIT 1")
+  dates_missing <- ifelse(nrow(dates) != 0, TRUE, FALSE)
   
   if (dates_missing) {
     
-    message("There are missing dates in `observations`...")
+    message("There are missing dates in `observations`, this is a critical error and should not occur...")
     
   } else {
     
@@ -102,12 +105,12 @@ test_smonitor_integrity <- function(con) {
   }
   
   
-  processes_observations <- databaser::db_get(con, "SELECT process FROM observations WHERE process IS NULL")[, 1]
-  processes_observations_missing <- ifelse(length(processes_observations) != 0, TRUE, FALSE)
+  processes_observations <- databaser::db_get(con, "SELECT process FROM observations WHERE process IS NULL LIMIT 1")
+  processes_observations_missing <- ifelse(nrow(processes_observations) != 0, TRUE, FALSE)
   
   if (processes_observations_missing) {
     
-    message("There are missing processes in `observations`...")
+    message("There are missing processes in `observations`, this is a critical error and should not occur...")
     
   } else {
     
@@ -115,8 +118,8 @@ test_smonitor_integrity <- function(con) {
     
   }
   
-  summary_observations <- databaser::db_get(con, "SELECT summary FROM observations WHERE summary IS NULL")[, 1]
-  summary_observations_missing <- ifelse(length(summary_observations) != 0, TRUE, FALSE)
+  summary_observations <- databaser::db_get(con, "SELECT summary FROM observations WHERE summary IS NULL")
+  summary_observations_missing <- ifelse(nrow(summary_observations) != 0, TRUE, FALSE)
   
   if (summary_observations_missing) {
     
@@ -127,6 +130,8 @@ test_smonitor_integrity <- function(con) {
     message("There are no missing summaries in `observations`...")
     
   }
+  
+  # values and nulls
   
   # Build return
   df <- data.frame(

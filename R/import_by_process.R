@@ -39,7 +39,7 @@
 #' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
-#' @return Data frame containing decoded observataion data with correct data 
+#' @return Data frame containing decoded observational data with correct data 
 #' types. 
 #' 
 #' @seealso \code{\link{import_by_site}} for a higher-level importing function
@@ -55,7 +55,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   
   # Check
   if (is.na(process[1])) 
-    stop("The 'process' argument must be used...", call. = FALSE)
+    stop("The `process` argument must be used...", call. = FALSE)
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
@@ -72,7 +72,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   process <- stringr::str_c(process, collapse = ",")
   summary <- stringr::str_c(summary, collapse = ",")
   
-  # Get table to link processs with sites
+  # Get table to link processes with sites
   df_processes <- import_by_process_process_table(
     con, 
     process, 

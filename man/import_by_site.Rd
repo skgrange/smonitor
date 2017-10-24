@@ -5,8 +5,8 @@
 \title{Function to import data from an \strong{smonitor} database based on sites.}
 \usage{
 import_by_site(con, site = NA, variable = NA, start = 1970, end = NA,
-  period = "hour", valid_only = TRUE, pad = TRUE, tz = "UTC",
-  spread = FALSE, date_end = TRUE, date_insert = FALSE,
+  period = "hour", include_sums = TRUE, valid_only = TRUE, pad = TRUE,
+  tz = "UTC", spread = FALSE, date_end = TRUE, date_insert = FALSE,
   site_name = TRUE, print_query = FALSE)
 }
 \arguments{
@@ -24,6 +24,11 @@ be returned.}
 \item{period}{Averaging period. Default is \code{"hour"}. \code{period} can
 also take the value \code{NA} which will return all periods, but \code{pad} 
 argument will be ignored.}
+
+\item{include_sums}{Should processes with the appropriate \code{period} which 
+have been summarised/aggregated with a sum function also be returned? This is
+useful for variables such as rainfall, snow, and precipitation where normally
+the aggregations do not take the form of the mean. Default is \code{TRUE}.}
 
 \item{valid_only}{Should only valid data be returned? Default is \code{TRUE}.}
 
@@ -49,6 +54,32 @@ Default is \code{TRUE}.}
 \description{
 \code{import_by_site} is considered the primary user-focused importing 
 function while \code{import_by_process} is the primary lower-level function.
+}
+\examples{
+\dontrun{
+
+# Get hourly means, the default
+data_site_hour <- import_by_site(con, site = "site_005", start = 2010)
+
+# Get hourly means and spread the data, useful for some analyses
+data_site_hour_spread <- import_by_site(
+  con, 
+  site = "site_005", 
+  start = 2010,
+  spread = TRUE
+)
+
+# Get daily means for two sites
+data_site_hour <- import_by_site(
+  con, 
+  site = c("site_005", "site_100"), 
+  period = "day", 
+  start = 2010,
+  spread = TRUE
+)
+
+}
+
 }
 \seealso{
 \code{\link{import_by_process}}

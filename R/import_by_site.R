@@ -18,6 +18,11 @@
 #' also take the value \code{NA} which will return all periods, but \code{pad} 
 #' argument will be ignored.
 #' 
+#' @param include_sums Should processes with the appropriate \code{period} which 
+#' have been summarised/aggregated with a sum function also be returned? This is
+#' useful for variables such as rainfall, snow, and precipitation where normally
+#' the aggregations do not take the form of the mean. Default is \code{TRUE}. 
+#' 
 #' @param valid_only Should only valid data be returned? Default is \code{TRUE}. 
 #' 
 #' @param pad Should the time-series be padded to ensure all dates in the 
@@ -43,15 +48,41 @@
 #' 
 #' @author Stuart K. Grange
 #' 
+#' @examples 
+#' \dontrun{
+#' 
+#' # Get hourly means, the default
+#' data_site_hour <- import_by_site(con, site = "site_005", start = 2010)
+#' 
+#' # Get hourly means and spread the data, useful for some analyses
+#' data_site_hour_spread <- import_by_site(
+#'   con, 
+#'   site = "site_005", 
+#'   start = 2010,
+#'   spread = TRUE
+#' )
+#' 
+#' # Get daily means for two sites
+#' data_site_hour <- import_by_site(
+#'   con, 
+#'   site = c("site_005", "site_100"), 
+#'   period = "day", 
+#'   start = 2010,
+#'   spread = TRUE
+#' )
+#' 
+#' }
+#' 
 #' @export
 import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA, 
-                           period = "hour", valid_only = TRUE, pad = TRUE, 
-                           tz = "UTC", spread = FALSE, date_end = TRUE,
-                           date_insert = FALSE, site_name = TRUE, 
-                           print_query = FALSE) {
+                           period = "hour", include_sums = TRUE, 
+                           valid_only = TRUE, pad = TRUE, tz = "UTC", 
+                           spread = FALSE, date_end = TRUE,date_insert = FALSE, 
+                           site_name = TRUE, print_query = FALSE) {
   
   # Check
-  if (is.na(site[1])) stop("The 'site' argument must be used...", call. = FALSE)
+  if (is.na(site[1]) || site == "") 
+    stop("The `site` argument must be used...", call. = FALSE)
   
   # Parse arguments
   site <- stringr::str_trim(site)
@@ -63,14 +94,56 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   period <- stringr::str_trim(period)
   period <- stringr::str_replace_all(period, " ", "_")
   
-  # Switch period to integer
+  # Check period
+  if (!length(period) == 1) 
+    stop("Only one `period` can be specified...", call. = FALSE)
+  
+  if (!period %in% valid_periods) {
+    
+    stop(
+      stringr::str_c(
+        "Invalid `period`. Valid options are: ", 
+        stringr::str_c(valid_periods, collapse = ", "),
+        "..."
+      ), 
+      call. = FALSE
+    )
+    
+  }
+  
+  # Switch period to integer, the summary integer used in smonitor
   summary <- ifelse(period == "source", 0, period)
+  
   summary <- ifelse(period %in% c("fifteen_minute", "15_minute", "15_min"), 15, summary)
+  
   summary <- ifelse(period == "hour", 1, summary)
+  
   summary <- ifelse(period == "day", 20, summary)
+  
+  summary <- ifelse(period == "month", 80, summary)
+  
+  # Could be another integer depending on source summary, used daily source here
+  summary <- ifelse(period %in% c("annual", "year"), 40, summary)
   
   # Time padder requires a string for sequence creation
   interval_pad <- ifelse(summary == 15, "15 min", period)
+  
+  # Usually for rainfall, precip, and snow
+  if (include_sums) {
+    
+    # ifelse not working here?
+    if (summary[1] == 1) summary <- c(summary, 5)
+    
+    # if (summary[1] == 15) summary <- c(summary, 5)
+    
+    if (summary[1] == 20) summary <- c(summary, 24)
+    
+    if (summary[1] == 80) summary <- c(summary, 84)
+    
+    # Different here because daily sums are not needed to get an annual sum
+    if (summary[1] == 40) summary <- c(summary, 64)
+    
+  }
   
   # Does not make sense to pad data in these situations
   if (period == "source" | is.na(period)) pad <- FALSE
@@ -105,7 +178,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   if (nrow(df_processes) == 0) {
     
     warning(
-      "Check the 'site' and 'period' arguments, processes are not available...", 
+      "Check the `site` and `period` arguments, processes are not available...", 
       call. = FALSE
     )
     
@@ -145,7 +218,6 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     
   }
   
-  
   if (spread) {
     
     # Drop
@@ -164,7 +236,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
       
       # Raise warning
       warning(
-        "Data has been removed to honour 'spread' argument...", 
+        "Data has been removed to honour `spread` argument...", 
         call. = FALSE
       )
       
@@ -208,3 +280,6 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   return(df)
   
 }
+
+# For testing of inputs
+valid_periods <- c("source", "15_minute", "hour", "day", "month", "year")
