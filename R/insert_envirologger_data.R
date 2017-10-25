@@ -18,12 +18,15 @@
 #' 
 #' @param end End date to download and insert. 
 #' 
+#' @param verbose Should the funciton give messages?
+#' 
 #' @author Stuart K. Grange
 #' 
 #' @return Invisible, a database insert. 
 #' 
 #' @export
-insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
+insert_envirologger_data <- function(con, user, key, station, start, end = NA,
+                                     verbose = FALSE) {
   
   # Load look-up tables
   # Sites
@@ -40,7 +43,8 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
            channel_number = envirologger_channel_number)
   
   # Get observations with API
-  message("Getting new observations...")
+  if (verbose) message("Getting new observations...")
+  
   df <- envirologgerr::get_envirologger_data(
     user = user, 
     key = key, 
@@ -77,7 +81,7 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
     if (nrow(df) > 0) {
       
       # Delete observations
-      message("Deleting old observations...")
+      if (verbose) message("Deleting old observations...")
       
       # Does the grouping
       delete_observations(
@@ -88,18 +92,18 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA) {
       )
       
       # Insert
-      message("Inserting new observations...")
+      if (verbose) message("Inserting new observations...")
       insert_observations(con, df)
       
     } else {
       
-      message("No data inserted...")
+      if (verbose) message("No data inserted...")
       
     }
     
   } else {
     
-    message("No data inserted because API returned no data.")
+    if (verbose) message("No data inserted because API returned no data...")
     
   }
   

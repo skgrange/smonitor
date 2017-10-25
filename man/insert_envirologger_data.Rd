@@ -5,7 +5,8 @@
 \title{Function to get observations from the Envirologger API and insert them into a 
 \strong{smonitor} database.}
 \usage{
-insert_envirologger_data(con, user, key, station, start, end = NA)
+insert_envirologger_data(con, user, key, station, start, end = NA,
+  verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -19,6 +20,8 @@ insert_envirologger_data(con, user, key, station, start, end = NA)
 \item{start}{Start date to download and insert.}
 
 \item{end}{End date to download and insert.}
+
+\item{verbose}{Should the funciton give messages?}
 }
 \value{
 Invisible, a database insert.
