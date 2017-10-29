@@ -2,15 +2,19 @@
 % Please edit documentation in R/delete_process.R
 \name{delete_process}
 \alias{delete_process}
-\title{Function to delete all observations for a process from the 
+\title{Function to delete/purge all observations for a process from the 
 \code{`observations`} table in a \strong{smonitor} database.}
 \usage{
-delete_process(con, process)
+delete_process(con, process, by_process = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{process}{A vector of processes.}
+
+\item{by_process}{Should the function use multiple SQL statements to delete 
+processes? This is useuful if there are many to delete and a progress bar
+is desired.}
 }
 \description{
 \code{delete_process} is usually used when a process needs to be purged and 

@@ -21,9 +21,18 @@ calculate_trend_summaries <- function(con, df, interval = "month", verbose = TRU
                                       progress = "none") {
   
   # Do by site
-  plyr::ddply(df, "site", function(x) 
-    calculate_trend_summaries_worker(con, x, interval = interval, verbose = verbose), 
-    .progress = progress)
+  plyr::ddply(
+    df, 
+    "site", 
+    function(x) 
+      calculate_trend_summaries_worker(
+        con, 
+        x, 
+        interval = interval, 
+        verbose = verbose
+      ), 
+    .progress = progress
+  )
   
 }
 
@@ -98,7 +107,7 @@ calculate_trend_summaries_worker <- function(con, df, interval, verbose) {
       arrange(site,
               summary,
               variable,
-              ate)
+              date)
     
   } else {
     
@@ -107,7 +116,6 @@ calculate_trend_summaries_worker <- function(con, df, interval, verbose) {
     
   }
   
-  # Return
-  df
+  return(df)
   
 }
