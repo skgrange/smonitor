@@ -6,7 +6,7 @@
 \strong{smonitor} database.}
 \usage{
 delete_observations(con, df, groups = c("process", "summary"),
-  match = "between", progress = "none")
+  match = "between", verbose = FALSE, progress = "none")
 }
 \arguments{
 \item{con}{Database connection.}
@@ -22,7 +22,12 @@ is \code{c("process", "summary")} and should not need changing.}
 \code{"all"} are supported. Beware that \code{"all"} will remove all 
 observations associated with a process.}
 
+\item{verbose}{Should the function give messages?}
+
 \item{progress}{Type of progress bar to display.}
+}
+\value{
+Invisible. A database delete.
 }
 \description{
 \code{delete_observations} is generally used immediately before a database 
@@ -31,8 +36,8 @@ inserted. This process avoids duplicate observations which are almost always
 undesirable.
 }
 \details{
-\code{delete_observations} does allow the use of groups based on the input 
-data frame.
+\code{delete_observations} allows the use of groups based on the input data
+frame.
 }
 \seealso{
 \code{\link{db_execute}}, \code{\link{insert_observations}}

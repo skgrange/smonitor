@@ -5,8 +5,8 @@
 \title{Function to calculate trend summaries of observations in an \strong{smonitor}
 database.}
 \usage{
-calculate_trend_summaries(con, df, interval = "month", verbose = TRUE,
-  progress = "none")
+calculate_trend_summaries(con, df, interval = c("month", "year"),
+  verbose = TRUE, progress = "none")
 }
 \arguments{
 \item{con}{Database connection.}
@@ -14,13 +14,16 @@ calculate_trend_summaries(con, df, interval = "month", verbose = TRUE,
 \item{df}{Mapping data frame which contains \code{"site"} and 
 \code{"process"} variables.}
 
-\item{interval}{What interval should the trends be; \code{"month"} or 
-\code{"year"}?}
+\item{interval}{What interval should the trends be; \code{"month"} and 
+\code{"year"} are supported.}
 
 \item{verbose}{Should the function print what site and processes are being 
 processed?}
 
 \item{progress}{What type of progress bar should be displayed?}
+}
+\value{
+Invisible.
 }
 \description{
 Function to calculate trend summaries of observations in an \strong{smonitor}

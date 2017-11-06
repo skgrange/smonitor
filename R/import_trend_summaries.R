@@ -36,11 +36,16 @@ import_trend_summaries <- function(con, site = NA, variable = NA,
   aggregation <- stringr::str_to_lower(aggregation)
   
   # Switch aggregation
-  aggregation <- ifelse(aggregation %in% c("monthly_mean", "month_mean"), 92, 
-                        aggregation)
+  aggregation <- ifelse(
+    aggregation %in% c("monthly_mean", "month_mean"), 
+    92, 
+    aggregation
+  )
   
-  aggregation <- ifelse(aggregation %in% c("year_mean", "annual_mean"), 102, 
-                        aggregation)
+  aggregation <- ifelse(
+    aggregation %in% c("year_mean", "annual_mean"), 102, 
+    aggregation
+  )
   
   # Build
   sql <- stringr::str_c(
@@ -58,7 +63,8 @@ import_trend_summaries <- function(con, site = NA, variable = NA,
     ORDER BY site,
     summary,
     variable,
-    date")
+    date"
+  )
   
   # Add site where clause
   if (!is.na(site[1])) {
@@ -70,7 +76,10 @@ import_trend_summaries <- function(con, site = NA, variable = NA,
     
     # Add to statement
     sql <- stringr::str_replace(
-      sql, "ORDER BY", stringr::str_c(sql_site_and, " ORDER BY "))
+      sql,
+      "ORDER BY", 
+      stringr::str_c(sql_site_and, " ORDER BY ")
+    )
     
   }
   

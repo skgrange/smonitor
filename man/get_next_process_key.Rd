@@ -4,13 +4,20 @@
 \alias{get_next_process_key}
 \title{Function to get next \code{process} key for a \strong{smonitor} database.}
 \usage{
-get_next_process_key(con)
+get_next_process_key(con, minimum = NA, positive = TRUE)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{Database connection to an \strong{smonitor} database.}
+
+\item{minimum}{If \code{positive}, what is the minimum value of the process 
+key? Useful for when process keys want to be grouped together.}
+
+\item{positive}{Should the next process key be greater than the current 
+process in the database? If \code{FALSE}, negative sequences are usually 
+to be generated.}
 }
 \value{
-Interger with length of 1.
+Integer with length of 1.
 }
 \description{
 Function to get next \code{process} key for a \strong{smonitor} database.

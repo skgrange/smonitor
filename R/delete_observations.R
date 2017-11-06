@@ -6,12 +6,10 @@
 #' inserted. This process avoids duplicate observations which are almost always
 #' undesirable. 
 #' 
-#' \code{delete_observations} does allow the use of groups based on the input 
-#' data frame.
+#' \code{delete_observations} allows the use of groups based on the input data
+#' frame.
 #' 
 #' @author Stuart K. Grange
-#' 
-#' @seealso \code{\link{db_execute}}, \code{\link{insert_observations}}
 #' 
 #' @param con Database connection.
 #' 
@@ -26,19 +24,29 @@
 #' \code{"all"} are supported. Beware that \code{"all"} will remove all 
 #' observations associated with a process. 
 #' 
+#' @param verbose Should the function give messages? 
+#' 
 #' @param progress Type of progress bar to display. 
+#' 
+#' @return Invisible. A database delete. 
+#' 
+#' @seealso \code{\link{db_execute}}, \code{\link{insert_observations}}
 #' 
 #' @export
 delete_observations <- function(con, df, groups = c("process", "summary"), 
-                                match = "between", progress = "none") {
+                                match = "between", verbose = FALSE, 
+                                progress = "none") {
   
   # Check data frame input
   if (!all(groups %in% names(df))) 
-    stop("Data frame must contain `group` variables...", call. = FALSE)
+    stop("Input data frame must contain all `group` variables...", call. = FALSE)
   
   # May need to use the argument
   if (any(is.na(df[, "process"])))
-    stop("Data frame must not contain missing processes...", call. = FALSE)
+    stop("Input data frame must not contain missing processes...", call. = FALSE)
+  
+  if (any(is.na(df[, "date"])))
+    stop("Input data frame must not contain missing dates...", call. = FALSE)
   
   if (match == "between") {
     
@@ -49,7 +57,8 @@ delete_observations <- function(con, df, groups = c("process", "summary"),
       function(x) delete_observations_worker(
         con, 
         x, 
-        match = match
+        match = match,
+        verbose = verbose
       ),
       .progress = progress)
     
@@ -71,7 +80,7 @@ delete_observations <- function(con, df, groups = c("process", "summary"),
 
 
 # No export
-delete_observations_worker <- function(con, df, match) {
+delete_observations_worker <- function(con, df, match, verbose) {
   
   # Drop tbl_df
   df <- threadr::base_df(df)
@@ -100,6 +109,27 @@ delete_observations_worker <- function(con, df, match) {
     
     # Clean
     sql <- threadr::str_trim_many_spaces(sql)
+    
+    # Message to user
+    if (verbose) {
+      
+      date_min_format <- threadr::parse_unix_time(date_min)
+      date_max_format <- threadr::parse_unix_time(date_min)
+      date_min_format <- format(date_min_format, usetz = TRUE)
+      date_max_format <- format(date_max_format, usetz = TRUE)
+      
+      list_message <- list(
+        message = "Deleting observations...",
+        date_system = format(lubridate::now(), usetz = TRUE),
+        process = process,
+        summary = summary,
+        date_span = c(date_min_format, date_max_format)
+      )
+      
+      message(threadr::to_json(list_message))
+      
+    }
+    
     
     # Use statement
     databaser::db_execute(con, sql)
