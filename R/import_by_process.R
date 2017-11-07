@@ -35,6 +35,8 @@
 #' @param site_name Should the return include the \code{site_name} variable? 
 #' Default is \code{TRUE}. 
 #' 
+#' @param unit Should the processes' units be included in the return? 
+#' 
 #' @param warn Should the functions raise warnings? 
 #' 
 #' @param print_query Should the SQL query string be printed? 
@@ -46,11 +48,25 @@
 #' 
 #' @author Stuart K. Grange
 #' 
+#' @examples 
+#' \dontrun{
+#'
+#' # Simple usage, all summaries for a process will be returned
+#' data_example <- import_by_process(con, process = 400)
+#' 
+#' # Many processes
+#' data_example <- import_by_process(con, process = 1:20)
+#' 
+#' # Simple usage, a single summary will be returned
+#' data_example <- import_by_process(con, process = 400, summary = 1)
+#' 
+#' }
+#' 
 #' @export
 import_by_process <- function(con, process = NA, summary = NA, start = 1969, 
                               end = NA, tz = "UTC", valid_only = TRUE, 
                               date_end = TRUE, date_insert = FALSE, 
-                              site_name = TRUE, warn = TRUE, 
+                              site_name = TRUE, unit = FALSE, warn = TRUE, 
                               print_query = FALSE) {
   
   # Check
@@ -62,9 +78,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   end <- threadr::parse_date_arguments(end, "end")
   
   # Push to last instant in day
-  if (lubridate::hour(end) == 0)
-    end <- end + lubridate::hours(23) + lubridate::minutes(59) + 
-    lubridate::seconds(59)
+  if (lubridate::hour(end) == 0) end <- end + (threadr::seconds_in_a_day() - 1)
   
   # For sql
   start <- as.numeric(start)
@@ -75,9 +89,10 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   # Get table to link processes with sites
   df_processes <- import_by_process_process_table(
     con, 
-    process, 
-    site_name, 
-    print_query
+    process = process, 
+    site_name = site_name, 
+    unit = unit,
+    print_query = print_query
   )
   
   # Check for data
@@ -155,7 +170,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   
-  # Arrange
+  # Arrange observations
   df <- arrange(df, process, date)
   
   # And make a nice variable order
@@ -170,6 +185,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     dplyr::matches("process"), 
     dplyr::matches("summary"),
     dplyr::matches("validity"),
+    dplyr::matches("unit"),
     dplyr::matches("value"),
     dplyr::everything()
   )
@@ -179,13 +195,15 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
 }
 
 
-import_by_process_process_table <- function(con, process, site_name, print_query) {
+import_by_process_process_table <- function(con, process, site_name, unit, 
+                                            print_query) {
   
   # Link processes to sites
   sql_processes <- stringr::str_c(
     "SELECT processes.process, 
     processes.site,
     processes.variable,
+    processes.unit,
     sites.site_name
     FROM processes 
     LEFT JOIN sites
@@ -202,8 +220,9 @@ import_by_process_process_table <- function(con, process, site_name, print_query
   # Get data
   df <- databaser::db_get(con, sql_processes)
   
-  # Drop site_name
+  # Drop variables
   if (!site_name) df$site_name <- NULL
+  if (!unit) df$unit <- NULL
   
   return(df)
   

@@ -6,7 +6,7 @@
 \usage{
 import_by_process(con, process = NA, summary = NA, start = 1969,
   end = NA, tz = "UTC", valid_only = TRUE, date_end = TRUE,
-  date_insert = FALSE, site_name = TRUE, warn = TRUE,
+  date_insert = FALSE, site_name = TRUE, unit = FALSE, warn = TRUE,
   print_query = FALSE)
 }
 \arguments{
@@ -42,6 +42,8 @@ Default is \code{FALSE}.}
 \item{site_name}{Should the return include the \code{site_name} variable? 
 Default is \code{TRUE}.}
 
+\item{unit}{Should the processes' units be included in the return?}
+
 \item{warn}{Should the functions raise warnings?}
 
 \item{print_query}{Should the SQL query string be printed?}
@@ -53,6 +55,21 @@ types.
 \description{
 \code{import_by_process} is considered the primary data importer for 
 \strong{smonitor}.
+}
+\examples{
+\dontrun{
+
+# Simple usage, all summaries for a process will be returned
+data_example <- import_by_process(con, process = 400)
+
+# Many processes
+data_example <- import_by_process(con, process = 1:20)
+
+# Simple usage, a single summary will be returned
+data_example <- import_by_process(con, process = 400, summary = 1)
+
+}
+
 }
 \seealso{
 \code{\link{import_by_site}} for a higher-level importing function

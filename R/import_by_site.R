@@ -42,6 +42,8 @@
 #' @param site_name Should the return include the \code{site_name} variable? 
 #' Default is \code{TRUE}. 
 #' 
+#' @param unit Should the processes' units be included in the return? 
+#' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
 #' @seealso \code{\link{import_by_process}}
@@ -77,8 +79,8 @@
 import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA, 
                            period = "hour", include_sums = TRUE, 
                            valid_only = TRUE, pad = TRUE, tz = "UTC", 
-                           spread = FALSE, date_end = TRUE,date_insert = FALSE, 
-                           site_name = TRUE, print_query = FALSE) {
+                           spread = FALSE, date_end = TRUE, date_insert = FALSE, 
+                           site_name = TRUE, unit = FALSE, print_query = FALSE) {
   
   # Check
   if (is.na(site[1]) || site == "") 
@@ -198,6 +200,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     date_end = date_end, 
     date_insert = date_insert, 
     site_name = site_name, 
+    unit = unit,
     print_query = print_query
   )
   
@@ -222,8 +225,9 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     
     # Drop
     if (date_insert) df$date_insert <- NULL
+    if (unit) df$unit <- NULL
     
-    # Cast data
+    # Spread data
     df <- tryCatch({
       
       df %>%
