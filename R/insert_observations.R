@@ -11,7 +11,7 @@
 #' 
 #' @param df Data frame containing observations to be inserted. 
 #' 
-#' @param message Should a message of counts and size be displayed? 
+#' @param verbose Should the function give messages? 
 #' 
 #' @return Invisible, an insert into a database table. 
 #' 
@@ -21,13 +21,15 @@
 #' # Insert some data
 #' insert_observations(con, data_test)
 #' 
-#' # Insert some data, with a message
-#' insert_observations(con, data_test, message = TRUE)
+#' # Insert some data, with some messages
+#' insert_observations(con, data_test, verbose = TRUE)
 #' 
 #' }
 #' 
 #' @export
-insert_observations <- function(con, df, message = FALSE) {
+insert_observations <- function(con, df, verbose = FALSE) {
+  
+  if (verbose) message("Formatting input for smonitor insert...")
   
   # No tbl_df
   df <- threadr::base_df(df)
@@ -63,6 +65,8 @@ insert_observations <- function(con, df, message = FALSE) {
   df$date_insert <- as.numeric(date_insert)
   
   # Do some checking
+  if (verbose) message("Checking smonitor's constraints...")
+  
   if (anyNA(df$process)) 
     stop("Missing processes detected, no data inserted...", call. = FALSE)
   
@@ -73,7 +77,7 @@ insert_observations <- function(con, df, message = FALSE) {
     stop("Missing dates detected, no data inserted...", call. = FALSE)
   
   # Print a message
-  if (message) {
+  if (verbose) {
     
     list_message <- list(
       message = "Inserting observations...", 

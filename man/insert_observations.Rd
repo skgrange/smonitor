@@ -5,14 +5,14 @@
 \title{Function to insert observations into the \code{`observations`} in a 
 \strong{smonitor} database.}
 \usage{
-insert_observations(con, df, message = FALSE)
+insert_observations(con, df, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{df}{Data frame containing observations to be inserted.}
 
-\item{message}{Should a message of counts and size be displayed?}
+\item{verbose}{Should the function give messages?}
 }
 \value{
 Invisible, an insert into a database table.
@@ -28,8 +28,8 @@ a \strong{smonitor} database.
 # Insert some data
 insert_observations(con, data_test)
 
-# Insert some data, with a message
-insert_observations(con, data_test, message = TRUE)
+# Insert some data, with some messages
+insert_observations(con, data_test, verbose = TRUE)
 
 }
 
