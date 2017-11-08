@@ -63,14 +63,14 @@ insert_observations <- function(con, df, message = FALSE) {
   df$date_insert <- as.numeric(date_insert)
   
   # Do some checking
-  if (any(is.na(df$process))) 
-    warning("Missing processes detected...", call. = FALSE)
+  if (anyNA(df$process)) 
+    stop("Missing processes detected, no data inserted...", call. = FALSE)
   
-  if (any(is.na(df$summary))) 
-    warning("Missing summaries detected...", call. = FALSE)
+  if (anyNA(df$summary))
+    stop("Missing summaries detected, no data inserted...", call. = FALSE)
   
-  if (any(is.na(df$date))) 
-    warning("Missing dates detected...", call. = FALSE)
+  if (anyNA(df$date))
+    stop("Missing dates detected, no data inserted...", call. = FALSE)
   
   # Print a message
   if (message) {
