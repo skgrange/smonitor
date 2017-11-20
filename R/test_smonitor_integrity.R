@@ -63,7 +63,7 @@ test_smonitor_integrity <- function(con) {
   processes <- databaser::db_get(con, "SELECT process FROM processes ORDER BY process")[, 1]
   processes_duplicated <- any(duplicated(processes))
   
-  if (sites_duplicated) {
+  if (processes_duplicated) {
     
     message("There are duplicated processes in `processes`, this is a critical error and should not occur...")
     
@@ -90,7 +90,6 @@ test_smonitor_integrity <- function(con) {
   
   # test if all processes in observations are present in process
   
-  
   dates <- databaser::db_get(con, "SELECT date FROM observations WHERE date IS NULL LIMIT 1")
   dates_missing <- ifelse(nrow(dates) != 0, TRUE, FALSE)
   
@@ -103,7 +102,6 @@ test_smonitor_integrity <- function(con) {
     message("There are no missing dates in `observations`...")
     
   }
-  
   
   processes_observations <- databaser::db_get(con, "SELECT process FROM observations WHERE process IS NULL LIMIT 1")
   processes_observations_missing <- ifelse(nrow(processes_observations) != 0, TRUE, FALSE)
