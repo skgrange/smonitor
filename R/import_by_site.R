@@ -80,7 +80,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
                            period = "hour", include_sums = TRUE, 
                            valid_only = TRUE, pad = TRUE, tz = "UTC", 
                            spread = FALSE, date_end = TRUE, date_insert = FALSE, 
-                           site_name = TRUE, unit = FALSE, print_query = FALSE) {
+                           site_name = TRUE, unit = TRUE, print_query = FALSE) {
   
   # Check
   if (is.na(site[1]) || site == "") 

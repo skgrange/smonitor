@@ -66,7 +66,7 @@
 import_by_process <- function(con, process = NA, summary = NA, start = 1969, 
                               end = NA, tz = "UTC", valid_only = TRUE, 
                               date_end = TRUE, date_insert = FALSE, 
-                              site_name = TRUE, unit = FALSE, warn = TRUE, 
+                              site_name = TRUE, unit = TRUE, warn = TRUE, 
                               print_query = FALSE) {
   
   # Check
