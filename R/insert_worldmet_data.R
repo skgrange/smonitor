@@ -134,15 +134,6 @@ download_noaa <- function(site, start = 1990, end = NA) {
 
 download_noaa_worker <- function(site, year) {
   
-  # message(
-  #   to_json(
-  #     list(
-  #       site = site,
-  #       year = year
-  #     )
-  #   )
-  # )
-  
   # Get data
   df <- worldmet::importNOAA(code = site, year = year)
   
