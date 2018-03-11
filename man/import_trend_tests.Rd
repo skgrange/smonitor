@@ -5,10 +5,13 @@
 \title{Function to import the \code{`trend_test`} table from an \strong{smonitor} 
 database.}
 \usage{
-import_trend_tests(con)
+import_trend_tests(con, date_insert = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
+
+\item{date_insert}{Should the return include the \code{date_insert} variable? 
+Default is \code{FALSE}.}
 }
 \value{
 Data frame.

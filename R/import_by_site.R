@@ -131,7 +131,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   interval_pad <- ifelse(summary == 15, "15 min", period)
   
   # Usually for rainfall, precip, and snow
-  if (include_sums) {
+  if (include_sums && !is.na(period)) {
     
     # ifelse not working here?
     if (summary[1] == 1) summary <- c(summary, 5)
@@ -286,4 +286,4 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
 }
 
 # For testing of inputs
-valid_periods <- c("source", "15_minute", "hour", "day", "month", "year")
+valid_periods <- c("source", "15_minute", "hour", "day", "month", "year", NA)
