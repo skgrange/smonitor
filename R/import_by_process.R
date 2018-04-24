@@ -73,6 +73,10 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   if (is.na(process[1])) 
     stop("The `process` argument must be used...", call. = FALSE)
   
+  # Check for sql wildcards
+  db_wildcard_check(process)
+  db_wildcard_check(summary)
+  
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
   end <- threadr::parse_date_arguments(end, "end")
@@ -215,7 +219,7 @@ import_by_process_process_table <- function(con, process, site_name, unit,
   sql_processes <- threadr::str_trim_many_spaces(sql_processes)
   
   # Message statement to user
-  if (print_query) message(stringr::str_c("Processes query: ", sql_processes))
+  if (print_query) message("Processes query: ", sql_processes)
   
   # Get data
   df <- databaser::db_get(con, sql_processes)
@@ -269,10 +273,9 @@ import_by_process_observation_table <- function(con, process, summary, start,
   # Drop date_end from query
   if (!date_end) {
     
-    sql_observations <- stringr::str_replace(
+    sql_observations <- stringr::str_remove(
       sql_observations, 
-      "observations.date_end,", 
-      ""
+      "observations.date_end,"
     )
     
   }
@@ -280,19 +283,18 @@ import_by_process_observation_table <- function(con, process, summary, start,
   # Drop date_insert from query
   if (!date_insert) {
     
-    sql_observations <- stringr::str_replace(
+    sql_observations <- stringr::str_remove(
       sql_observations, 
-      "observations.date_insert,", 
-      ""
+      "observations.date_insert,"
     )
     
   }
     
   # Clean sql
-  sql_observations <- threadr::str_trim_many_spaces(sql_observations)
+  sql_observations <- stringr::str_squish(sql_observations)
   
   # Message statement to user
-  if (print_query) message(stringr::str_c("Observations query: ", sql_observations))
+  if (print_query) message("Observations query: ", sql_observations)
   
   # Get observations
   df <- databaser::db_get(con, sql_observations)

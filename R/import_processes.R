@@ -34,7 +34,7 @@ import_processes <- function(con, tz = "UTC", print_query = FALSE) {
           ORDER BY processes.process"
   
   # Clean
-  sql <- threadr::str_trim_many_spaces(sql)
+  sql <- stringr::str_squish(sql)
   
   # Message
   if (print_query) message(sql)

@@ -37,6 +37,9 @@
 calculate_summaries <- function(con, df_map, start, end, tz = "UTC", 
                                 insert = TRUE) {
   
+  # Message
+  .Defunct("import_by_process", package = "smonitor")
+  
   plyr::a_ply(df_map, 1, function(x) 
     summary_calculator(con, x, start, end, tz = tz, insert))
   

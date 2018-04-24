@@ -51,7 +51,7 @@ import_any <- function(con, process, summary = NA, start = 1970, end = NA,
                        print_query = FALSE) {
   
   # Message
-  .Deprecated("import_by_process", package = "smonitor")
+  .Defunct("import_by_process", package = "smonitor")
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")
