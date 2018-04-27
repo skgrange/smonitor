@@ -1,14 +1,13 @@
 language: r
 sudo: required
-warnings_are_errors: false
+cache: packages
 
 env:
   global:
     - _R_CHECK_FORCE_SUGGESTS_=FALSE
 
-r_binary_packages:
-  - Rcpp
-  - testthat
+r_packages:
+  - devtools
 
 # Install development packages
 r_github_packages:
