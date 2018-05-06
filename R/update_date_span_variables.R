@@ -12,6 +12,9 @@
 #' @param row_counts Should the \code{`row_counts`} table be updated (or 
 #' inserted)? 
 #' 
+#' @param variables_monitored Should the \code{variable_monitored} vaiable also 
+#' be updated? 
+#' 
 #' @param verbose Should the function give messages?
 #' 
 #' @author Stuart K. Grange

@@ -22,6 +22,8 @@
 #' 
 #' @param end End date for summaries. 
 #' 
+#' @param tz Time zone to use. 
+#' 
 #' @param insert Should the data be inserted? Default is \code{TRUE}.
 #' 
 #' @examples 

@@ -17,6 +17,9 @@ aggregation functions?}
 \item{row_counts}{Should the \code{`row_counts`} table be updated (or 
 inserted)?}
 
+\item{variables_monitored}{Should the \code{variable_monitored} vaiable also 
+be updated?}
+
 \item{verbose}{Should the function give messages?}
 }
 \value{

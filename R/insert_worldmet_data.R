@@ -78,7 +78,7 @@ insert_worldmet_data <- function(con, site, start, end = NA,
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @param Site Site code, for example \code{"037720-99999"}. 
+#' @param site Site code, for example \code{"037720-99999"}. 
 #' 
 #' @param start Start year. 
 #' 

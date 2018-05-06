@@ -8,11 +8,11 @@ with \code{worldmet}.}
 download_noaa(site, start = 1990, end = NA)
 }
 \arguments{
+\item{site}{Site code, for example \code{"037720-99999"}.}
+
 \item{start}{Start year.}
 
 \item{end}{End year.}
-
-\item{Site}{Site code, for example \code{"037720-99999"}.}
 }
 \description{
 Function to get observations from NOAA's Integrated Surface Database (ISD)

@@ -71,7 +71,7 @@ insert_kings_college_data <- function(con, site, start, end = NA,
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @param Site Site code, for example \code{"rb1"}. 
+#' @param site Site code, for example \code{"rb1"}. 
 #' 
 #' @param start Start year.
 #' 

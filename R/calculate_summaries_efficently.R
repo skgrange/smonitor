@@ -20,6 +20,8 @@
 #' 
 #' @param end End date for summaries. 
 #' 
+#' @param tz Time zone in use. 
+#' 
 #' @param insert Should the data be inserted? Default is \code{TRUE}. 
 #' 
 #' @param verbose Should the function be verbose? 

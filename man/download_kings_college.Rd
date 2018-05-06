@@ -8,11 +8,11 @@ accessed with \strong{openair}.}
 download_kings_college(site, start, end = NA)
 }
 \arguments{
+\item{site}{Site code, for example \code{"rb1"}.}
+
 \item{start}{Start year.}
 
 \item{end}{End year.}
-
-\item{Site}{Site code, for example \code{"rb1"}.}
 }
 \description{
 Function to get observations which are served by Kings College London and 

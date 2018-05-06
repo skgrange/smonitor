@@ -18,6 +18,8 @@ calculate_summaries_efficently(con, df_map, start = NA, end = NA,
 
 \item{end}{End date for summaries.}
 
+\item{tz}{Time zone in use.}
+
 \item{insert}{Should the data be inserted? Default is \code{TRUE}.}
 
 \item{verbose}{Should the function be verbose?}

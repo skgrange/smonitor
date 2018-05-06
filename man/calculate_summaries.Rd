@@ -17,6 +17,8 @@ variables.}
 
 \item{end}{End date for summaries.}
 
+\item{tz}{Time zone to use.}
+
 \item{insert}{Should the data be inserted? Default is \code{TRUE}.}
 }
 \description{

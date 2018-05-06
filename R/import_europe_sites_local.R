@@ -1,3 +1,14 @@
+#' Function to import a local copy of the \strong{smonitor} Europe \code{sites} 
+#' table. 
+#' 
+#' @param file Local file name. 
+#' 
+#' @param tz Time zone for dates. 
+#' 
+#' @author Stuart K. Grange
+#' 
+#' @return Data frame.
+#' 
 #' @export
 import_europe_sites_local <- function(file = NA, tz = "UTC") {
   
@@ -17,6 +28,18 @@ import_europe_sites_local <- function(file = NA, tz = "UTC") {
 }
 
 
+
+#' Function to import a local copy of the \strong{smonitor} Europe 
+#' \code{processes} table. 
+#' 
+#' @param file Local file name. 
+#' 
+#' @param tz Time zone for dates. 
+#' 
+#' @author Stuart K. Grange
+#' 
+#' @return Data frame.
+#' 
 #' @export
 import_europe_processes_local <- function(file = NA, tz = "UTC") {
   
