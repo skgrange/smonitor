@@ -74,8 +74,8 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     stop("The `process` argument must be used...", call. = FALSE)
   
   # Check for sql wildcards
-  db_wildcard_check(process)
-  db_wildcard_check(summary)
+  databaser::db_wildcard_check(process)
+  databaser::db_wildcard_check(summary)
   
   # Parse date arguments
   start <- threadr::parse_date_arguments(start, "start")

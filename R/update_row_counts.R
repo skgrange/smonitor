@@ -6,14 +6,13 @@
 #' 
 #' @param estimate Should the row counts be estimated rather than counted? Only
 #' works for PostgreSQL databases.
-#'  
-#' @param read Should the table be immediately read after being updated? Default
-#' is \code{FALSE}. 
 #' 
 #' @seealso \code{\link{db_count_rows}}
 #' 
+#' @return Invisible data frame. 
+#' 
 #' @export
-update_row_counts <- function(con, estimate = FALSE, read = FALSE) {
+update_row_counts <- function(con, estimate = FALSE) {
   
   # Get all tables
   table <- databaser::db_list_tables(con)
@@ -27,10 +26,9 @@ update_row_counts <- function(con, estimate = FALSE, read = FALSE) {
   # Insert and always replace table
   databaser::db_insert(con, "row_counts", df, replace = TRUE)
   
-  # Reassign df
-  if (read) df <- databaser::db_read_table(con, "row_counts")
-
-  # Return
-  if (read) df else invisible()
+  # Read table
+  df <- databaser::db_read_table(con, "row_counts")
+  
+  return(invisible(df))
 
 }

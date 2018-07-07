@@ -24,12 +24,9 @@
 insert_wunderground_data <- function(con, site, start, end = NA, validity = FALSE,
                                      progress = "time") {
   
-  # For dplyr
-  site_vector <- site
-  
   # Get look-up table for a join
   df_look <- import_processes(con) %>% 
-    filter(site %in% site_vector) %>% 
+    filter(site %in% !!site) %>% 
     select(process,
            site,
            variable)
