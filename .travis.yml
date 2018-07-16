@@ -14,5 +14,3 @@ r_packages:
 r_github_packages:
   - skgrange/threadr
   - skgrange/databaser
-  - skgrange/envirologgerr
-

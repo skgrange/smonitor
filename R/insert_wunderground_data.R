@@ -32,9 +32,10 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
            variable)
   
   # Get observations, every site is done separately
-  message("Getting new observations...")
+  # message("Getting new observations...")
+  
   df <- plyr::ldply(
-    site_vector, 
+    site, 
     function(x) 
       sscraper::scrape_wunderground(
         x, 
@@ -73,7 +74,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
     if (nrow(df) > 0) {
       
       # Delete observations
-      message("Deleting old observations...")
+      # message("Deleting old observations...")
       
       # Does the grouping
       delete_observations(
@@ -84,7 +85,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
       )
       
       # Insert
-      message("Inserting new observations...")
+      # message("Inserting new observations...")
       insert_observations(con, df)
       
     } else {
@@ -142,7 +143,7 @@ insert_wunderground_data_frame <- function(con, df) {
   if (nrow(df) > 0) {
     
     # Delete observations
-    message("Deleting old observations...")
+    # message("Deleting old observations...")
     
     # Does the grouping
     delete_observations(
@@ -153,7 +154,7 @@ insert_wunderground_data_frame <- function(con, df) {
     )
     
     # Insert
-    message("Inserting new observations...")
+    # message("Inserting new observations...")
     insert_observations(con, df)
     
   } else {
