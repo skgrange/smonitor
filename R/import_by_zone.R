@@ -59,13 +59,16 @@ import_by_zone <- function(con, zone, variable = NA, sp_other = NA, start = 1969
     # Build sql
     zone <- threadr::str_sql_quote(zone)
     
-    sql <- stringr::str_c("SELECT * FROM 
-                         zones WHERE zone IN (", zone, ")")
+    sql <- stringr::str_c(
+      "SELECT * 
+      FROM zones 
+      WHERE zone IN (", zone, ")"
+    )
     
-    sql <- threadr::str_trim_many_spaces(sql)
+    sql <- stringr::str_squish(sql)
     
     # Get zones
-    sp_zones <- db_get(con, sql) %>% 
+    sp_zones <- databaser::db_get(con, sql) %>% 
       gissr::sp_from_wkt(projection = gissr::projection_wgs84())
     
     # Filter sites

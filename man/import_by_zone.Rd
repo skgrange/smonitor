@@ -6,8 +6,9 @@
 spatial polygons.}
 \usage{
 import_by_zone(con, zone, variable = NA, sp_other = NA, start = 1969,
-  end = NA, period = "hour", pad = TRUE, spread = TRUE, tz = "UTC",
-  valid_only = TRUE, site_name = FALSE, print_query = FALSE)
+  end = NA, period = "hour", pad = TRUE, spread = TRUE,
+  tz = "UTC", valid_only = TRUE, site_name = FALSE,
+  print_query = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}

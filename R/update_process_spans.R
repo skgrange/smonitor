@@ -21,7 +21,6 @@ update_process_spans <- function(con, process = NA, na.rm = FALSE) {
   df <- calculate_process_spans(
     con, 
     process = process, 
-    tz = tz, 
     na.rm = na.rm
   ) 
   
@@ -67,7 +66,7 @@ update_process_spans <- function(con, process = NA, na.rm = FALSE) {
 }
 
 
-calculate_process_spans <- function(con, process, tz, na.rm) {
+calculate_process_spans <- function(con, process, na.rm) {
   
   # Build sql
   if (is.na(process[1])) {

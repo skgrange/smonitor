@@ -87,9 +87,7 @@ download_kings_college <- function(site, start, end = NA) {
   df <- tryCatch({
     
     suppressWarnings(
-      quiet(
-        openair::importKCL(site = site, year = start:end)
-      )
+      openair::importKCL(site = site, year = start:end)
     )
     
   }, error = function(e) {
