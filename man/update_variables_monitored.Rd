@@ -3,7 +3,7 @@
 \name{update_variables_monitored}
 \alias{update_variables_monitored}
 \title{Function to update the \code{variables_monitored} variable in the 
-\code{`process`} table of an \strong{smonitor} database.}
+\code{`site`} table of an \strong{smonitor} database.}
 \usage{
 update_variables_monitored(con)
 }
@@ -15,7 +15,7 @@ Invisible.
 }
 \description{
 Function to update the \code{variables_monitored} variable in the 
-\code{`process`} table of an \strong{smonitor} database.
+\code{`site`} table of an \strong{smonitor} database.
 }
 \author{
 Stuart K. Grange
