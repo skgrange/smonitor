@@ -3,7 +3,8 @@
 #' 
 #' \code{insert_observations} will handle the variable/column order, the date 
 #' conversions, add a \code{"date_insert"} variable, and the database insert for 
-#' a \strong{smonitor} database. 
+#' a \strong{smonitor} database. A number of tests are conducted before insertion
+#' is attempted. 
 #' 
 #' @author Stuart K. Grange. 
 #' 
@@ -13,7 +14,7 @@
 #' 
 #' @param verbose Should the function give messages? 
 #' 
-#' @return Invisible, an insert into a database table. 
+#' @return Invisible, an insert into the \code{`observations`} database table. 
 #' 
 #' @examples 
 #' \dontrun{
@@ -29,43 +30,38 @@
 #' @export
 insert_observations <- function(con, df, verbose = FALSE) {
   
-  if (verbose) message("Formatting input for smonitor insert...")
+  # Get system date
+  date_system <- round(lubridate::now())
   
-  # No tbl_df
-  df <- threadr::base_df(df)
+  if (verbose) 
+    message(threadr::str_date_formatted(), ": Formatting input for smonitor insert...")
   
   # Get variables in database table
-  variables <- databaser::db_list_variables(con, "observations")
+  df_template <- databaser::db_table_names(con, "observations")
   
-  # Drop variables which are not in table
-  index <- ifelse(names(df) %in% variables, TRUE, FALSE)
+  # Drop variables which are not in `observations`
+  index <- ifelse(names(df) %in% names(df_template), TRUE, FALSE)
   df <- df[, index]
   
   # Convert dates to unix time, before binding otherwise conversion occurs
   if (lubridate::is.POSIXt(df$date)) df$date <- as.numeric(df$date)
   if (lubridate::is.POSIXt(df$date_end)) df$date_end <- as.numeric(df$date_end)
   
-  # Ensure inserting data frame has all variables and are in the correct order
-  # Create a data frame with only headers
-  df_headers <- read.csv(
-    textConnection(stringr::str_c(variables, collapse = ",")), 
-    stringsAsFactors = FALSE
-  )
+  # Order variables and also add variables which do not exist
+  df <- bind_rows(df_template, df)
   
-  # Bind
-  # To-do, this is expensive and slow but it handles data-type changes well
-  df <- plyr::rbind.fill(df_headers, df)
-  
-  # Force after binding
-  gc()
-  
-  # Add variable
-  date_insert <- lubridate::now()
-  date_insert <- round(date_insert)
-  df$date_insert <- as.numeric(date_insert)
+  # Add date insert variable
+  df$date_insert <- as.numeric(date_system)
   
   # Do some checking
-  if (verbose) message("Checking smonitor's constraints...")
+  if (verbose) {
+    
+    message(
+      threadr::str_date_formatted(), 
+      ": Checking smonitor's constraints before insert..."
+    )
+    
+  }
   
   if (anyNA(df$process)) 
     stop("Missing processes detected, no data inserted...", call. = FALSE)
@@ -76,22 +72,18 @@ insert_observations <- function(con, df, verbose = FALSE) {
   if (anyNA(df$date))
     stop("Missing dates detected, no data inserted...", call. = FALSE)
   
-  # Print a message
   if (verbose) {
     
-    list_message <- list(
-      message = "Inserting observations...", 
-      date_begin = format(date_insert, usetz = TRUE),
-      observations = threadr::str_thousands_separator(nrow(df)),
-      size = threadr::object_size(df)
+    message(
+      threadr::str_date_formatted(), 
+      ": Inserting ", 
+      threadr::str_thousands_separator(nrow(df)), 
+      " observations into `observations`..."
     )
-    
-    # The message
-    message(jsonlite::toJSON(list_message, pretty = TRUE, auto_unbox = TRUE))
     
   }
   
-  # Insert into database
+  # Insert into observations
   databaser::db_insert(con, "observations", df)
   
 }

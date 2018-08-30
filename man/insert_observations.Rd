@@ -15,12 +15,13 @@ insert_observations(con, df, verbose = FALSE)
 \item{verbose}{Should the function give messages?}
 }
 \value{
-Invisible, an insert into a database table.
+Invisible, an insert into the \code{`observations`} database table.
 }
 \description{
 \code{insert_observations} will handle the variable/column order, the date 
 conversions, add a \code{"date_insert"} variable, and the database insert for 
-a \strong{smonitor} database.
+a \strong{smonitor} database. A number of tests are conducted before insertion
+is attempted.
 }
 \examples{
 \dontrun{
