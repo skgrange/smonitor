@@ -184,7 +184,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
       call. = FALSE
     )
     
-    return(data.frame())
+    return(data_frame())
     
   }
   
