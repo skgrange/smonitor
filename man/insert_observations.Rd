@@ -5,12 +5,15 @@
 \title{Function to insert observations into the \code{`observations`} in a 
 \strong{smonitor} database.}
 \usage{
-insert_observations(con, df, verbose = FALSE)
+insert_observations(con, df, check_processes = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{df}{Data frame containing observations to be inserted.}
+
+\item{check_processes}{Should the processes in \code{df} be tested for their
+existance in the `processes` table before insert?}
 
 \item{verbose}{Should the function give messages?}
 }

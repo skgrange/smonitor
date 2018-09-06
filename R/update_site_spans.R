@@ -53,7 +53,7 @@ update_site_spans <- function(con, variables_monitored = FALSE) {
   sql <- stringr::str_replace_all(sql, "NA", "NULL")
   
   # Clean
-  sql <- threadr::str_trim_many_spaces(sql)
+  sql <- stringr::str_squish(sql)
   
   # Update variables to be null before insert
   databaser::db_execute(

@@ -110,7 +110,7 @@ calculate_process_spans <- function(con, process, na.rm) {
   }
   
   # Clean query
-  sql <- threadr::str_trim_many_spaces(sql)
+  sql <- stringr::str_squish(sql)
   
   # Get table
   df <- databaser::db_get(con, sql)

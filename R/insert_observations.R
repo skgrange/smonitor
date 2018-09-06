@@ -12,6 +12,9 @@
 #' 
 #' @param df Data frame containing observations to be inserted. 
 #' 
+#' @param check_processes Should the processes in \code{df} be tested for their
+#' existance in the `processes` table before insert?
+#' 
 #' @param verbose Should the function give messages? 
 #' 
 #' @return Invisible, an insert into the \code{`observations`} database table. 
@@ -28,7 +31,7 @@
 #' }
 #' 
 #' @export
-insert_observations <- function(con, df, verbose = FALSE) {
+insert_observations <- function(con, df, check_processes = TRUE, verbose = FALSE) {
   
   # Get system date
   date_system <- round(lubridate::now())
@@ -65,6 +68,24 @@ insert_observations <- function(con, df, verbose = FALSE) {
   
   if (anyNA(df$process)) 
     stop("Missing processes detected, no data inserted...", call. = FALSE)
+  
+  # Check process keys for presence in `processes`
+  if (check_processes) {
+    
+    # Do the test
+    processes_not_in_processes <- check_process(con, df$process)
+    
+    # Error if they do not exist
+    if (length(processes_not_in_processes) != 0) {
+      
+      stop(
+        "Processes to be inserted do not exist in `processes` table...", 
+        call. = FALSE
+      )
+      
+    }
+    
+  }
   
   if (anyNA(df$summary))
     stop("Missing summaries detected, no data inserted...", call. = FALSE)
