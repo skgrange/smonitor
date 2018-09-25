@@ -37,7 +37,8 @@ update_validity <- function(con, process, summary = 0, tz = "UTC",
            date_end = as.numeric(date_end))
   
   # Filter
-  df_look <- df_look[df_look[, "process"] %in% process, ]
+  df_look <- df_look %>% 
+    filter(process %in% !!process)
   
   # Check again
   if (nrow(df_look) == 0) 

@@ -22,7 +22,12 @@ get_next_process_key <- function(con, minimum = NA, positive = TRUE) {
   if (positive) {
     
     # Get max process
-    x <- databaser::db_get(con, "SELECT max(process) FROM processes")[, 1]
+    x <- databaser::db_get(
+      con, 
+      "SELECT max(process) 
+      FROM processes"
+    )[, 1, drop = TRUE]
+    
     x <- ifelse(is.na(x), 1, x + 1)
     
     # 
@@ -31,7 +36,12 @@ get_next_process_key <- function(con, minimum = NA, positive = TRUE) {
   } else {
     
     # Get min process
-    x <- databaser::db_get(con, "SELECT min(process) FROM processes")[, 1]
+    x <- databaser::db_get(
+      con, 
+      "SELECT min(process) 
+      FROM processes"
+    )[, 1]
+    
     x <- ifelse(is.na(x) | x %in% c(0, 1), -1, x - 1)
     
   }
