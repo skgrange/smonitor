@@ -15,9 +15,12 @@
 #' @param check_processes Should the processes in \code{df} be tested for their
 #' existance in the `processes` table before insert?
 #' 
+#' @param batch_size Number of rows to insert per batch. Useful for large 
+#' inserts. 
+#' 
 #' @param verbose Should the function give messages? 
 #' 
-#' @return Invisible, an insert into the \code{`observations`} database table. 
+#' @return Invisible, \code{con}.  
 #' 
 #' @examples 
 #' \dontrun{
@@ -31,7 +34,8 @@
 #' }
 #' 
 #' @export
-insert_observations <- function(con, df, check_processes = TRUE, verbose = FALSE) {
+insert_observations <- function(con, df, check_processes = TRUE, 
+                                batch_size = NA, verbose = FALSE) {
   
   # Get system date
   date_system <- round(lubridate::now())
@@ -93,18 +97,49 @@ insert_observations <- function(con, df, check_processes = TRUE, verbose = FALSE
   if (anyNA(df$date))
     stop("Missing dates detected, no data inserted...", call. = FALSE)
   
-  if (verbose) {
+  # Insert into observations
+  if (is.na(batch_size)) {
     
-    message(
-      threadr::str_date_formatted(), 
-      ": Inserting ", 
-      threadr::str_thousands_separator(nrow(df)), 
-      " observations into `observations`..."
-    )
+    if (verbose) {
+      
+      message(
+        threadr::str_date_formatted(), 
+        ": Inserting ", 
+        threadr::str_thousands_separator(nrow(df)), 
+        " observations into `observations`..."
+      )
+      
+    }
+    
+    # Insert
+    databaser::db_insert(con, "observations", df)
+    
+  } else {
+    
+    if (verbose) 
+      message(threadr::str_date_formatted(), ": Splitting input...")
+    
+    # Split
+    list_df <- threadr::split_nrow(df, batch_size)
+    
+    if (verbose) {
+      
+      message(
+        threadr::str_date_formatted(), 
+        ": Inserting ", 
+        threadr::str_thousands_separator(nrow(df)), 
+        " observations into `observations` with ", 
+        length(list_df), 
+        " batches..."
+      )
+      
+    }
+    
+    # Insert in pieces
+    purrr::walk(list_df, ~databaser::db_insert(con, "observations", .))
     
   }
   
-  # Insert into observations
-  databaser::db_insert(con, "observations", df)
+  invisible(con)
   
 }
