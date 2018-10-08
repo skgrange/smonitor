@@ -98,7 +98,31 @@ insert_observations <- function(con, df, check_processes = TRUE,
     stop("Missing dates detected, no data inserted...", call. = FALSE)
   
   # Insert into observations
-  if (is.na(batch_size)) {
+  if (!is.na(batch_size) && nrow(df) >= batch_size) {
+    
+    if (verbose) 
+      message(threadr::str_date_formatted(), ": Splitting input...")
+    
+    # Split
+    list_df <- threadr::split_nrow(df, batch_size)
+    
+    if (verbose) {
+      
+      message(
+        threadr::str_date_formatted(), 
+        ": Inserting ", 
+        threadr::str_thousands_separator(nrow(df)), 
+        " observations into `observations` in ", 
+        length(list_df), 
+        " batches..."
+      )
+      
+    }
+    
+    # Insert in pieces
+    purrr::walk(list_df, ~databaser::db_insert(con, "observations", .))
+    
+  } else {
     
     if (verbose) {
       
@@ -113,30 +137,6 @@ insert_observations <- function(con, df, check_processes = TRUE,
     
     # Insert
     databaser::db_insert(con, "observations", df)
-    
-  } else {
-    
-    if (verbose) 
-      message(threadr::str_date_formatted(), ": Splitting input...")
-    
-    # Split
-    list_df <- threadr::split_nrow(df, batch_size)
-    
-    if (verbose) {
-      
-      message(
-        threadr::str_date_formatted(), 
-        ": Inserting ", 
-        threadr::str_thousands_separator(nrow(df)), 
-        " observations into `observations` with ", 
-        length(list_df), 
-        " batches..."
-      )
-      
-    }
-    
-    # Insert in pieces
-    purrr::walk(list_df, ~databaser::db_insert(con, "observations", .))
     
   }
   
