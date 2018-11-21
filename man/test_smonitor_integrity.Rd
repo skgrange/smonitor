@@ -10,7 +10,7 @@ test_smonitor_integrity(con)
 \item{con}{Database connection.}
 }
 \value{
-Data frame.
+Tibble.
 }
 \description{
 Function to test the integrity of a \strong{smonitor} database.
