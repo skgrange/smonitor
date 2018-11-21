@@ -26,11 +26,12 @@ update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE,
                                        variables_monitored = TRUE, 
                                        verbose = FALSE) {
   
-  # Do
-  if (verbose) message("Updating `processes` table...")
+  # Processes table
+  if (verbose) message(threadr::str_date_formatted(), ": Updating `processes` table...")
   update_process_spans(con, na.rm = na.rm)
   
-  if (verbose) message("Updating `sites` table...")
+  # Sites table
+  if (verbose) message(threadr::str_date_formatted(), ": Updating `sites` table...")
   update_site_spans(con, variables_monitored = variables_monitored)
   
   # Also row counts
@@ -41,11 +42,11 @@ update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE,
       
       if (databaser::db_table_exists(con, "row_counts")) {
         
-        message("Replacing `row_counts` table...")
+        message(threadr::str_date_formatted(), ": Replacing `row_counts` table...")
         
       } else {
         
-        message("Inserting a `row_counts` table...")
+        message(threadr::str_date_formatted(), ": Inserting a `row_counts` table...")
         
       }
       
