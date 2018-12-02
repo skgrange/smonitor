@@ -43,14 +43,15 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
            channel_number = envirologger_channel_number)
   
   # Get observations with API
-  if (verbose) message("Getting new observations...")
+  if (verbose) message(threadr::message_date_prefix(), "Getting new observations...")
   
   df <- envirologgerr::get_envirologger_data(
     user = user, 
     key = key, 
     station = station, 
     start = start, 
-    end = end
+    end = end,
+    verbose = verbose
   )
   
   if (nrow(df) != 0) {
@@ -81,29 +82,30 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
     if (nrow(df) > 0) {
       
       # Delete observations
-      if (verbose) message("Deleting old observations...")
+      if (verbose) message(threadr::message_date_prefix(), "Deleting old observations...")
       
       # Does the grouping
       delete_observations(
         con, 
         df, 
-        match = "between", 
-        progress = "time"
+        match = "between"
       )
       
       # Insert
-      if (verbose) message("Inserting new observations...")
-      insert_observations(con, df)
-      
-    } else {
-      
-      if (verbose) message("No data inserted...")
+      insert_observations(con, df, verbose = verbose)
       
     }
     
   } else {
     
-    if (verbose) message("No data inserted because API returned no data...")
+    if (verbose) {
+      
+      message(
+        threadr::message_date_prefix(), 
+        "No data inserted because API returned no data..."
+      )
+    
+    } 
     
   }
   
