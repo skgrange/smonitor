@@ -5,8 +5,7 @@
 \title{Function to delete observations from the \code{`observations`} table in a
 \strong{smonitor} database.}
 \usage{
-delete_observations(con, df, groups = c("process", "summary"),
-  match = "between", verbose = FALSE, progress = "none")
+delete_observations(con, df, match = "between", verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -15,19 +14,14 @@ delete_observations(con, df, groups = c("process", "summary"),
 a database table. \code{delete_observations} uses this as a mapping table to
 know what to send the database in the delete statement.}
 
-\item{groups}{Groups in \code{df} to apply the deleting function to. Default 
-is \code{c("process", "summary")} and should not need changing.}
-
 \item{match}{Type of match to use for dates. \code{"between"} and 
 \code{"all"} are supported. Beware that \code{"all"} will remove all 
 observations associated with a process.}
 
 \item{verbose}{Should the function give messages?}
-
-\item{progress}{Type of progress bar to display.}
 }
 \value{
-Invisible. A database delete.
+Invisible, database connection.
 }
 \description{
 \code{delete_observations} is generally used immediately before a database 

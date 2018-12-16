@@ -77,12 +77,7 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
       # message("Deleting old observations...")
       
       # Does the grouping
-      delete_observations(
-        con, 
-        df, 
-        match = "between",
-        progress = "none"
-      )
+      delete_observations(con, df, match = "between")
       
       # Insert
       # message("Inserting new observations...")
