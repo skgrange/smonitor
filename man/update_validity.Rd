@@ -6,7 +6,7 @@
 \strong{smonitor} database.}
 \usage{
 update_validity(con, process, summary = 0, tz = "UTC",
-  delete = "between", progress = "time")
+  verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -14,18 +14,19 @@ update_validity(con, process, summary = 0, tz = "UTC",
 \item{process}{A vector of processes.}
 
 \item{summary}{Summary to invalidate. This will usually be \code{0} for source
-data.}
+data and can only take one value.}
 
-\item{tz}{Time-zone.}
+\item{tz}{Time zone to conduct invalidations in.}
 
-\item{delete}{Type of delete-match to use for dates.}
-
-\item{progress}{Progress bar type. Default is \code{"time"}.}
+\item{verbose}{Should the function give messages?}
+}
+\value{
+Invisible \code{con}.
 }
 \description{
-\code{update_validity} does not really update the validity variable, it queries
-the database, re-tests, deletes the old observations and inserts the re-tested
-table.
+\code{update_validity} does not update the validity variable with SQL, it 
+queries the database, re-tests, deletes the old observations and inserts the
+re-tested table.
 }
 \author{
 Stuart K. Grange
