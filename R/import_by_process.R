@@ -41,8 +41,7 @@
 #' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
-#' @return Data frame containing decoded observational data with correct data 
-#' types. 
+#' @return Tibble containing decoded observational data with correct data types. 
 #' 
 #' @seealso \code{\link{import_by_site}} for a higher-level importing function
 #' 
@@ -112,7 +111,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     }
     
     # Return empty data frame here
-    return(data.frame())
+    return(tibble())
     
   }
   
@@ -141,7 +140,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     }
     
     # Return empty data frame here
-    return(data.frame())
+    return(tibble())
     
   }
   
@@ -158,7 +157,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     }
     
     # Return empty data frame here
-    return(data.frame())
+    return(tibble())
     
   }
   

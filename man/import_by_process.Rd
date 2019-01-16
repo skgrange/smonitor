@@ -49,8 +49,7 @@ Default is \code{TRUE}.}
 \item{print_query}{Should the SQL query string be printed?}
 }
 \value{
-Data frame containing decoded observational data with correct data 
-types.
+Tibble containing decoded observational data with correct data types.
 }
 \description{
 \code{import_by_process} is considered the primary data importer for 

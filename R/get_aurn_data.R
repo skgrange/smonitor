@@ -9,7 +9,7 @@
 #' 
 #' @param print_query Should the function print the URLs which are being loaded?
 #' 
-#' @return Data frame. 
+#' @return Tibble. 
 #' 
 #' @author Stuart K. Grange
 #' 
@@ -31,7 +31,7 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   
   # Do
   df <- suppressWarnings(
-    data_frame(url = url) %>% 
+    tibble(url = url) %>% 
       rowwise() %>% 
       do(get_aurn_data_worker(.$url, print_query = print_query)) %>% 
       ungroup()
@@ -47,10 +47,7 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   df$site <- stringr::str_to_lower(df$site)
   
   # Use look-up table to create smonitor names
-  df_names <- data.frame(
-    variable = names(df),
-    stringsAsFactors = FALSE
-  )
+  df_names <- tibble(variable = names(df))
   
   # Join look-up
   df_names <- left_join(df_names, load_openair_variable_helper(), by = "variable")
@@ -66,7 +63,7 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
   names(df) <- df_names$variable_smonitor
   
   # Arrange variables
-  df <- threadr::arrange_left(df, c("date", "site", "site_name"))
+  df <- select(df, date, site, site_name, everything())
   
   # Reshape
   if (longer) {
@@ -81,8 +78,7 @@ get_aurn_data <- function(site, year, longer = FALSE, print_query = FALSE) {
     
   }
   
-  # Return
-  df
+  return(df)
   
 }
 
@@ -103,24 +99,21 @@ get_aurn_data_worker <- function(url, print_query) {
   # Load data
   df <- tryCatch({
     
-    df <- suppressWarnings(
+    suppressWarnings(
       load(file_name)
-    )
-    
-    # Assign object
-    df <- get(df)
-    
-    # Return
-    df
+    ) %>% 
+      get()
     
   }, error = function(e) {
     
     # Empty
-    data.frame()
+    tibble()
     
   })
   
-  # Return
-  df
+  # To tibble
+  df <- as_tibble(df)
+  
+  return(df)
   
 }

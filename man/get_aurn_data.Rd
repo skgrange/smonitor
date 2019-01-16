@@ -17,7 +17,7 @@ get_aurn_data(site, year, longer = FALSE, print_query = FALSE)
 \item{print_query}{Should the function print the URLs which are being loaded?}
 }
 \value{
-Data frame.
+Tibble.
 }
 \description{
 Function to get UK's AURN data using the same API as \strong{openair}.

@@ -13,11 +13,11 @@ test_smonitor_integrity <- function(con) {
   database_name <- databaser::db_name(con, extension = FALSE)
   database_size <- databaser::db_size(con)
   
-  message(threadr::str_date_formatted(), ": This database is ", database_name, "...")
+  message(threadr::date_message(), "This database is ", database_name, "...")
   
   message(
-    threadr::str_date_formatted(), 
-    ": The database size is ",
+    threadr::date_message(), 
+    "The database size is ",
     round(database_size, 2), 
     " (MB)..."
   )
@@ -40,8 +40,8 @@ test_smonitor_integrity <- function(con) {
   if (length(tables_missing) != 0) {
 
     message(
-      threadr::str_date_formatted(), 
-      ": There are missing smonitor core tables, this should be fixed..."
+      threadr::date_message(), 
+      "There are missing smonitor core tables, this should be fixed..."
     )
     
     # For return
@@ -49,7 +49,7 @@ test_smonitor_integrity <- function(con) {
     
   } else {
     
-    message(threadr::str_date_formatted(), ": There are no missing smonitor tables...")
+    message(threadr::date_message(), "There are no missing smonitor tables...")
     
     # For return
     tables_missing <- FALSE
@@ -69,13 +69,13 @@ test_smonitor_integrity <- function(con) {
   if (sites_duplicated) {
     
     message(
-      threadr::str_date_formatted(), 
-      ": There are duplicated sites in `sites`, this is an error and should be fixed..."
+      threadr::date_message(), 
+      "There are duplicated sites in `sites`, this is an error and should be fixed..."
     )
     
   } else {
     
-    message(threadr::str_date_formatted(), ": There are no duplicated sites in `sites`...")
+    message(threadr::date_message(), "There are no duplicated sites in `sites`...")
     
   }
   
@@ -92,15 +92,15 @@ test_smonitor_integrity <- function(con) {
   if (processes_duplicated) {
     
     message(
-      threadr::str_date_formatted(), 
-      ": There are duplicated processes in `processes`, this is a critical error and should not occur..."
+      threadr::date_message(), 
+      "There are duplicated processes in `processes`, this is a critical error and should not occur..."
     )
     
   } else {
     
     message(
-      threadr::str_date_formatted(), 
-      ": There are no duplicated processes in `processes`..."
+      threadr::date_message(), 
+      "There are no duplicated processes in `processes`..."
     )
     
   }
@@ -118,15 +118,15 @@ test_smonitor_integrity <- function(con) {
   if (length(sites_with_no_processes) != 0) {
     
     message(
-      threadr::str_date_formatted(), 
-      ": There are sites which do not have processes, this is usually fine..."
+      threadr::date_message(), 
+      "There are sites which do not have processes, this is usually fine..."
     )
     
     sites_with_no_processes <- stringr::str_c(sites_with_no_processes, collapse = "; ")
     
   } else {
     
-    message(threadr::str_date_formatted(), ": All sites have associated processes...")
+    message(threadr::date_message(), "All sites have associated processes...")
     sites_with_no_processes <- FALSE
     
   }
@@ -139,13 +139,13 @@ test_smonitor_integrity <- function(con) {
   if (dates_missing) {
     
     message(
-      threadr::str_date_formatted(), 
-      ": There are missing dates in `observations`, this is a critical error and should not occur..."
+      threadr::date_message(), 
+      "There are missing dates in `observations`, this is a critical error and should not occur..."
     )
     
   } else {
     
-    message(threadr::str_date_formatted(), ": There are no missing dates in `observations`...")
+    message(threadr::date_message(), "There are no missing dates in `observations`...")
     
   }
   
@@ -162,15 +162,15 @@ test_smonitor_integrity <- function(con) {
   if (processes_observations_missing) {
     
     message(
-      threadr::str_date_formatted(), 
-      ": There are missing processes in `observations`, this is a critical error and should not occur..."
+      threadr::date_message(), 
+      "There are missing processes in `observations`, this is a critical error and should not occur..."
     )
     
   } else {
     
     message(
-      threadr::str_date_formatted(),
-      ": There are no missing processes in `observations`..."
+      threadr::date_message(),
+      "There are no missing processes in `observations`..."
     )
     
   }
@@ -187,15 +187,15 @@ test_smonitor_integrity <- function(con) {
   if (summary_observations_missing) {
     
     message(
-      threadr::str_date_formatted(), 
-      ": There are missing summaries in `observations`..."
+      threadr::date_message(), 
+      "There are missing summaries in `observations`..."
     )
     
   } else {
     
     message(
-      threadr::str_date_formatted(), 
-      ": There are no missing summaries in `observations`..."
+      threadr::date_message(), 
+      "There are no missing summaries in `observations`..."
     )
     
   }
@@ -203,7 +203,7 @@ test_smonitor_integrity <- function(con) {
   # values and nulls
   
   # Build return
-  df <- data_frame(
+  df <- tibble(
     date = as.numeric(date_start),
     database_name,
     database_size,
