@@ -4,7 +4,7 @@
 \alias{import_sites}
 \title{Function to import \code{`sites`} table from a \strong{smonitor} database.}
 \usage{
-import_sites(con, tz = "UTC", print_query = FALSE)
+import_sites(con, tz = "UTC", correct_integers = TRUE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -12,10 +12,10 @@ import_sites(con, tz = "UTC", print_query = FALSE)
 \item{tz}{What time zone should the \code{date_start} and \code{date_end}
 variables be represented as?}
 
-\item{print_query}{Should the SQL query be printed?}
+\item{correct_integers}{Should integers be corrected for a SQLite issue?}
 }
 \value{
-Data frame.
+Tibble.
 }
 \description{
 Function to import \code{`sites`} table from a \strong{smonitor} database.
@@ -24,7 +24,7 @@ Function to import \code{`sites`} table from a \strong{smonitor} database.
 \dontrun{
 
 # Import sites from a smonitor database
-data_sites <- import_processes(con)
+data_sites <- import_sites(con)
 
 }
 
