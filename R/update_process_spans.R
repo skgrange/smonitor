@@ -12,7 +12,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @return Invisible. 
+#' @return Invisible \code{con}. 
 #' 
 #' @export
 update_process_spans <- function(con, process = NA, na.rm = FALSE) {
@@ -61,7 +61,7 @@ update_process_spans <- function(con, process = NA, na.rm = FALSE) {
     
   }
   
-  # No return
+  return(invisible(con))
   
 }
 

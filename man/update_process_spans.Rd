@@ -18,7 +18,7 @@ cause the database to update all process keys.}
 aggregation functions?}
 }
 \value{
-Invisible.
+Invisible \code{con}.
 }
 \description{
 Function to calculate \code{date_start}, \code{date_end}, and 

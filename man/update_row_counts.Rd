@@ -13,7 +13,7 @@ update_row_counts(con, estimate = FALSE)
 works for PostgreSQL databases.}
 }
 \value{
-Invisible data frame.
+Invisible, tibble.
 }
 \description{
 Function to get row counts and insert as a table in a database.

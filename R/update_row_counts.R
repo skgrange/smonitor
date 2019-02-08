@@ -9,7 +9,7 @@
 #' 
 #' @seealso \code{\link{db_count_rows}}
 #' 
-#' @return Invisible data frame. 
+#' @return Invisible, tibble. 
 #' 
 #' @export
 update_row_counts <- function(con, estimate = FALSE) {

@@ -19,7 +19,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @return Invisible. 
+#' @return Invisible \code{con}. 
 #' 
 #' @export
 update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE, 
@@ -57,6 +57,6 @@ update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE,
     
   }
   
-  # No return
+  return(invisible(con))
   
 }

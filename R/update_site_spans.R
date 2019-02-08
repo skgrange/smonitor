@@ -12,7 +12,7 @@
 #' @seealso \code{\link{update_process_spans}}, 
 #' \code{\link{update_date_span_variables}}
 #' 
-#' @return Invisible. 
+#' @return Invisible \code{con}. 
 #' 
 #' @author Stuart K. Grange
 #'
@@ -67,6 +67,6 @@ update_site_spans <- function(con, variables_monitored = FALSE) {
   # Also update variables monitored
   if (variables_monitored) update_variables_monitored(con)
   
-  # No return
+  return(invisible(con))
   
 }

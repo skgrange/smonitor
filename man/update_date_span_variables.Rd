@@ -23,7 +23,7 @@ be updated?}
 \item{verbose}{Should the function give messages?}
 }
 \value{
-Invisible.
+Invisible \code{con}.
 }
 \description{
 \code{update_date_span_variables} will also insert (or replace) the 

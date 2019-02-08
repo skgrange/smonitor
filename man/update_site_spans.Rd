@@ -14,7 +14,7 @@ update_site_spans(con, variables_monitored = FALSE)
 also be updated?}
 }
 \value{
-Invisible.
+Invisible \code{con}.
 }
 \description{
 Use \code{update_site_span} after \code{\link{update_process_spans}} because 
