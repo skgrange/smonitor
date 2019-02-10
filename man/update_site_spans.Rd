@@ -2,8 +2,9 @@
 % Please edit documentation in R/update_site_spans.R
 \name{update_site_spans}
 \alias{update_site_spans}
-\title{Function to update \code{date_start} and \code{date_end}, for sites and then
-update the \code{`sites`} table for an \strong{smonitor} database.}
+\title{Function to update the \code{date_start}, \code{date_end}, 
+\code{observation_count}, and \code{variables_monitored} variables for a 
+\code{`sites`} table in an smonitor database.}
 \usage{
 update_site_spans(con, variables_monitored = FALSE)
 }

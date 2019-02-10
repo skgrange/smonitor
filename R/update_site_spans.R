@@ -1,5 +1,6 @@
-#' Function to update \code{date_start} and \code{date_end}, for sites and then
-#' update the \code{`sites`} table for an \strong{smonitor} database.
+#' Function to update the \code{date_start}, \code{date_end}, 
+#' \code{observation_count}, and \code{variables_monitored} variables for a 
+#' \code{`sites`} table in an smonitor database. 
 #' 
 #' Use \code{update_site_span} after \code{\link{update_process_spans}} because 
 #' it queries the \code{`processes`} table rather than \code{`observations`}. 
@@ -64,9 +65,47 @@ update_site_spans <- function(con, variables_monitored = FALSE) {
   # Use statements
   databaser::db_execute(con, sql)
   
+  # Update observation counts if they exist
+  if ("observation_count" %in% databaser::db_list_variables(con, "sites")) {
+    update_sites_observation_counts(con)
+  }
+  
   # Also update variables monitored
-  if (variables_monitored) update_variables_monitored(con)
+  if (variables_monitored) {
+    update_variables_monitored(con)
+  }
   
   return(invisible(con))
+  
+}
+
+
+update_sites_observation_counts <- function(con) {
+  
+  # Get processes counts
+  df_processes <- databaser::db_get(
+    con, 
+    "SELECT 
+    site, 
+    observation_count
+    FROM processes
+    ORDER BY site"
+  )
+  
+  # Summarise
+  df_processes_counts <- df_processes %>% 
+    group_by(site) %>% 
+    summarise(observation_count = sum(observation_count, na.rm = TRUE)) %>% 
+    ungroup()
+  
+  # Set all to null before update
+  databaser::db_execute(con, "UPDATE sites SET observation_count = NULL")
+  
+  # Update variable
+  df_processes_counts %>% 
+    databaser::build_update_statements("sites", ., where = "site", squish = TRUE) %>% 
+    databaser::db_execute(con, .)
+  
+  # No return
   
 }

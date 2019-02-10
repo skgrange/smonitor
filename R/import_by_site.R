@@ -44,6 +44,9 @@
 #' 
 #' @param unit Should the processes' units be included in the return? 
 #' 
+#' @param arrange_by How should the returned table be arranged? Can be either
+#' \code{"process"} or \code{"date"}. 
+#' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
 #' @seealso \code{\link{import_by_process}}
@@ -80,11 +83,13 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
                            period = "hour", include_sums = TRUE, 
                            valid_only = TRUE, pad = TRUE, tz = "UTC", 
                            spread = FALSE, date_end = TRUE, date_insert = FALSE, 
-                           site_name = TRUE, unit = TRUE, print_query = FALSE) {
+                           site_name = TRUE, unit = TRUE, arrange_by = "process",
+                           print_query = FALSE) {
   
-  # Check
-  if (is.na(site[1]) || site == "") 
+  # Check inputs
+  if (is.na(site[1]) || site == "") {
     stop("The `site` argument must be used...", call. = FALSE)
+  }
   
   # Parse arguments
   site <- stringr::str_trim(site)
@@ -97,8 +102,9 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   period <- stringr::str_replace_all(period, " ", "_")
   
   # Check period
-  if (!length(period) == 1) 
+  if (!length(period) == 1) {
     stop("Only one `period` can be specified...", call. = FALSE)
+  }
   
   if (!period %in% valid_periods) {
     
@@ -115,18 +121,12 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   
   # Switch period to integer, the summary integer used in smonitor
   summary <- ifelse(period == "source", 0, period)
-  
   summary <- ifelse(period %in% c("fifteen_minute", "15_minute", "15_min"), 15, summary)
-  
   summary <- ifelse(period == "hour", 1, summary)
-  
   summary <- ifelse(period == "day", 20, summary)
-  
   summary <- ifelse(period == "month", 80, summary)
-  
   # Could be another integer depending on source summary, used daily source here
   summary <- ifelse(period %in% c("annual", "year"), 40, summary)
-  
   # Time padder requires a string for sequence creation
   interval_pad <- ifelse(summary == 15, "15 min", period)
   
@@ -135,20 +135,16 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     
     # ifelse not working here?
     if (summary[1] == 1) summary <- c(summary, 5)
-    
     # if (summary[1] == 15) summary <- c(summary, 5)
-    
     if (summary[1] == 20) summary <- c(summary, 24)
-    
     if (summary[1] == 80) summary <- c(summary, 84)
-    
     # Different here because daily sums are not needed to get an annual sum
     if (summary[1] == 40) summary <- c(summary, 64)
     
   }
   
   # Does not make sense to pad data in these situations
-  if (period == "source" | is.na(period)) pad <- FALSE
+  if (period == "source" || is.na(period)) pad <- FALSE
   
   # Get process keys
   # Build sql, only really need process here
@@ -208,17 +204,13 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   if (nrow(df) == 0) return(df)
   
   # Drop all NAs for padding and reshaping
-  df <- df[!is.na(df$value), ]
+  df <- filter(df, !is.na(value))
   
   # Groups for time-padding
   if (site_name) {
-    
     site_variables <- c("site", "site_name")  
-    
   } else {
-    
     site_variables <- "site"
-    
   }
   
   if (spread) {
@@ -256,13 +248,11 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
       
     })
     
+    # Pad time-series
     if (pad) {
-      
-      # Pad time-series
       df <- threadr::time_pad(df, interval = interval_pad, by = site_variables)
-      
     }
-    
+
   } else {
     
     if (pad) {
@@ -276,10 +266,17 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
       
     }
     
+    # Arrange observations
+    if (arrange_by == "process") {
+      df <- arrange(df, process, date)
+    } else if (arrange_by == "date") {
+      df <- arrange(df, date, process)
+    }
+    
   }
   
   # Clean R's names prefix, occurs with hydrocarbon variables
-  names(df) <- stringr::str_replace(names(df), "^X", "")
+  # names(df) <- stringr::str_replace(names(df), "^X", "")
   
   return(df)
   

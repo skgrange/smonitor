@@ -26,12 +26,13 @@ get_next_process_key <- function(con, minimum = NA, positive = TRUE) {
       con, 
       "SELECT max(process) 
       FROM processes"
-    )[, 1, drop = TRUE]
+    ) %>% 
+      pull()
     
-    x <- ifelse(is.na(x), 1, x + 1)
+    x <- if_else(is.na(x), 1, x + 1)
     
     # 
-    if (!is.na(minimum)) x <- ifelse(x < minimum, minimum, x)
+    if (!is.na(minimum)) x <- if_else(x < minimum, minimum, x)
     
   } else {
     
@@ -40,11 +41,15 @@ get_next_process_key <- function(con, minimum = NA, positive = TRUE) {
       con, 
       "SELECT min(process) 
       FROM processes"
-    )[, 1]
+    ) %>% 
+      pull()
     
-    x <- ifelse(is.na(x) | x %in% c(0, 1), -1, x - 1)
+    x <- if_else(is.na(x) | x %in% c(0, 1), -1, x - 1)
     
   }
+  
+  # Ensure integer
+  x <- as.integer(x)
   
   return(x)
   

@@ -8,7 +8,7 @@ import_by_site(con, site = NA, variable = NA, start = 1970,
   end = NA, period = "hour", include_sums = TRUE,
   valid_only = TRUE, pad = TRUE, tz = "UTC", spread = FALSE,
   date_end = TRUE, date_insert = FALSE, site_name = TRUE,
-  unit = TRUE, print_query = FALSE)
+  unit = TRUE, arrange_by = "process", print_query = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -51,6 +51,9 @@ Default is \code{FALSE}.}
 Default is \code{TRUE}.}
 
 \item{unit}{Should the processes' units be included in the return?}
+
+\item{arrange_by}{How should the returned table be arranged? Can be either
+\code{"process"} or \code{"date"}.}
 
 \item{print_query}{Should the SQL query string be printed?}
 }

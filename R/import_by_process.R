@@ -39,6 +39,9 @@
 #' 
 #' @param warn Should the functions raise warnings? 
 #' 
+#' @param arrange_by How should the returned table be arranged? Can be either
+#' \code{"process"} or \code{"date"}. 
+#' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
 #' @return Tibble containing decoded observational data with correct data types. 
@@ -66,11 +69,16 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
                               end = NA, tz = "UTC", valid_only = TRUE, 
                               date_end = TRUE, date_insert = FALSE, 
                               site_name = TRUE, unit = TRUE, warn = TRUE, 
-                              print_query = FALSE) {
+                              arrange_by = "process", print_query = FALSE) {
   
-  # Check
-  if (is.na(process[1])) 
+  # Check inputs
+  if (is.na(process[1])) {
     stop("The `process` argument must be used...", call. = FALSE)
+  }
+  
+  # Can only be one of two things
+  arrange_by <- stringr::str_to_lower(arrange_by)
+  stopifnot(arrange_by %in% c("process", "date"))
   
   # Check for sql wildcards
   databaser::db_wildcard_check(process)
@@ -144,16 +152,16 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     
   }
   
-  # Filter invalid observations, not 0, may move to sql at some point
-  if (valid_only) df <- df[is.na(df$validity) | df$validity == 1, ]
+  # Filter invalid observations, may move to sql at some point
+  if (valid_only) {
+    df <- filter(df, validity %in% 1:3 | is.na(validity))
+  }
   
   # Check for data
   if (nrow(df) == 0) {
     
     if (warn) {
-      
       warning("Database contains no valid observations...", call. = FALSE)
-      
     }
     
     # Return empty data frame here
@@ -165,16 +173,22 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   df <- left_join(df, df_processes, by = "process")
   
   # Parse dates
-  if (date_insert) 
+  if (date_insert) {
     df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
+  }
   
-  if (date_end) 
+  if (date_end) {
     df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  }
   
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   
   # Arrange observations
-  df <- arrange(df, process, date)
+  if (arrange_by == "process") {
+    df <- arrange(df, process, date)
+  } else if (arrange_by == "date") {
+    df <- arrange(df, date, process)
+  }
   
   # And make a nice variable order
   df <- select(
