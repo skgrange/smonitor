@@ -52,8 +52,8 @@ Default is \code{TRUE}.}
 
 \item{unit}{Should the processes' units be included in the return?}
 
-\item{arrange_by}{How should the returned table be arranged? Can be either
-\code{"process"} or \code{"date"}.}
+\item{arrange_by}{When \code{spread} is \code{FALSE}, how should the returned
+table be arranged? Can be either \code{"process"} or \code{"date"}.}
 
 \item{print_query}{Should the SQL query string be printed?}
 }

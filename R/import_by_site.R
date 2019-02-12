@@ -44,8 +44,8 @@
 #' 
 #' @param unit Should the processes' units be included in the return? 
 #' 
-#' @param arrange_by How should the returned table be arranged? Can be either
-#' \code{"process"} or \code{"date"}. 
+#' @param arrange_by When \code{spread} is \code{FALSE}, how should the returned
+#' table be arranged? Can be either \code{"process"} or \code{"date"}.  
 #' 
 #' @param print_query Should the SQL query string be printed? 
 #' 
@@ -270,13 +270,10 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     if (arrange_by == "process") {
       df <- arrange(df, process, date)
     } else if (arrange_by == "date") {
-      df <- arrange(df, date, process)
+      df <- arrange(df, variable, date, process)
     }
     
   }
-  
-  # Clean R's names prefix, occurs with hydrocarbon variables
-  # names(df) <- stringr::str_replace(names(df), "^X", "")
   
   return(df)
   

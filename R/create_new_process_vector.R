@@ -23,7 +23,7 @@ create_new_process_vector <- function(con, n, minimum = NA, positive = TRUE) {
   if (positive) {
     x <- seq(x, length.out = n)
   } else {
-    x <- seq(from = x, to = x + -n)
+    x <- seq(from = x, to = x + (-n+ 1))
   }
   
   # Ensure integer

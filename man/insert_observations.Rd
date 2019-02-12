@@ -5,8 +5,8 @@
 \title{Function to insert observations into the \code{`observations`} in a 
 \strong{smonitor} database.}
 \usage{
-insert_observations(con, df, check_processes = TRUE, batch_size = NA,
-  verbose = FALSE)
+insert_observations(con, df, check_processes = TRUE,
+  check_validity = TRUE, batch_size = NA, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -16,13 +16,16 @@ insert_observations(con, df, check_processes = TRUE, batch_size = NA,
 \item{check_processes}{Should the processes in \code{df} be tested for their
 existance in the `processes` table before insert?}
 
+\item{check_validity}{Should the validity in \code{df} be tested before 
+insert?}
+
 \item{batch_size}{Number of rows to insert per batch. Useful for large 
 inserts.}
 
 \item{verbose}{Should the function give messages?}
 }
 \value{
-Invisible, \code{con}.
+Invisible \code{con}.
 }
 \description{
 \code{insert_observations} will handle the variable/column order, the date 
