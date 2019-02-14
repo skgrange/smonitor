@@ -108,7 +108,7 @@ insert_observations <- function(con, df, check_processes = TRUE,
     validity_values <- unique(df$validity)
     
     # Test
-    if (!validity_values %in% c(NA, -1:3)) {
+    if (!any(validity_values %in% c(NA, -1:3))) {
       stop("Validity contains incorrect values...", call. = FALSE)
     }
     

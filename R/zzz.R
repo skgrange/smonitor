@@ -7,7 +7,8 @@ if (getRversion() >= "2.15.1") {
     "date_start", "code", "site_name", "process", "validity", "date_start",
     "variables_monitored", "significant", "envirologger_station", "service",
     "envirologger_channel_number", "site_code", "date_local", "date_unix",
-    "software", "df_look", "test"
+    "software", "df_look", "test", "conc", "p", "intercept", "slope", "lower",
+    "upper"
   )
   
   # Squash the notes
