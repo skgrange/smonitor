@@ -8,10 +8,10 @@ database.}
 import_aggregations(con)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{A \strong{smonitor} database connection.}
 }
 \value{
-Data frame.
+Tibble.
 }
 \description{
 Function to import \code{`aggregations`} table from a \strong{smonitor} 

@@ -1,11 +1,11 @@
 #' Function to import \code{`aggregations`} table from a \strong{smonitor} 
 #' database. 
 #' 
-#' @param con Database connection. 
+#' @param con A \strong{smonitor} database connection. 
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @return Data frame. 
+#' @return Tibble. 
 #' 
 #' @examples 
 #' \dontrun{

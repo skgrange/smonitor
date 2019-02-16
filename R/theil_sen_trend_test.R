@@ -52,10 +52,14 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   
   # Select variables
   df_test <- df_test %>% 
-    mutate(n = n) %>% 
+    mutate(n = n,
+           auto_correlation = auto_correlation,
+           deseason = deseason) %>% 
     select(date_start,
            date_end,
            n,
+           auto_correlation,
+           deseason,
            p_value = p,
            intercept,
            slope, 
