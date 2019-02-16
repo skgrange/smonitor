@@ -2,13 +2,13 @@
 % Please edit documentation in R/tz_nz.R
 \name{tz_nz}
 \alias{tz_nz}
-\title{Function for New Zealand's "psudo time-zone" string used for air quality 
+\title{Function for New Zealand's "pseudo time zone" string used for air quality 
 monitoring.}
 \usage{
 tz_nz()
 }
 \description{
-The time-zone string is \code{"Etc/GMT-12"}.
+The time zone string is \code{"Etc/GMT-12"}.
 }
 \author{
 Stuart K. Grange

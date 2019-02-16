@@ -27,7 +27,7 @@ calculate_simple_summaries <- function(con, processes,
   stopifnot(period %in% c("month", "year"))
   
   # Get observations
-  if (verbose) message(threadr::date_message(), "Getting observations...")
+  if (verbose) message(threadr::date_message(), "Importing observations...")
   
   df <- import_by_process(
     con, 
@@ -36,20 +36,30 @@ calculate_simple_summaries <- function(con, processes,
     date_end = FALSE,
     valid_only = TRUE,
     tz = "UTC"
-  ) %>% 
-    rename(summary_source = summary)
+  ) 
   
-  # Calculate the summaries
-  df_summaries <- purrr::map_dfr(
-    period, 
-    ~calculate_simple_summaries_aggregator(
-      df, 
-      period = .x,
-      verbose = verbose
+  if (nrow(df) != 0) {
+    
+    # Rename variable
+    df <- rename(df, summary_source = summary)
+    
+    # Calculate the summaries
+    df <- purrr::map_dfr(
+      period,
+      ~calculate_simple_summaries_aggregator(
+        df = df, 
+        period = .x,
+        verbose = verbose
+      )
     )
-  )
+    
+  } else {
+    
+    df <- tibble()
+    
+  }
   
-  return(df_summaries)
+  return(df)
   
 }
 
@@ -66,7 +76,7 @@ calculate_simple_summaries_aggregator <- function(df, period, verbose = TRUE) {
   
   # Calculate means
   if (verbose) {
-    message(threadr::date_message(), "Calculating ", period_message, " means...")
+    message(threadr::date_message(), "Calculating ", period_message, " summaries...")
   }
   
   quiet(
@@ -77,11 +87,6 @@ calculate_simple_summaries_aggregator <- function(df, period, verbose = TRUE) {
       summary = "mean"
     )
   )
-  
-  # Counts
-  if (verbose) {
-    message(threadr::date_message(), "Calculating ", period_message, " counts...")
-  }
   
   quiet(
     df_counts <- threadr::aggregate_by_date(
