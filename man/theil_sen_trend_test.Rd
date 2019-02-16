@@ -28,5 +28,5 @@ Function to test a time series with the Theil-Sen estimator.
 \code{\link{TheilSen}}
 }
 \author{
-Stuart K. Grange
+Stuart K. Grange.
 }

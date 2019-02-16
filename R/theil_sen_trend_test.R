@@ -14,11 +14,23 @@
 #' 
 #' @return Tibble with one observation/row. 
 #' 
-#' @author Stuart K. Grange
+#' @author Stuart K. Grange.
 #' 
 #' @export
 theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE, 
                                  auto_correlation = FALSE) {
+  
+  # Trend test errors when one observation is passed
+  # Less than three observations results in no p-values and is not a valid procedure
+  if (nrow(df) == 1) {
+    
+    warning(
+      "One observation was supplied, trend test hsa not been conducted...",
+      call. = FALSE
+    )
+    
+    return(tibble())
+  }
   
   # Send plot to dev/null
   pdf(tempfile())
@@ -30,6 +42,9 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
       pollutant = variable,
       deseason = deseason,
       autocor = auto_correlation,
+      avg.time = "month", 
+      statistic = "mean",
+      alpha = 0.05,
       plot = FALSE,
       silent = TRUE
     )$data$res2
@@ -42,7 +57,11 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
     setNames(stringr::str_replace_all(names(.), "\\.", "_")) %>% 
     filter(is.finite(conc)) %>% 
     mutate(date_start = min(df$date), 
-           date_end = max(df$date))
+           date_end = max(df$date)) %>% 
+    as_tibble()
+  
+  # Add p-value if it is not there
+  if (!"p" %in% names(df_test)) df_test$p <- NA_real_
   
   # Get n too
   n <- df %>% 
