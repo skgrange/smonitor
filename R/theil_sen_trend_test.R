@@ -25,7 +25,7 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   if (nrow(df) == 1) {
     
     warning(
-      "One observation was supplied, trend test hsa not been conducted...",
+      "One observation was supplied, the trend test has not been conducted...",
       call. = FALSE
     )
     
