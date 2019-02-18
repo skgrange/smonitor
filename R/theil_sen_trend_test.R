@@ -7,6 +7,9 @@
 #' @param deseason Should the time series be deseaonsalised before the trend 
 #' test is conducted?
 #' 
+#' @param alpha Confidence interval of the slope, default is 0.05 for 95 \%
+#' confidence intervals.  
+#' 
 #' @param auto_correlation Should auto correlation be considered in the 
 #' estimates?
 #' 
@@ -18,7 +21,7 @@
 #' 
 #' @export
 theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE, 
-                                 auto_correlation = FALSE) {
+                                 alpha = 0.05, auto_correlation = FALSE) {
   
   # Trend test errors when one observation is passed
   # Less than three observations results in no p-values and is not a valid procedure
@@ -44,7 +47,7 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
       autocor = auto_correlation,
       avg.time = "month", 
       statistic = "mean",
-      alpha = 0.05,
+      alpha = alpha,
       plot = FALSE,
       silent = TRUE
     )$data$res2
@@ -84,6 +87,7 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
            date_end,
            n,
            auto_correlation,
+           alpha,
            deseason,
            p_value = p,
            intercept,

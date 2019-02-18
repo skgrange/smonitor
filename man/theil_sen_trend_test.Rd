@@ -5,7 +5,7 @@
 \title{Function to test a time series with the Theil-Sen estimator.}
 \usage{
 theil_sen_trend_test(df, variable = "value", deseason = FALSE,
-  auto_correlation = FALSE)
+  alpha = 0.05, auto_correlation = FALSE)
 }
 \arguments{
 \item{df}{Input data frame, containing time series observations.}
@@ -14,6 +14,9 @@ theil_sen_trend_test(df, variable = "value", deseason = FALSE,
 
 \item{deseason}{Should the time series be deseaonsalised before the trend 
 test is conducted?}
+
+\item{alpha}{Confidence interval of the slope, default is 0.05 for 95 \%
+confidence intervals.}
 
 \item{auto_correlation}{Should auto correlation be considered in the 
 estimates?}
