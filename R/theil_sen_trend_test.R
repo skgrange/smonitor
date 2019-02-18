@@ -52,6 +52,12 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   
   dev.off()
   
+  # Catch a null, not sure when this is occuring
+  if (is.null(df_test)) {
+    warning("Trend tested returned NULL...", call. = FALSE    )
+    return(tibble())
+  }
+  
   # Clean names of returned data frame, remove duplicates and add date variables
   df_test <- df_test %>% 
     setNames(stringr::str_replace_all(names(.), "\\.", "_")) %>% 
