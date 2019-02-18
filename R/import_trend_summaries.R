@@ -29,6 +29,8 @@ import_trend_summaries <- function(con, site = NA, variable = NA,
                                    date_insert = FALSE, spread = FALSE,
                                    tz = "UTC", print_query = FALSE) {
   
+  .Deprecated(new = "import_simmple_summaries")
+  
   # Clean
   site <- stringr::str_trim(site)
   site <- stringr::str_to_lower(site)
