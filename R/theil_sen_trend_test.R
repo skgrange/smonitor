@@ -82,7 +82,8 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   df_test <- df_test %>% 
     mutate(n = n,
            auto_correlation = auto_correlation,
-           deseason = deseason) %>% 
+           deseason = deseason,
+           alpha = alpha) %>% 
     select(date_start,
            date_end,
            n,
