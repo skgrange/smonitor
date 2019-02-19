@@ -7,7 +7,7 @@
 import_processes(con, tz = "UTC", print_query = FALSE)
 }
 \arguments{
-\item{con}{A \strong{smonitor} database connection.}
+\item{con}{Database connection to an \strong{smonitor} database.}
 
 \item{tz}{What time zone should the \code{date_start} and \code{date_end}
 variables be represented as?}
@@ -15,7 +15,7 @@ variables be represented as?}
 \item{print_query}{Should the SQL query be printed?}
 }
 \value{
-Data frame.
+Tibble.
 }
 \description{
 Function to import \code{`processes`} table from a \strong{smonitor} database.

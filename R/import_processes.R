@@ -1,6 +1,6 @@
 #' Function to import \code{`processes`} table from a \strong{smonitor} database. 
 #' 
-#' @param con A \strong{smonitor} database connection. 
+#' @param con Database connection to an \strong{smonitor} database.
 #' 
 #' @param tz What time zone should the \code{date_start} and \code{date_end}
 #' variables be represented as? 
@@ -9,7 +9,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @return Data frame. 
+#' @return Tibble. 
 #' 
 #' @examples 
 #' \dontrun{

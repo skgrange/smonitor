@@ -2,22 +2,23 @@
 % Please edit documentation in R/import_trend_tests.R
 \name{import_trend_tests}
 \alias{import_trend_tests}
-\title{Function to import the \code{`trend_test`} table from an \strong{smonitor} 
+\title{Function to import the \code{`trend_tests`} table from an \strong{smonitor} 
 database.}
 \usage{
-import_trend_tests(con, date_insert = FALSE)
+import_trend_tests(con, tz = "UTC", date_insert = FALSE)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{Database connection to an \strong{smonitor} database.}
 
-\item{date_insert}{Should the return include the \code{date_insert} variable? 
-Default is \code{FALSE}.}
+\item{tz}{What time zone should the \code{date_*} variables be represented in?}
+
+\item{date_insert}{Should the return include the \code{date_insert} variable?}
 }
 \value{
-Data frame.
+Tibble.
 }
 \description{
-Function to import the \code{`trend_test`} table from an \strong{smonitor} 
+Function to import the \code{`trend_tests`} table from an \strong{smonitor} 
 database.
 }
 \author{

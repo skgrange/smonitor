@@ -7,7 +7,7 @@
 import_sites(con, tz = "UTC", correct_integers = TRUE)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{Database connection to an \strong{smonitor} database.}
 
 \item{tz}{What time zone should the \code{date_start} and \code{date_end}
 variables be represented as?}

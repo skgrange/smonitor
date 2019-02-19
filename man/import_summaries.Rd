@@ -7,10 +7,10 @@
 import_summaries(con)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{Database connection to an \strong{smonitor} database.}
 }
 \value{
-Data frame.
+Tibble.
 }
 \description{
 Function to import \code{`summaries`} table from a \strong{smonitor} database.

@@ -1,6 +1,6 @@
 #' Function to import \code{`sites`} table from a \strong{smonitor} database. 
 #' 
-#' @param con Database connection. 
+#' @param con Database connection to an \strong{smonitor} database.
 #' 
 #' @param tz What time zone should the \code{date_start} and \code{date_end}
 #' variables be represented as? 

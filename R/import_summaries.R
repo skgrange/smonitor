@@ -1,10 +1,10 @@
 #' Function to import \code{`summaries`} table from a \strong{smonitor} database. 
 #' 
-#' @param con Database connection. 
+#' @param con Database connection to an \strong{smonitor} database.
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @return Data frame. 
+#' @return Tibble. 
 #' 
 #' @examples 
 #' \dontrun{
@@ -17,8 +17,7 @@
 #' @export
 import_summaries <- function(con) {
   
-  # Get look-up table
-  df <- databaser::db_get(
+  databaser::db_get(
     con, 
     "SELECT summaries.*,
     sites.site_name
@@ -28,7 +27,5 @@ import_summaries <- function(con) {
     ORDER BY summaries.process,
     summaries.summary"
   )
-  
-  return(df)
-  
+
 }
