@@ -2,7 +2,7 @@
 #'
 #' @importFrom utils download.file
 #' 
-#' @importFrom stats setNames
+#' @importFrom stats setNames na.omit
 #' 
 #' @importFrom grDevices dev.off pdf
 #' 

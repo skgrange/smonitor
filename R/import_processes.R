@@ -5,8 +5,6 @@
 #' @param tz What time zone should the \code{date_start} and \code{date_end}
 #' variables be represented as? 
 #' 
-#' @param print_query Should the SQL query be printed?
-#' 
 #' @author Stuart K. Grange
 #' 
 #' @return Tibble. 
@@ -20,35 +18,41 @@
 #' }
 #' 
 #' @export
-import_processes <- function(con, tz = "UTC", print_query = FALSE) {
+import_processes <- function(con, tz = "UTC") {
   
   # Get everything from processes and things from sites
-  sql <- "SELECT processes.*, 
-          sites.site_name, 
-          sites.region, 
-          sites.country,
-          sites.site_type
-          FROM processes
-          LEFT JOIN sites
-          ON processes.site = sites.site
-          ORDER BY processes.process"
-  
-  # Clean
-  sql <- stringr::str_squish(sql)
-  
-  # Message
-  if (print_query) message(sql)
+  sql <- "
+    SELECT processes.*, 
+    sites.site_name, 
+    sites.region, 
+    sites.country,
+    sites.site_type
+    FROM processes
+    LEFT JOIN sites
+    ON processes.site = sites.site
+    ORDER BY processes.process
+    " %>% 
+    stringr::str_squish()
   
   # Query
-  df <- databaser::db_get(con, sql)
-  
-  # Parse dates
-  df$date_start <- suppressWarnings(as.numeric(df$date_start))
-  df$date_end <- suppressWarnings(as.numeric(df$date_end))
-  
-  df$date_start <- threadr::parse_unix_time(df$date_start, tz = tz)
-  df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+  df <- databaser::db_get(con, sql) %>% 
+    mutate(date_start = parse_numeric_dates(date_start, tz = tz),
+           date_end = parse_numeric_dates(date_end, tz = tz))
   
   return(df)
+  
+}
+
+
+parse_numeric_dates <- function(x, tz) {
+  
+  # Warning suppression is for when elments are missing
+  suppressWarnings(
+    x %>% 
+      as.numeric(.) %>% 
+      threadr::parse_unix_time(tz = tz
+  )
+  
+)
   
 }

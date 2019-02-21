@@ -25,14 +25,33 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   
   # Trend test errors when one observation is passed
   # Less than three observations results in no p-values and is not a valid procedure
-  if (nrow(df) == 1) {
+  if (nrow(df) <= 2) {
     
     warning(
-      "One observation was supplied, the trend test has not been conducted...",
+      "Too few observations were supplied, the trend test has not been conducted...",
       call. = FALSE
     )
     
     return(tibble())
+    
+  }
+  
+  # Get n
+  n <- df %>% 
+    pull(!!variable) %>% 
+    na.omit() %>% 
+    length()
+  
+  # Catch all missing
+  if (n == 0) {
+    
+    warning(
+      "There are no valid observations, the trend test has not been conducted...",
+      call. = FALSE
+    )
+    
+    return(tibble())
+    
   }
   
   # Send plot to dev/null
@@ -57,7 +76,7 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   
   # Catch a null, not sure when this is occuring
   if (is.null(df_test)) {
-    warning("Trend tested returned NULL...", call. = FALSE    )
+    warning("Trend tested returned NULL...", call. = FALSE)
     return(tibble())
   }
   
@@ -71,12 +90,6 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   
   # Add p-value if it is not there
   if (!"p" %in% names(df_test)) df_test$p <- NA_real_
-  
-  # Get n too
-  n <- df %>% 
-    filter(!is.na(!!variable)) %>% 
-    pull(!!variable) %>% 
-    length()
   
   # Select variables
   df_test <- df_test %>% 

@@ -4,15 +4,13 @@
 \alias{import_processes}
 \title{Function to import \code{`processes`} table from a \strong{smonitor} database.}
 \usage{
-import_processes(con, tz = "UTC", print_query = FALSE)
+import_processes(con, tz = "UTC")
 }
 \arguments{
 \item{con}{Database connection to an \strong{smonitor} database.}
 
 \item{tz}{What time zone should the \code{date_start} and \code{date_end}
 variables be represented as?}
-
-\item{print_query}{Should the SQL query be printed?}
 }
 \value{
 Tibble.
