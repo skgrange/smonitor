@@ -59,6 +59,10 @@ calculate_simple_summaries <- function(con, processes,
     
   }
   
+  # For progress bar
+  # .progress = FALSE
+  # if (.progress) progress_bar$tick()$print()
+  
   return(df)
   
 }

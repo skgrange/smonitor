@@ -36,6 +36,7 @@ import_simple_summaries <- function(con, site = NA, summary = "month",
     variable,
     summary_source,
     summary,
+    count,
     value 
     FROM observations_simple_summaries
     WHERE summary = ", summary_smonitor, " 
