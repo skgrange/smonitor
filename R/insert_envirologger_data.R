@@ -22,7 +22,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @return Invisible, a database insert. 
+#' @return Invisible \code{con}.
 #' 
 #' @export
 insert_envirologger_data <- function(con, user, key, station, start, end = NA,
@@ -30,17 +30,22 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
   
   # Load look-up tables
   # Sites
-  df_sites_look_up <- import_sites(con) %>% 
-    select(site,
-           station = envirologger_station)
+  df_sites_look_up <- databaser::db_get(
+    con, 
+    "SELECT site,
+    envirologger_station AS station
+    FROM sites
+    ORDER BY site"
+  )
   
-  # Process keys
+  # Import process keys granular to channel number and sensor combinations
   df_processes <- import_processes(con) %>% 
     filter(service != 0 | is.na(service)) %>% 
     select(process,
            site,
            variable,
-           channel_number = envirologger_channel_number)
+           channel_number = envirologger_channel_number,
+           sensor_id = envirologger_sensor_id)
   
   # Get observations with API
   if (verbose) message(threadr::date_message(), "Getting new observations...")
@@ -56,20 +61,30 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
   
   if (nrow(df) != 0) {
     
-    # Site, not station bitte
+    # Join smonitor site
     df <- df %>% 
       left_join(df_sites_look_up, by = "station") %>% 
       select(-station)
     
-    # Only processes in table will be kept
-    df <- df %>% 
-      inner_join(df_processes, by = c("site", "channel_number"))
+    # Store number of observations before joining
+    n_row_pre_processes <- nrow(df)
     
-    # Transform data frame for smonitor
+    # Only processes in table will be kept
+    df <- inner_join(df, df_processes, by = c("site", "channel_number", "sensor_id"))
+    
+    # Test for equal or fewer observations
+    if (nrow(df) > n_row_pre_processes) {
+      stop(
+        "Process join caused observations to be replicated, some processes are duplicated...", 
+        call. = TRUE
+      )
+    }
+    
+    # Transform for smonitor
     df <- df %>% 
       mutate(date = as.numeric(date),
-             date_end = NA, 
-             validity = NA,
+             date_end = NA_real_, 
+             validity = NA_integer_,
              summary = 0L) %>% 
       select(date,
              date_end,
@@ -81,17 +96,8 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
     # Join may drop all observations
     if (nrow(df) > 0) {
       
-      # Delete observations
-      if (verbose) message(threadr::date_message(), "Deleting old observations...")
-      
-      # Does the grouping
-      delete_observations(
-        con, 
-        df, 
-        match = "between"
-      )
-      
-      # Insert
+      # Upsert observations
+      delete_observations(con, df, match = "between", verbose = verbose)
       insert_observations(con, df, verbose = verbose)
       
     }
@@ -109,6 +115,6 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
     
   }
   
-  # No return
+  return(invisible(con))
   
 }

@@ -24,7 +24,7 @@ insert_envirologger_data(con, user, key, station, start, end = NA,
 \item{verbose}{Should the funciton give messages?}
 }
 \value{
-Invisible, a database insert.
+Invisible \code{con}.
 }
 \description{
 Site-variable combinations must to be present in the database's process table,
