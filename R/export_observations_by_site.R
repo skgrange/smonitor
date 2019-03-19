@@ -14,6 +14,8 @@
 #' 
 #' @param end End date of observations to query from database. 
 #' 
+#' @param site_name Should the site name variable be included in the return?
+#' 
 #' @param directory_output The directory to export files to.
 #' 
 #' @param file_name_prefix Prefix to use for the exported file names. The default
@@ -28,7 +30,7 @@
 #' 
 #' @export
 export_observations_by_site <- function(con, df, start = 1960, end = NA, 
-                                        directory_output, 
+                                        site_name = FALSE, directory_output, 
                                         file_name_prefix = NA_character_,
                                         file_type = ".csv.gz", verbose = FALSE) {
   
@@ -66,6 +68,7 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
         df = .x,
         start = start,
         end = end, 
+        site_name = site_name,
         directory_output = directory_output,
         file_name_prefix = file_name_prefix,
         file_type = file_type,
@@ -79,7 +82,7 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
 
 
 # Define the worker
-export_observations_by_site_worker <- function(con, df, start, end, 
+export_observations_by_site_worker <- function(con, df, start, end, site_name,
                                                directory_output, file_name_prefix, 
                                                file_type, verbose) {
   
@@ -95,7 +98,7 @@ export_observations_by_site_worker <- function(con, df, start, end,
     start = start,
     end = end,
     date_end = TRUE,
-    site_name = TRUE,
+    site_name = site_name,
     valid_only = FALSE
   )
   

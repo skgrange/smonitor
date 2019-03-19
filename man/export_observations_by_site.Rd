@@ -6,8 +6,9 @@
 can be shared and easily used.}
 \usage{
 export_observations_by_site(con, df, start = 1960, end = NA,
-  directory_output, file_name_prefix = NA_character_,
-  file_type = ".csv.gz", verbose = FALSE)
+  site_name = FALSE, directory_output,
+  file_name_prefix = NA_character_, file_type = ".csv.gz",
+  verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection to a \strong{smonitor} database.}
@@ -18,6 +19,8 @@ variables.}
 \item{start}{Start date of observations to query from database.}
 
 \item{end}{End date of observations to query from database.}
+
+\item{site_name}{Should the site name variable be included in the return?}
 
 \item{directory_output}{The directory to export files to.}
 
