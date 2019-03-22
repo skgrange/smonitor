@@ -7,6 +7,8 @@
 #' 
 #' @param con Database connection. 
 #' 
+#' @param site Vector of sites to update. 
+#' 
 #' @param variables_monitored Should the \code{variables_monitored} variable 
 #' also be updated? 
 #' 
@@ -18,7 +20,7 @@
 #' @author Stuart K. Grange
 #'
 #' @export
-update_site_spans <- function(con, variables_monitored = FALSE) {
+update_site_spans <- function(con, site = NA, variables_monitored = FALSE) {
   
   # Get data and transform
   df <- databaser::db_get(
@@ -31,7 +33,10 @@ update_site_spans <- function(con, variables_monitored = FALSE) {
     mutate(date_start = suppressWarnings(as.numeric(date_start)),
            date_end = suppressWarnings(as.numeric(date_end)))
   
-  # Summarise
+  # Filter to sites
+  if (!is.na(site[1])) df <- filter(df, site %in% !!site)
+  
+  # Summarise by site
   df <- df %>% 
     group_by(site) %>% 
     summarise(date_start = min(date_start, na.rm = TRUE),
@@ -42,37 +47,53 @@ update_site_spans <- function(con, variables_monitored = FALSE) {
            date_start = stringr::str_replace_na(date_start),
            date_end = stringr::str_replace_na(date_end))
   
-  # Build update statements
-  sql <- stringr::str_c(
-    "UPDATE sites
-     SET date_start=", df$date_start, 
-    ",date_end=", df$date_end, 
-    " WHERE site='", df$site, "'"
-  )
-  
-  # Make nulls
-  sql <- stringr::str_replace_all(sql, "NA", "NULL")
-  
-  # Clean
-  sql <- stringr::str_squish(sql)
-  
   # Update variables to be null before insert
-  databaser::db_execute(
-    con, 
-    "UPDATE sites SET date_start = NULL, date_end = NULL"
-  )
+  if (!is.na(site[1])) {
+    
+    site_collapsed <- site %>% 
+      stringr::str_c("'", ., "'") %>% 
+      stringr::str_c(collapse = ",")
+    
+    sql_set_null <- stringr::str_c(
+      "UPDATE sites
+      SET date_start = NULL, 
+      date_end = NULL 
+      WHERE site IN (", site_collapsed, ")"
+    ) 
+    
+  } else {
+    
+    # All sites
+    sql_set_null <- "
+      UPDATE sites 
+      SET date_start = NULL, 
+      date_end = NULL
+    "
+    
+  }
+  
+  # Build update statements
+  sql_update <- stringr::str_c(
+    "UPDATE sites
+     SET date_start = ", df$date_start, 
+    ", date_end = ", df$date_end, 
+    " WHERE site = '", df$site, "'"
+  ) %>% 
+    stringr::str_replace_all("NA", "NULL")
   
   # Use statements
-  databaser::db_execute(con, sql)
+  c(sql_set_null, sql_update) %>% 
+    stringr::str_squish() %>% 
+    databaser::db_execute(con, .)
   
   # Update observation counts if they exist
   if ("observation_count" %in% databaser::db_list_variables(con, "sites")) {
-    update_sites_observation_counts(con)
+    update_sites_observation_counts(con, site = site)
   }
   
   # Also update variables monitored
   if (variables_monitored) {
-    update_variables_monitored(con)
+    update_variables_monitored(con, site = site)
   }
   
   return(invisible(con))
@@ -80,10 +101,10 @@ update_site_spans <- function(con, variables_monitored = FALSE) {
 }
 
 
-update_sites_observation_counts <- function(con) {
+update_sites_observation_counts <- function(con, site = NA) {
   
   # Get processes counts
-  df_processes <- databaser::db_get(
+  df <- databaser::db_get(
     con, 
     "SELECT 
     site, 
@@ -92,20 +113,48 @@ update_sites_observation_counts <- function(con) {
     ORDER BY site"
   )
   
+  # Filter to sites
+  if (!is.na(site[1])) df <- filter(df, site %in% !!site)
+  
   # Summarise
-  df_processes_counts <- df_processes %>% 
+  df <- df %>% 
     group_by(site) %>% 
     summarise(observation_count = sum(observation_count, na.rm = TRUE)) %>% 
     ungroup()
   
-  # Set all to null before update
-  databaser::db_execute(con, "UPDATE sites SET observation_count = NULL")
+  # Update variable to be null before insert
+  if (!is.na(site[1])) {
+    
+    site_collapsed <- site %>% 
+      stringr::str_c("'", ., "'") %>% 
+      stringr::str_c(collapse = ",")
+    
+    sql_set_null <- stringr::str_c(
+      "UPDATE sites
+      SET observation_count = NULL
+      WHERE site IN (", site_collapsed, ")"
+    ) 
+    
+  } else {
+    
+    # All sites
+    sql_set_null <- "
+      UPDATE sites 
+      SET observation_count = NULL
+    "
+    
+  }
+  
+  # Use statements
+  sql_set_null %>% 
+    stringr::str_squish() %>% 
+    databaser::db_execute(con, .)
   
   # Update variable
-  df_processes_counts %>% 
+  df %>% 
     databaser::build_update_statements("sites", ., where = "site", squish = TRUE) %>% 
     databaser::db_execute(con, .)
   
-  # No return
+  return(invisible(con))
   
 }

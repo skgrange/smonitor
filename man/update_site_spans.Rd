@@ -6,10 +6,12 @@
 \code{observation_count}, and \code{variables_monitored} variables for a 
 \code{`sites`} table in an smonitor database.}
 \usage{
-update_site_spans(con, variables_monitored = FALSE)
+update_site_spans(con, site = NA, variables_monitored = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
+
+\item{site}{Vector of sites to update.}
 
 \item{variables_monitored}{Should the \code{variables_monitored} variable 
 also be updated?}

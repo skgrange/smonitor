@@ -3,39 +3,46 @@
 #' 
 #' @param con Database connection. 
 #' 
+#' @param site Vector of sites to update. 
+#' 
 #' @author Stuart K. Grange
 #' 
-#' @return Invisible. 
+#' @return Invisible \code{con}. 
 #' 
 #' @export
-update_variables_monitored <- function(con) {
+update_variables_monitored <- function(con, site = NA) {
   
-  # Summarise process table
-  df <- import_processes(con) %>% 
+  # Get process entries
+  df <- databaser::db_get(
+    con, 
+    "SELECT site,
+    variable, 
+    observation_count
+    FROM processes"
+  ) 
+  
+  # Filter to sites
+  if (!is.na(site[1])) df <- filter(df, site %in% !!site)
+  
+  # Summarise
+  df <- df %>% 
     arrange(site,
             variable) %>% 
     group_by(site) %>% 
     summarise(variables_monitored = stringr::str_c(unique(variable), collapse = "; "),
               observation_count = sum(observation_count, na.rm = TRUE)) %>% 
     ungroup() %>% 
-    mutate(variables_monitored = ifelse(observation_count == 0, NA, variables_monitored),
-           variables_monitored = stringr::str_replace_na(variables_monitored))
+    mutate(variables_monitored = if_else(
+      observation_count == 0, 
+      NA_character_, variables_monitored
+    ),
+    variables_monitored = stringr::str_replace_na(variables_monitored))
   
-  # Build some sql
-  sql_update <- stringr::str_c(
-    "UPDATE sites SET variables_monitored='", 
-    df$variables_monitored, "'
-    WHERE site='", 
-    df$site, "'"
-  )
+  # Build some sql and use
+  df %>% 
+    databaser::build_update_statements("sites", ., where = "site", squish = TRUE) %>% 
+    databaser::db_execute(con, .)
   
-  # Clean
-  sql_update <- stringr::str_replace_all(sql_update, "'NA'", "NULL")
-  sql_update <- stringr::str_squish(sql_update)
-  
-  # Do
-  databaser::db_execute(con, sql_update)
-  
-  # No return
+  return(invisible(con))
   
 }

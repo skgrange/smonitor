@@ -76,7 +76,7 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
     if (nrow(df) > n_row_pre_processes) {
       stop(
         "Process join caused observations to be replicated, some processes are duplicated...", 
-        call. = TRUE
+        call. = FALSE
       )
     }
     
