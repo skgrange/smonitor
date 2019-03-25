@@ -35,17 +35,16 @@
 #' 
 #' @param site_name Should \code{site_name} be returned? 
 #' 
-#' @param print_query Should the SQL query string be printed? 
-#' 
 #' @author Stuart K. Grange
+#' 
+#' @return Tibble. 
 #' 
 #' @seealso \code{\link{import_zones}}, \code{\link{import_zone_names}}
 #' 
 #' @export
 import_by_zone <- function(con, zone, variable = NA, sp_other = NA, start = 1969, 
                            end = NA, period = "hour", pad = TRUE, spread = TRUE, 
-                           tz = "UTC", valid_only = TRUE, site_name = FALSE, 
-                           print_query = FALSE) {
+                           tz = "UTC", valid_only = TRUE, site_name = FALSE) {
   
   # Get sites
   suppressWarnings(
@@ -77,11 +76,13 @@ import_by_zone <- function(con, zone, variable = NA, sp_other = NA, start = 1969
   } else {
     
     # Check
-    if (!grepl("polygon", gissr::sp_class(sp_other), ignore.case = TRUE)) 
-      stop("'sp_other' needs to be a polygon.", call. = FALSE)
+    if (!grepl("polygon", gissr::sp_class(sp_other), ignore.case = TRUE)) {
+      stop("'sp_other' needs to be a polygon.", call. = FALSE) 
+    }
     
-    if (!gissr::sp_projection(sp_sites) == gissr::sp_projection(sp_other))
-      stop("Projection systems are not identical.", call. = FALSE)
+    if (!gissr::sp_projection(sp_sites) == gissr::sp_projection(sp_other)) {
+      stop("Projection systems are not identical.", call. = FALSE) 
+    }
     
     # Filter with extra polygon
     sp_sites <- sp_sites[sp_other, ]
@@ -92,12 +93,20 @@ import_by_zone <- function(con, zone, variable = NA, sp_other = NA, start = 1969
   sites <- sort(unique(sp_sites@data$site))
   
   # Import observations
-  df <- import_by_site(con, site = sites, variable = variable, start = start,
-                       end = end, period = period, pad = pad, spread = spread, 
-                       tz = tz, valid_only = valid_only, site_name = site_name, 
-                       print_query = print_query)
+  df <- import_by_site(
+    con, 
+    site = sites, 
+    variable = variable, 
+    start = start,
+    end = end, 
+    period = period, 
+    pad = pad, 
+    spread = spread, 
+    tz = tz, 
+    valid_only = valid_only, 
+    site_name = site_name
+  )
   
-  # Return
-  df
+  return(df)
   
 }

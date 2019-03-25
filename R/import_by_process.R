@@ -42,8 +42,6 @@
 #' @param arrange_by How should the returned table be arranged? Can be either
 #' \code{"process"} or \code{"date"}. 
 #' 
-#' @param print_query Should the SQL query string be printed? 
-#' 
 #' @return Tibble containing decoded observational data with correct data types. 
 #' 
 #' @seealso \code{\link{import_by_site}} for a higher-level importing function
@@ -69,7 +67,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
                               end = NA, tz = "UTC", valid_only = TRUE, 
                               date_end = TRUE, date_insert = FALSE, 
                               site_name = TRUE, unit = TRUE, warn = TRUE, 
-                              arrange_by = "process", print_query = FALSE) {
+                              arrange_by = "process") {
   
   # Check inputs
   if (is.na(process[1])) {
@@ -102,20 +100,17 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     con, 
     process = process, 
     site_name = site_name, 
-    unit = unit,
-    print_query = print_query
+    unit = unit
   )
   
   # Check for data
   if (nrow(df_processes) == 0) {
     
     if (warn) {
-      
       warning(
         "Process(s) not found in database, no data has been returned...", 
         call. = FALSE
       )
-      
     }
     
     # Return empty data frame here
@@ -131,20 +126,17 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     start = start,
     end = end,
     date_end = date_end, 
-    date_insert = date_insert, 
-    print_query = print_query
+    date_insert = date_insert
   )
   
   # Check for data
   if (nrow(df) == 0) {
     
     if (warn) {
-      
       warning(
         "Database has been queried but no data has been returned...", 
         call. = FALSE
       )
-      
     }
     
     # Return empty data frame here
@@ -212,8 +204,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
 }
 
 
-import_by_process_process_table <- function(con, process, site_name, unit, 
-                                            print_query) {
+import_by_process_process_table <- function(con, process, site_name, unit) {
   
   # Link processes to sites
   sql_processes <- stringr::str_c(
@@ -231,9 +222,6 @@ import_by_process_process_table <- function(con, process, site_name, unit,
   # Clean
   sql_processes <- threadr::str_trim_many_spaces(sql_processes)
   
-  # Message statement to user
-  if (print_query) message("Processes query: ", sql_processes)
-  
   # Get data
   df <- databaser::db_get(con, sql_processes)
   
@@ -247,8 +235,7 @@ import_by_process_process_table <- function(con, process, site_name, unit,
 
 
 import_by_process_observation_table <- function(con, process, summary, start, 
-                                                end, date_end, date_insert, 
-                                                print_query) {
+                                                end, date_end, date_insert) {
   
   if (is.na(summary[1])) {
     
@@ -305,9 +292,6 @@ import_by_process_observation_table <- function(con, process, summary, start,
     
   # Clean sql
   sql_observations <- stringr::str_squish(sql_observations)
-  
-  # Message statement to user
-  if (print_query) message("Observations query: ", sql_observations)
   
   # Get observations
   df <- databaser::db_get(con, sql_observations)

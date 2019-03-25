@@ -7,7 +7,7 @@
 import_by_process(con, process = NA, summary = NA, start = 1969,
   end = NA, tz = "UTC", valid_only = TRUE, date_end = TRUE,
   date_insert = FALSE, site_name = TRUE, unit = TRUE, warn = TRUE,
-  arrange_by = "process", print_query = FALSE)
+  arrange_by = "process")
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -48,8 +48,6 @@ Default is \code{TRUE}.}
 
 \item{arrange_by}{How should the returned table be arranged? Can be either
 \code{"process"} or \code{"date"}.}
-
-\item{print_query}{Should the SQL query string be printed?}
 }
 \value{
 Tibble containing decoded observational data with correct data types.

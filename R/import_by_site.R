@@ -47,7 +47,7 @@
 #' @param arrange_by When \code{spread} is \code{FALSE}, how should the returned
 #' table be arranged? Can be either \code{"process"} or \code{"date"}.  
 #' 
-#' @param print_query Should the SQL query string be printed? 
+#' @param warn Should the functions raise warnings? 
 #' 
 #' @seealso \code{\link{import_by_process}}
 #' 
@@ -84,7 +84,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
                            valid_only = TRUE, pad = TRUE, tz = "UTC", 
                            spread = FALSE, date_end = TRUE, date_insert = FALSE, 
                            site_name = TRUE, unit = TRUE, arrange_by = "process",
-                           print_query = FALSE) {
+                           warn = TRUE) {
   
   # Check inputs
   if (is.na(site[1]) || site == "") {
@@ -175,10 +175,12 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   # Check mapping table
   if (nrow(df_processes) == 0) {
     
-    warning(
-      "Check the `site` and `period` arguments, processes are not available...", 
-      call. = FALSE
-    )
+    if (warn) {
+      warning(
+        "Check the `site` and `period` arguments, processes are not available...", 
+        call. = FALSE
+      )
+    }
     
     return(tibble())
     
@@ -197,7 +199,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     date_insert = date_insert, 
     site_name = site_name, 
     unit = unit,
-    print_query = print_query
+    warn = warn
   )
   
   # Return empty data frame here if no observations
@@ -231,10 +233,12 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     }, error = function(e) {
       
       # Raise warning
-      warning(
-        "Data has been removed to honour `spread` argument...", 
-        call. = FALSE
-      )
+      if (warn) {
+        warning(
+          "Data has been removed to honour `spread` argument...", 
+          call. = FALSE
+        )
+      }
       
       df %>%
         distinct(date,

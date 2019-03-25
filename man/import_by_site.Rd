@@ -8,7 +8,7 @@ import_by_site(con, site = NA, variable = NA, start = 1970,
   end = NA, period = "hour", include_sums = TRUE,
   valid_only = TRUE, pad = TRUE, tz = "UTC", spread = FALSE,
   date_end = TRUE, date_insert = FALSE, site_name = TRUE,
-  unit = TRUE, arrange_by = "process", print_query = FALSE)
+  unit = TRUE, arrange_by = "process", warn = TRUE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
@@ -55,7 +55,7 @@ Default is \code{TRUE}.}
 \item{arrange_by}{When \code{spread} is \code{FALSE}, how should the returned
 table be arranged? Can be either \code{"process"} or \code{"date"}.}
 
-\item{print_query}{Should the SQL query string be printed?}
+\item{warn}{Should the functions raise warnings?}
 }
 \description{
 \code{import_by_site} is considered the primary user-focused importing 

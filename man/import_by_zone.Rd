@@ -7,8 +7,7 @@ spatial polygons.}
 \usage{
 import_by_zone(con, zone, variable = NA, sp_other = NA, start = 1969,
   end = NA, period = "hour", pad = TRUE, spread = TRUE,
-  tz = "UTC", valid_only = TRUE, site_name = FALSE,
-  print_query = FALSE)
+  tz = "UTC", valid_only = TRUE, site_name = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -41,8 +40,9 @@ spreading the data? Default is \code{FALSE}.}
 \item{valid_only}{Should only valid data be returned? Default is \code{TRUE}.}
 
 \item{site_name}{Should \code{site_name} be returned?}
-
-\item{print_query}{Should the SQL query string be printed?}
+}
+\value{
+Tibble.
 }
 \description{
 \code{import_by_zone} needs a \code{`zones`} table and has been developed 
