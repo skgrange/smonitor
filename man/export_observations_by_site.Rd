@@ -8,7 +8,7 @@ can be shared and easily used.}
 export_observations_by_site(con, df, start = 1960, end = NA,
   site_name = FALSE, directory_output,
   file_name_prefix = NA_character_, file_type = ".csv.gz",
-  verbose = FALSE)
+  by_year = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection to a \strong{smonitor} database.}
@@ -29,6 +29,9 @@ is \code{"air_quality_data_site_"}.}
 
 \item{file_type}{Type of files to export. Can be either \code{".csv.gz"} or 
 \code{".rds"}.}
+
+\item{by_year}{Should files be exported for the site-year combinations? This 
+will create directories for each year too.}
 
 \item{verbose}{Should the function give messages?}
 }
