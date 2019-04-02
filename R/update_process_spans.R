@@ -23,13 +23,15 @@
 update_process_spans <- function(con, process = NA, by_process = FALSE, 
                                  na.rm = TRUE, verbose = FALSE) {
   
-  # Parse input
-  process <- process %>% 
-    unique() %>% 
-    sort()
-  
   # Check for empty inputs
   stopifnot(is.na(process) && length(process) >= 1)
+  
+  # Parse input
+  if (!is.na(process[1])) {
+    process <- process %>% 
+      unique() %>% 
+      sort()
+  }
   
   if (is.na(process) && verbose) {
     message(
@@ -41,9 +43,7 @@ update_process_spans <- function(con, process = NA, by_process = FALSE,
   if (verbose) {
     message(
       threadr::date_message(), 
-      "Calculating ", 
-      length(process), 
-      " process spans..."
+      "Calculating process spans..."
     )
   }
   
