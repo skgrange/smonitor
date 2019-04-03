@@ -23,9 +23,6 @@
 update_process_spans <- function(con, process = NA, by_process = FALSE, 
                                  na.rm = TRUE, verbose = FALSE) {
   
-  # Check for empty inputs
-  stopifnot(is.na(process) && length(process) >= 1)
-  
   # Parse input
   if (!is.na(process[1])) {
     process <- process %>% 
