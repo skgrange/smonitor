@@ -105,10 +105,6 @@ export_observations_by_site_worker <- function(con, df, start, end, site_name,
   
   if (nrow(df) != 0) {
     
-    if (verbose) {
-      message(threadr::date_message(), "Exporting `", file_type, "` data file...")
-    }
-    
     if (by_year) {
       
       if (verbose) {
@@ -132,6 +128,10 @@ export_observations_by_site_worker <- function(con, df, start, end, site_name,
       )
       
     } else {
+      
+      if (verbose) {
+        message(threadr::date_message(), "Exporting a site file...")
+      }
       
       # Build output file name
       file_output <- stringr::str_c(file_name_prefix, df$site[1])

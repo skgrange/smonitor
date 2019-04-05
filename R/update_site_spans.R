@@ -1,16 +1,13 @@
 #' Function to update the \code{date_start}, \code{date_end}, 
-#' \code{observation_count}, and \code{variables_monitored} variables for a 
-#' \code{`sites`} table in an smonitor database. 
+#' \code{observation_count}, \code{variables_monitored}, and \code{"data_source"}
+#'  variables for a \code{`sites`} table in an \strong{smonitor} database. 
 #' 
 #' Use \code{update_site_span} after \code{\link{update_process_spans}} because 
 #' it queries the \code{`processes`} table rather than \code{`observations`}. 
 #' 
-#' @param con Database connection. 
+#' @param con \strong{smonitor} database connection. 
 #' 
 #' @param site Vector of sites to update. 
-#' 
-#' @param variables_monitored Should the \code{variables_monitored} variable 
-#' also be updated? 
 #' 
 #' @seealso \code{\link{update_process_spans}}, 
 #' \code{\link{update_date_span_variables}}
@@ -20,7 +17,7 @@
 #' @author Stuart K. Grange
 #'
 #' @export
-update_site_spans <- function(con, site = NA, variables_monitored = FALSE) {
+update_site_spans <- function(con, site = NA) {
   
   # Get data and transform
   df <- databaser::db_get(
@@ -86,14 +83,19 @@ update_site_spans <- function(con, site = NA, variables_monitored = FALSE) {
     stringr::str_squish() %>% 
     databaser::db_execute(con, .)
   
-  # Update observation counts if they exist
+  # Update observation counts
   if ("observation_count" %in% databaser::db_list_variables(con, "sites")) {
     update_sites_observation_counts(con, site = site)
   }
   
-  # Also update variables monitored
-  if (variables_monitored) {
+  # Update variables monitored
+  if ("variables_monitored" %in% databaser::db_list_variables(con, "sites")) {
     update_variables_monitored(con, site = site)
+  }
+  
+  # Update data sources
+  if ("data_source" %in% databaser::db_list_variables(con, "sites")) {
+    update_sites_data_sources(con, site = site)
   }
   
   return(invisible(con))
@@ -158,3 +160,51 @@ update_sites_observation_counts <- function(con, site = NA) {
   return(invisible(con))
   
 }
+
+
+update_sites_data_sources <- function(con, site = NA) {
+    
+  # Build sql query
+  sql <- "
+    SELECT site, 
+    data_source 
+    FROM processes 
+  "
+  
+  if (!is.na(site[1])) {
+    
+    # Format site for sql
+    site <- site %>% 
+      stringr::str_c("'", ., "'") %>% 
+      stringr::str_c(collapse = ",")
+    
+    sql_where <- stringr::str_c(
+      "WHERE site IN (", site, ")"
+    )
+    
+    # Add where clause
+    sql <- stringr::str_c(sql, sql_where)
+    
+  } 
+  
+  # Add order by, clean, and use
+  df <- sql %>% 
+    stringr::str_c(" ORDER BY site") %>% 
+    stringr::str_squish() %>% 
+    databaser::db_get(con, .)
+  
+  # Summarise data sources
+  df <- df %>% 
+    group_by(site) %>% 
+    summarise(data_source = stringr::str_c(unique(data_source), collapse = "; ")) %>% 
+    ungroup()
+  
+  # Build update statements and use
+  df %>%
+    databaser::build_update_statements("sites", ., where = "site", squish = TRUE) %>%
+    databaser::db_execute(con, .)
+  
+  return(invisible(con))
+  
+}
+

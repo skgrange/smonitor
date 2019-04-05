@@ -6,19 +6,16 @@
 \code{`processes`} and \code{`sites`} tables in a \strong{smonitor} database.}
 \usage{
 update_date_span_variables(con, na.rm = FALSE, row_counts = FALSE,
-  variables_monitored = TRUE, verbose = FALSE)
+  verbose = FALSE)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{\strong{smonitor} database connection.}
 
 \item{na.rm}{Should missing values (\code{NA}/\code{NULL}) be omited from the
 aggregation functions?}
 
 \item{row_counts}{Should the \code{`row_counts`} table be updated (or 
 inserted)?}
-
-\item{variables_monitored}{Should the \code{variable_monitored} vaiable also 
-be updated?}
 
 \item{verbose}{Should the function give messages?}
 }

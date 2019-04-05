@@ -3,18 +3,15 @@
 \name{update_site_spans}
 \alias{update_site_spans}
 \title{Function to update the \code{date_start}, \code{date_end}, 
-\code{observation_count}, and \code{variables_monitored} variables for a 
-\code{`sites`} table in an smonitor database.}
+\code{observation_count}, \code{variables_monitored}, and \code{"data_source"}
+ variables for a \code{`sites`} table in an \strong{smonitor} database.}
 \usage{
-update_site_spans(con, site = NA, variables_monitored = FALSE)
+update_site_spans(con, site = NA)
 }
 \arguments{
-\item{con}{Database connection.}
+\item{con}{\strong{smonitor} database connection.}
 
 \item{site}{Vector of sites to update.}
-
-\item{variables_monitored}{Should the \code{variables_monitored} variable 
-also be updated?}
 }
 \value{
 Invisible \code{con}.

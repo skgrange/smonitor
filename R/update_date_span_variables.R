@@ -4,16 +4,13 @@
 #' \code{update_date_span_variables} will also insert (or replace) the 
 #' \code{`row_counts`} table. 
 #' 
-#' @param con Database connection.
+#' @param con \strong{smonitor} database connection. 
 #' 
 #' @param na.rm Should missing values (\code{NA}/\code{NULL}) be omited from the
 #' aggregation functions? 
 #' 
 #' @param row_counts Should the \code{`row_counts`} table be updated (or 
 #' inserted)? 
-#' 
-#' @param variables_monitored Should the \code{variable_monitored} vaiable also 
-#' be updated? 
 #' 
 #' @param verbose Should the function give messages?
 #' 
@@ -23,7 +20,6 @@
 #' 
 #' @export
 update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE, 
-                                       variables_monitored = TRUE, 
                                        verbose = FALSE) {
   
   # Processes table
@@ -32,7 +28,7 @@ update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE,
   
   # Sites table
   if (verbose) message(threadr::date_message(), "Updating `sites` table...")
-  update_site_spans(con, variables_monitored = variables_monitored)
+  update_site_spans(con)
   
   # Also row counts
   if (row_counts) {
