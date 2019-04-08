@@ -89,12 +89,14 @@ update_site_spans <- function(con, site = NA) {
   }
   
   # Update variables monitored
-  if ("variables_monitored" %in% databaser::db_list_variables(con, "sites")) {
+  if ("variables_monitored" %in% databaser::db_list_variables(con, "sites") && 
+      "observation_count" %in% databaser::db_list_variables(con, "sites")) {
     update_variables_monitored(con, site = site)
   }
   
   # Update data sources
-  if ("data_source" %in% databaser::db_list_variables(con, "sites")) {
+  if ("data_source" %in% databaser::db_list_variables(con, "sites") &&
+      "data_source" %in% databaser::db_list_variables(con, "processes")) {
     update_sites_data_sources(con, site = site)
   }
   
