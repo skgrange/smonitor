@@ -14,6 +14,8 @@
 #' @export
 update_row_counts <- function(con, estimate = FALSE) {
   
+  .Deprecated("db_count_rows_insert", package = "databaser")
+  
   # Get all tables
   table <- databaser::db_list_tables(con)
   

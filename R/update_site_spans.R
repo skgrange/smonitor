@@ -9,17 +9,32 @@
 #' 
 #' @param site Vector of sites to update. 
 #' 
+#' @param verbose Should the function give messages? 
+#' 
 #' @seealso \code{\link{update_process_spans}}, 
 #' \code{\link{update_date_span_variables}}
 #' 
 #' @return Invisible \code{con}. 
 #' 
 #' @author Stuart K. Grange
+#' 
+#' @examples 
+#' 
+#' \dontrun{
+#' # Update variables in `sites` table
+#' update_site_spans(con)
+#' 
+#' # Update variables in `sites` table, only for a few sites
+#' update_site_spans(con, site = 1:3)
+#' 
+#' }
 #'
 #' @export
-update_site_spans <- function(con, site = NA) {
+update_site_spans <- function(con, site = NA, verbose = FALSE) {
   
   # Get data and transform
+  if (verbose) message(threadr::date_message(), "Querying `processes` table...")
+  
   df <- databaser::db_get(
     con, 
     "SELECT site,
@@ -34,6 +49,8 @@ update_site_spans <- function(con, site = NA) {
   if (!is.na(site[1])) df <- filter(df, site %in% !!site)
   
   # Summarise by site
+  if (verbose) message(threadr::date_message(), "Summarising sites' data...")
+  
   df <- df %>% 
     group_by(site) %>% 
     summarise(date_start = min(date_start, na.rm = TRUE),
@@ -70,6 +87,8 @@ update_site_spans <- function(con, site = NA) {
   }
   
   # Build update statements
+  if (verbose) message(threadr::date_message(), "Updating date variables...")
+  
   sql_update <- stringr::str_c(
     "UPDATE sites
      SET date_start = ", df$date_start, 
@@ -85,19 +104,28 @@ update_site_spans <- function(con, site = NA) {
   
   # Update observation counts
   if ("observation_count" %in% databaser::db_list_variables(con, "sites")) {
+    
+    if (verbose) message(threadr::date_message(), "Updating observation counts...")
     update_sites_observation_counts(con, site = site)
+    
   }
   
   # Update variables monitored
   if ("variables_monitored" %in% databaser::db_list_variables(con, "sites") && 
       "observation_count" %in% databaser::db_list_variables(con, "sites")) {
+    
+    if (verbose) message(threadr::date_message(), "Updating variables monitored...")
     update_variables_monitored(con, site = site)
+    
   }
   
   # Update data sources
   if ("data_source" %in% databaser::db_list_variables(con, "sites") &&
       "data_source" %in% databaser::db_list_variables(con, "processes")) {
+    
+    if (verbose) message(threadr::date_message(), "Updating data sources...")
     update_sites_data_sources(con, site = site)
+    
   }
   
   return(invisible(con))
@@ -209,4 +237,3 @@ update_sites_data_sources <- function(con, site = NA) {
   return(invisible(con))
   
 }
-

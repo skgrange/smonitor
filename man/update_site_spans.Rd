@@ -6,12 +6,14 @@
 \code{observation_count}, \code{variables_monitored}, and \code{"data_source"}
  variables for a \code{`sites`} table in an \strong{smonitor} database.}
 \usage{
-update_site_spans(con, site = NA)
+update_site_spans(con, site = NA, verbose = FALSE)
 }
 \arguments{
 \item{con}{\strong{smonitor} database connection.}
 
 \item{site}{Vector of sites to update.}
+
+\item{verbose}{Should the function give messages?}
 }
 \value{
 Invisible \code{con}.
@@ -19,6 +21,18 @@ Invisible \code{con}.
 \description{
 Use \code{update_site_span} after \code{\link{update_process_spans}} because 
 it queries the \code{`processes`} table rather than \code{`observations`}.
+}
+\examples{
+
+\dontrun{
+# Update variables in `sites` table
+update_site_spans(con)
+
+# Update variables in `sites` table, only for a few sites
+update_site_spans(con, site = 1:3)
+
+}
+
 }
 \seealso{
 \code{\link{update_process_spans}}, 
