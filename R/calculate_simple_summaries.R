@@ -8,23 +8,33 @@
 #' 
 #' @param processes A vector of processes. 
 #' 
+#' @param start What is the start date of observations to be summarised?
+#' 
+#' @param end What is the end date of observations to be summarised?
+#' 
 #' @param period Period of aggregation to summarise to. Can be both, or either
 #' \code{"month"} or \code{"year"}. 
 #' 
 #' @param verbose Should the function give messages? 
+#' 
+#' @param .progress Should a progress bar be displayed? A \strong{dplyr} progress
+#' bar named \code{progress_bar} must be initialised first. 
 #' 
 #' @return Tibble. 
 #' 
 #' @author Stuart K. Grange
 #'
 #' @export
-calculate_simple_summaries <- function(con, processes, 
+calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
                                        period = c("month", "year"), 
-                                       verbose = FALSE) {
+                                       verbose = FALSE, .progress = FALSE) {
   
   # Check inputs
   period <- stringr::str_to_lower(period)
   stopifnot(period %in% c("month", "year"))
+  
+  # For query
+  if (is.na(start)) start <- 1969
   
   # Get observations
   if (verbose) message(threadr::date_message(), "Importing observations...")
@@ -32,10 +42,13 @@ calculate_simple_summaries <- function(con, processes,
   df <- import_by_process(
     con, 
     process = processes, 
+    start = start,
+    end = end,
     site_name = FALSE, 
     date_end = FALSE,
     valid_only = TRUE,
-    tz = "UTC"
+    tz = "UTC",
+    warn = FALSE
   ) 
   
   if (nrow(df) != 0) {
@@ -61,7 +74,7 @@ calculate_simple_summaries <- function(con, processes,
   
   # For progress bar
   # .progress = FALSE
-  # if (.progress) progress_bar$tick()$print()
+  if (.progress) progress_bar$tick()$print()
   
   return(df)
   

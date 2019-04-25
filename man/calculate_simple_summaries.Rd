@@ -5,18 +5,25 @@
 \title{Function to create simple monthly and annual means for an \code{smonitor}
 database.}
 \usage{
-calculate_simple_summaries(con, processes, period = c("month", "year"),
-  verbose = FALSE)
+calculate_simple_summaries(con, processes, start = NA, end = NA,
+  period = c("month", "year"), verbose = FALSE, .progress = FALSE)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
 
 \item{processes}{A vector of processes.}
 
+\item{start}{What is the start date of observations to be summarised?}
+
+\item{end}{What is the end date of observations to be summarised?}
+
 \item{period}{Period of aggregation to summarise to. Can be both, or either
 \code{"month"} or \code{"year"}.}
 
 \item{verbose}{Should the function give messages?}
+
+\item{.progress}{Should a progress bar be displayed? A \strong{dplyr} progress
+bar named \code{progress_bar} must be initialised first.}
 }
 \value{
 Tibble.
