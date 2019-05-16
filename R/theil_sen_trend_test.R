@@ -26,14 +26,11 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   # Trend test errors when one observation is passed
   # Less than three observations results in no p-values and is not a valid procedure
   if (nrow(df) <= 2) {
-    
     warning(
       "Too few observations were supplied, the trend test has not been conducted...",
       call. = FALSE
     )
-    
     return(tibble())
-    
   }
   
   # Get n
@@ -44,14 +41,11 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
   
   # Catch all missing
   if (n == 0) {
-    
     warning(
       "There are no valid observations, the trend test has not been conducted...",
       call. = FALSE
     )
-    
     return(tibble())
-    
   }
   
   # Send plot to dev/null
@@ -105,6 +99,8 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
            deseason,
            p_value = p,
            intercept,
+           intercept_lower,
+           intercept_upper,
            slope, 
            slope_lower = lower,
            slope_upper = upper)
