@@ -165,15 +165,16 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   df <- left_join(df, df_processes, by = "process")
   
   # Parse dates
+  df$date <- threadr::parse_unix_time(df$date, tz = tz)
+  
   if (date_insert) {
     df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   }
   
+  # As numeric force is for 64 bit integers issues
   if (date_end) {
-    df$date_end <- threadr::parse_unix_time(df$date_end, tz = tz)
+    df$date_end <- threadr::parse_unix_time(as.numeric(df$date_end), tz = tz)
   }
-  
-  df$date <- threadr::parse_unix_time(df$date, tz = tz)
   
   # Arrange observations
   if (arrange_by == "process") {
