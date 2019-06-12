@@ -14,15 +14,14 @@
 #' 
 #' @param end End date to download and insert. 
 #' 
-#' @param validity Should the validity variable be updated? Not implemented yet. 
+#' @param verbose Should the function give messages? 
 #' 
-#' @param progress Type of progress bar to display. 
+#' @return Invisible \code{con}
 #' 
 #' @author Stuart K. Grange
 #' 
 #' @export
-insert_wunderground_data <- function(con, site, start, end = NA, validity = FALSE,
-                                     progress = "time") {
+insert_wunderground_data <- function(con, site, start, end = NA, verbose = FALSE) {
   
   # Get look-up table for a join
   df_look <- import_processes(con) %>% 
@@ -31,19 +30,15 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
            site,
            variable)
   
-  # Get observations, every site is done separately
-  # message("Getting new observations...")
-  
-  df <- plyr::ldply(
+  # Get observations, scrape_wunderground is not vectorised over site
+  df <- purrr::map_dfr(
     site, 
-    function(x) 
-      sscraper::scrape_wunderground(
-        x, 
-        start = start, 
-        end = end, 
-        verbose = FALSE
-      ),
-    .progress = progress
+    ~sscraper::scrape_wunderground(
+      ., 
+      start = start, 
+      end = end, 
+      verbose = verbose
+    )
   )
   
   if (nrow(df) != 0) {
@@ -59,8 +54,6 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
              validity = NA,
              summary = 0L)
     
-    # To-do validity
-    
     # Join processes, only processes in table will be kept, then arrange
     df <- df %>% 
       inner_join(df_look, by = c("site", "variable")) %>% 
@@ -72,27 +65,16 @@ insert_wunderground_data <- function(con, site, start, end = NA, validity = FALS
              value)
     
     if (nrow(df) > 0) {
-      
-      # Delete observations
-      # message("Deleting old observations...")
-      
-      # Does the grouping
-      delete_observations(con, df, match = "between")
-      
-      # Insert
-      # message("Inserting new observations...")
-      insert_observations(con, df)
-      
+      delete_observations(con, df, match = "between", verbose = verbose)
+      insert_observations(con, df, verbose = verbose)
     } else {
-      
-      message("No data inserted...")
-      
+      message(threadr::date_message(), "No data inserted...")
     }
     
   } else {
-    
     message("No data was returned from the API...")
-    
   }
+  
+  return(invisible(con))
   
 }

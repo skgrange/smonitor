@@ -5,8 +5,7 @@
 \title{Function to get observations from wunderground and insert them into a 
 \strong{smonitor} database.}
 \usage{
-insert_wunderground_data(con, site, start, end = NA, validity = FALSE,
-  progress = "time")
+insert_wunderground_data(con, site, start, end = NA, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -17,9 +16,10 @@ insert_wunderground_data(con, site, start, end = NA, validity = FALSE,
 
 \item{end}{End date to download and insert.}
 
-\item{validity}{Should the validity variable be updated? Not implemented yet.}
-
-\item{progress}{Type of progress bar to display.}
+\item{verbose}{Should the function give messages?}
+}
+\value{
+Invisible \code{con}
 }
 \description{
 Site-variable combinations need to be present in the database's process table,
