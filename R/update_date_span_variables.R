@@ -42,8 +42,8 @@ update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE,
       }
     }
     
-    # Do
-    update_row_counts(con)
+    # Do the updating or replacing
+    databaser::db_count_rows_insert(con, table = "row_counts")
     
   }
   
