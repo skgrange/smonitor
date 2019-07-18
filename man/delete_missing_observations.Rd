@@ -11,7 +11,7 @@ delete_missing_observations(con)
 \item{con}{Database connection.}
 }
 \value{
-Invisible.
+Invisible \code{con}.
 }
 \description{
 Function to delete missing (\code{NA}/\code{NULL}) value from the 

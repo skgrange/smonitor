@@ -21,7 +21,7 @@ observations associated with a process.}
 \item{verbose}{Should the function give messages?}
 }
 \value{
-Invisible, database connection.
+Invisible \code{con}.
 }
 \description{
 \code{delete_observations} is generally used immediately before a database 

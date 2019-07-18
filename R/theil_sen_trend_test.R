@@ -110,6 +110,47 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
 }
 
 
+#' Function to deseasonalise a time series with loess. 
+#' 
+#' @param df Input data frame, containing time series observations. 
+#' 
+#' @param variable Variable name to test. 
+#' 
+#' @seealso \code{\link{TheilSen}}
+#' 
+#' @return Tibble. 
+#' 
+#' @author Stuart K. Grange.
+#' 
+#' @export
+deseasonalise <- function(df, variable = "value") {
+  
+  # Get time zone of input
+  time_zone <- threadr::time_zone(df$date)
+  
+  # Use openair to do the deseaonalisation
+  list_openair <- quiet(
+    openair::TheilSen(
+      df,
+      pollutant = variable,
+      deseason = TRUE,
+      plot = FALSE,
+      silent = TRUE
+    )
+  )
+  
+  # Get the deseasonalised component
+  df <- list_openair$data$main.data %>% 
+    mutate(date = lubridate::ymd(date, tz = time_zone)) %>% 
+    select(date,
+           value = conc) %>% 
+    as_tibble()
+  
+  return(df)
+  
+}
+
+
 quiet <- function(x) {
   sink(tempfile())
   on.exit(sink())

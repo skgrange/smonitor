@@ -5,13 +5,10 @@
 #' 
 #' @author Stuart K. Grange.
 #' 
-#' @return Invisible. 
+#' @return Invisible \code{con}. 
 #' 
 #' @export
 delete_missing_observations <- function(con) {
-  
-  sql <- "DELETE FROM observations WHERE value IS NULL"
-  databaser::db_execute(con, sql)
-  # No return
-  
+  databaser::db_execute(con, "DELETE FROM observations WHERE value IS NULL")
+  return(invisible(con))
 }
