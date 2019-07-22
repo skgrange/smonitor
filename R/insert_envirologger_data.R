@@ -18,6 +18,9 @@
 #' 
 #' @param end End date to download and insert. 
 #' 
+#' @param api_version What API version is in use? Use \code{3.5} for different 
+#' joining logic which uses \code{channel} and \code{sensor_label} variables.
+#' 
 #' @param verbose Should the funciton give messages?
 #' 
 #' @author Stuart K. Grange
@@ -26,7 +29,7 @@
 #' 
 #' @export
 insert_envirologger_data <- function(con, user, key, station, start, end = NA,
-                                     verbose = FALSE) {
+                                     api_version = 3.5, verbose = FALSE) {
   
   # Load look-up tables
   # Sites
@@ -38,16 +41,36 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
     ORDER BY site"
   )
   
-  # Import process keys granular to channel number and sensor combinations
-  df_processes <- import_processes(con) %>% 
-    filter(service != 0 | is.na(service)) %>% 
-    select(process,
-           site,
-           variable,
-           channel_number = envirologger_channel_number,
-           sensor_id = envirologger_sensor_id)
+  # Processes
+  df_processes <- import_processes(con)
   
-  # Get observations with API
+  # Needs more granular control for past apis, but those apis are no longer
+  # reachable anyway
+  if (identical(api_version, 3.5)) {
+    
+    # Process keys are granular to channel-sensor_label
+    df_processes <- df_processes %>% 
+      filter(service != 0 | is.na(service), 
+             envirologger_api_version == !!api_version) %>%
+      select(process,
+             site,
+             variable,
+             channel = envirologger_channel_number,
+             sensor_label = envirologger_sensor_label)
+    
+  } else {
+    
+    df_processes <- df_processes %>% 
+      filter(service != 0 | is.na(service)) %>% 
+      select(process,
+             site,
+             variable,
+             channel_number = envirologger_channel_number,
+             sensor_id = envirologger_sensor_id)
+    
+  }
+  
+  # Get observations from API
   if (verbose) message(threadr::date_message(), "Getting new observations...")
   
   df <- envirologgerr::get_envirologger_data(
@@ -70,7 +93,7 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
     n_row_pre_processes <- nrow(df)
     
     # Only processes in table will be kept
-    df <- inner_join(df, df_processes, by = c("site", "channel_number", "sensor_id"))
+    df <- inner_join(df, df_processes, by = c("site", "channel", "sensor_label"))
     
     # Test for equal or fewer observations
     if (nrow(df) > n_row_pre_processes) {
@@ -80,10 +103,10 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
       )
     }
     
-    # Transform for smonitor
+    # Transform for smonitor's observation table
     df <- df %>% 
       mutate(date = as.numeric(date),
-             date_end = NA_real_, 
+             date_end = as.numeric(date_end), 
              validity = NA_integer_,
              summary = 0L) %>% 
       select(date,
@@ -93,24 +116,17 @@ insert_envirologger_data <- function(con, user, key, station, start, end = NA,
              validity,
              value)
     
-    # Join may drop all observations
-    if (nrow(df) > 0) {
-      
-      # Upsert observations
-      delete_observations(con, df, match = "between", verbose = verbose)
-      insert_observations(con, df, verbose = verbose)
-      
-    }
+    # Upsert observations
+    delete_observations(con, df, match = "between", verbose = verbose)
+    insert_observations(con, df, verbose = verbose)
     
   } else {
     
     if (verbose) {
-      
       message(
         threadr::date_message(), 
         "No data inserted because API returned no data..."
       )
-    
     } 
     
   }

@@ -6,7 +6,7 @@
 \strong{smonitor} database.}
 \usage{
 insert_envirologger_data(con, user, key, station, start, end = NA,
-  verbose = FALSE)
+  api_version = 3.5, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -20,6 +20,9 @@ insert_envirologger_data(con, user, key, station, start, end = NA,
 \item{start}{Start date to download and insert.}
 
 \item{end}{End date to download and insert.}
+
+\item{api_version}{What API version is in use? Use \code{3.5} for different 
+joining logic which uses \code{channel} and \code{sensor_label} variables.}
 
 \item{verbose}{Should the funciton give messages?}
 }
