@@ -128,6 +128,9 @@ deseasonalise <- function(df, variable = "value") {
   # Get time zone of input
   time_zone <- threadr::time_zone(df$date)
   
+  # Check if monthly time series
+  date_interval <- threadr::detect_date_interval(df$date, text_return = TRUE)
+  
   # Use openair to do the deseaonalisation
   list_openair <- quiet(
     openair::TheilSen(
@@ -140,13 +143,22 @@ deseasonalise <- function(df, variable = "value") {
   )
   
   # Get the deseasonalised component
-  df <- list_openair$data$main.data %>% 
-    mutate(date = lubridate::ymd(date, tz = time_zone)) %>% 
+  df_deseason <- list_openair$data$main.data %>% 
+    mutate(date = lubridate::ymd(date, tz = time_zone)) 
+  
+  # Join monthly data if time series are equal
+  if (date_interval == "month") {
+    df_deseason <- left_join(df_deseason, select(df, date, value), by = "date")
+  }
+  
+  # Final cleaning
+  df_deseason <- df_deseason %>% 
     select(date,
-           value = conc) %>% 
+           dplyr::matches("value"),
+           value_deseason = conc) %>% 
     as_tibble()
   
-  return(df)
+  return(df_deseason)
   
 }
 
