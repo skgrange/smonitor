@@ -44,8 +44,14 @@ insert_observations <- function(con, df, check_processes = TRUE,
   # Get system date
   date_system <- round(lubridate::now())
   
+  # Return immediatelly when input contains no observations
+  if (nrow(df) == 0) {
+    message(threadr::date_message(), "Input data has no observations, not continuing...")
+    return(invisible(con))
+  }
+  
   if (verbose) {
-    message(threadr::str_date_formatted(), ": Formatting input for smonitor insert...")
+    message(threadr::date_message(), "Formatting input for smonitor insert...")
   }
   
   # Get variables in database table
@@ -68,8 +74,8 @@ insert_observations <- function(con, df, check_processes = TRUE,
   # Do some checking
   if (verbose) {
     message(
-      threadr::str_date_formatted(), 
-      ": Checking smonitor's constraints before insert..."
+      threadr::date_message(), 
+      "Checking smonitor's constraints before insert..."
     )
   }
   
@@ -118,7 +124,7 @@ insert_observations <- function(con, df, check_processes = TRUE,
   if (!is.na(batch_size) && nrow(df) >= batch_size) {
     
     if (verbose) {
-      message(threadr::str_date_formatted(), ": Splitting input...")
+      message(threadr::date_message(), "Splitting input...")
     }
     
     # Split
@@ -126,8 +132,8 @@ insert_observations <- function(con, df, check_processes = TRUE,
     
     if (verbose) {
       message(
-        threadr::str_date_formatted(), 
-        ": Inserting ", 
+        threadr::date_message(), 
+        "Inserting ", 
         threadr::str_thousands_separator(nrow(df)), 
         " observations into `observations` in ", 
         length(list_df), 
@@ -142,8 +148,8 @@ insert_observations <- function(con, df, check_processes = TRUE,
     
     if (verbose) {
       message(
-        threadr::str_date_formatted(), 
-        ": Inserting ", 
+        threadr::date_message(), 
+        "Inserting ", 
         threadr::str_thousands_separator(nrow(df)), 
         " observations into `observations`..."
       )
@@ -154,6 +160,6 @@ insert_observations <- function(con, df, check_processes = TRUE,
     
   }
   
-  invisible(con)
+  return(invisible(con))
   
 }

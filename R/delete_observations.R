@@ -30,6 +30,12 @@
 #' @export
 delete_observations <- function(con, df, match = "between", verbose = FALSE) {
   
+  # Return immediatelly when input contains no observations
+  if (nrow(df) == 0) {
+    message(threadr::date_message(), "Input data has no observations, not continuing...")
+    return(invisible(con))
+  }
+  
   # May need to use the argument
   if (any(is.na(df$process))) {
     stop("Input data frame must not contain missing processes...", call. = FALSE)
@@ -91,27 +97,8 @@ delete_observations_worker <- function(con, df, verbose) {
   ) %>% 
     stringr::str_squish()
   
-  # Message to user
-  if (verbose) {
-    
-    # # Clean dates
-    # date_min_format <- threadr::parse_unix_time(date_min)
-    # date_max_format <- threadr::parse_unix_time(date_max)
-    # date_min_format <- format(date_min_format, usetz = TRUE)
-    # date_max_format <- format(date_max_format, usetz = TRUE)
-    # 
-    # stringr::str_c(
-    #   threadr::date_message(), 
-    #   "Deleting observations from `process` ", process,
-    #   " and `summary` ", summary, 
-    #   " between ", date_min_format, 
-    #   " and ", date_max_format
-    # ) %>% 
-    #   message()
-    
-    message(threadr::date_message(), sql)
-    
-  }
+  # Message sql to user
+  if (verbose) message(threadr::date_message(), sql)
   
   # Use statement
   databaser::db_execute(con, sql)
