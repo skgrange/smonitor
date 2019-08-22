@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_simple_summaries.R
 \name{calculate_simple_summaries}
 \alias{calculate_simple_summaries}
-\title{Function to create simple monthly and annual means for an \code{smonitor}
+\title{Function to create simple monthly and annual means for an \strong{smonitor}
 database.}
 \usage{
 calculate_simple_summaries(con, processes, start = NA, end = NA,

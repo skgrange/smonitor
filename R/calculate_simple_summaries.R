@@ -1,4 +1,4 @@
-#' Function to create simple monthly and annual means for an \code{smonitor}
+#' Function to create simple monthly and annual means for an \strong{smonitor}
 #' database. 
 #' 
 #' The summaries created by \code{calculate_simple_summaries} are generally of
@@ -33,11 +33,18 @@ calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
   period <- stringr::str_to_lower(period)
   stopifnot(period %in% c("month", "year"))
   
+  print(processes)
+  
   # For query
   if (is.na(start)) start <- 1969
   
   # Get observations
-  if (verbose) message(threadr::date_message(), "Importing observations...")
+  if (verbose) {
+    message(
+      threadr::date_message(), 
+      "Importing observations for ", length(processes), " processes..."
+    )
+  }
   
   df <- import_by_process(
     con, 
@@ -67,9 +74,7 @@ calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
     )
     
   } else {
-    
     df <- tibble()
-    
   }
   
   # For progress bar

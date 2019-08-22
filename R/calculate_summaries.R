@@ -51,8 +51,9 @@ calculate_summaries <- function(con, df, start = NA, end = NA, tz = "UTC",
     "aggregation_function", "validity_threshold", "source_name_summary"
   )
   
-  if (!all(variables_needed %in% names(df)))
+  if (!all(variables_needed %in% names(df))) {
     stop("Mandatory variables not present in mapping data frame.", call. = FALSE)
+  }
   
   # Do
   df %>% 
@@ -138,7 +139,7 @@ calculate_summaries_worker <- function(con, df, start, end, tz, verbose,
     if (aggregation_function == "data_capture") {
       
       # More are possible
-      pad_unit <- if_else(grepl("day|daily", source_name_summary), "day", as.character(NA))
+      pad_unit <- if_else(grepl("day|daily", source_name_summary), "day", NA_character_)
       pad_unit <- if_else(grepl("hour|hourly", source_name_summary), "hour", pad_unit)
       pad_unit <- if_else(grepl("month|monthly", source_name_summary), "month", pad_unit)
       
