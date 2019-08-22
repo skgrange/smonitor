@@ -33,8 +33,6 @@ calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
   period <- stringr::str_to_lower(period)
   stopifnot(period %in% c("month", "year"))
   
-  print(processes)
-  
   # For query
   if (is.na(start)) start <- 1969
   
