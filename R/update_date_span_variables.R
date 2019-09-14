@@ -34,13 +34,7 @@ update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE,
   if (row_counts) {
     
     # Message text logic
-    if (verbose) {
-      if (databaser::db_table_exists(con, "row_counts")) {
-        message(threadr::date_message(), "Replacing `row_counts` table...")
-      } else {
-        message(threadr::date_message(), "Inserting a `row_counts` table...")
-      }
-    }
+    if (verbose) message(threadr::date_message(), "Updating `row_counts` table...")
     
     # Do the updating or replacing
     databaser::db_count_rows_insert(con, table = "row_counts")
