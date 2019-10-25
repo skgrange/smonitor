@@ -5,12 +5,14 @@
 \title{Function to update the \code{variables_monitored} variable in the 
 \code{`site`} table of an \strong{smonitor} database.}
 \usage{
-update_variables_monitored(con, site = NA)
+update_variables_monitored(con, site = NA, verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
 
 \item{site}{Vector of sites to update.}
+
+\item{verbose}{Should the function give messages?}
 }
 \value{
 Invisible \code{con}.
