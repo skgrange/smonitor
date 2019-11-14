@@ -4,8 +4,11 @@
 \alias{smonitor_observation_validity_test}
 \title{Function to add a validity variable to a data frame based on date ranges.}
 \usage{
-smonitor_observation_validity_test(df_observations, df,
-  valid_value = as.integer(NA))
+smonitor_observation_validity_test(
+  df_observations,
+  df,
+  valid_value = as.integer(NA)
+)
 }
 \arguments{
 \item{df_observations}{Data frame to test and add or overwrite a 

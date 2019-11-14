@@ -5,10 +5,18 @@
 \title{Function to export tidy tabular files from a \strong{smonitor} database which 
 can be shared and easily used.}
 \usage{
-export_observations_by_site(con, df, start = 1960, end = NA,
-  site_name = FALSE, directory_output,
-  file_name_prefix = NA_character_, file_type = ".csv.gz",
-  by_year = FALSE, verbose = FALSE)
+export_observations_by_site(
+  con,
+  df,
+  start = 1960,
+  end = NA,
+  site_name = FALSE,
+  directory_output,
+  file_name_prefix = NA_character_,
+  file_type = ".csv.gz",
+  by_year = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection to a \strong{smonitor} database.}

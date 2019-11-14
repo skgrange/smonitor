@@ -5,8 +5,15 @@
 \title{Function to create simple monthly and annual means for an \strong{smonitor}
 database.}
 \usage{
-calculate_simple_summaries(con, processes, start = NA, end = NA,
-  period = c("month", "year"), verbose = FALSE, .progress = FALSE)
+calculate_simple_summaries(
+  con,
+  processes,
+  start = NA,
+  end = NA,
+  period = c("month", "year"),
+  verbose = FALSE,
+  .progress = FALSE
+)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}

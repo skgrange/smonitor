@@ -4,11 +4,25 @@
 \alias{import_by_site}
 \title{Function to import data from an \strong{smonitor} database based on sites.}
 \usage{
-import_by_site(con, site = NA, variable = NA, start = 1970,
-  end = NA, period = "hour", include_sums = TRUE,
-  valid_only = TRUE, pad = TRUE, tz = "UTC", spread = FALSE,
-  date_end = TRUE, date_insert = FALSE, site_name = TRUE,
-  unit = TRUE, arrange_by = "process", warn = TRUE)
+import_by_site(
+  con,
+  site = NA,
+  variable = NA,
+  start = 1970,
+  end = NA,
+  period = "hour",
+  include_sums = TRUE,
+  valid_only = TRUE,
+  pad = TRUE,
+  tz = "UTC",
+  spread = FALSE,
+  date_end = TRUE,
+  date_insert = FALSE,
+  site_name = TRUE,
+  unit = TRUE,
+  arrange_by = "process",
+  warn = TRUE
+)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}

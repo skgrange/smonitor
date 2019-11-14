@@ -5,8 +5,12 @@
 \title{Function to update the \code{date_start}, \code{date_end}, variables in the
 \code{`processes`} and \code{`sites`} tables in a \strong{smonitor} database.}
 \usage{
-update_date_span_variables(con, na.rm = FALSE, row_counts = FALSE,
-  verbose = FALSE)
+update_date_span_variables(
+  con,
+  na.rm = FALSE,
+  row_counts = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{con}{\strong{smonitor} database connection.}

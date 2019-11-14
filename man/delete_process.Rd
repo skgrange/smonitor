@@ -5,7 +5,7 @@
 \title{Function to delete/purge all observations for a process from the 
 \code{`observations`} table in a \strong{smonitor} database.}
 \usage{
-delete_process(con, process, by_process = FALSE)
+delete_process(con, process, by_process = FALSE, progress = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -15,6 +15,11 @@ delete_process(con, process, by_process = FALSE)
 \item{by_process}{Should the function use multiple SQL statements to delete 
 processes? This is useuful if there are many to delete and a progress bar
 is desired.}
+
+\item{progress}{If \code{by_process}, should a progress bar be displayed?}
+}
+\value{
+Invisible \code{con}.
 }
 \description{
 \code{delete_process} is usually used when a process needs to be purged and 

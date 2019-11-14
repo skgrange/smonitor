@@ -4,8 +4,13 @@
 \alias{import_simple_summaries}
 \title{Function to import simple summaries from an \strong{smonitor} database.}
 \usage{
-import_simple_summaries(con, site = NA, summary = "month",
-  date_insert = FALSE, tz = "UTC")
+import_simple_summaries(
+  con,
+  site = NA,
+  summary = "month",
+  date_insert = FALSE,
+  tz = "UTC"
+)
 }
 \arguments{
 \item{con}{Database connection to an \strong{smonitor} database.}

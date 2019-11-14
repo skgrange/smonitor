@@ -5,8 +5,12 @@
 \title{Function to create entries for the \code{`summary`} table in a 
 \strong{smonitor} database.}
 \usage{
-create_summary_entries(con, process, type = "standard",
-  validity_threshold = 0L)
+create_summary_entries(
+  con,
+  process,
+  type = "standard",
+  validity_threshold = 0L
+)
 }
 \arguments{
 \item{con}{Database connection.}

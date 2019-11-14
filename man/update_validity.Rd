@@ -5,8 +5,7 @@
 \title{Function to update validity variable in a \code{`observations`} table in a 
 \strong{smonitor} database.}
 \usage{
-update_validity(con, process, summary = 0, tz = "UTC",
-  verbose = FALSE)
+update_validity(con, process, summary = 0, tz = "UTC", verbose = FALSE)
 }
 \arguments{
 \item{con}{Database connection.}

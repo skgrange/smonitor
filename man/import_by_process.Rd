@@ -4,10 +4,21 @@
 \alias{import_by_process}
 \title{Function to import observational data from a \strong{smonitor} database.}
 \usage{
-import_by_process(con, process = NA, summary = NA, start = 1969,
-  end = NA, tz = "UTC", valid_only = TRUE, date_end = TRUE,
-  date_insert = FALSE, site_name = TRUE, unit = TRUE, warn = TRUE,
-  arrange_by = "process")
+import_by_process(
+  con,
+  process = NA,
+  summary = NA,
+  start = 1969,
+  end = NA,
+  tz = "UTC",
+  valid_only = TRUE,
+  date_end = TRUE,
+  date_insert = FALSE,
+  site_name = TRUE,
+  unit = TRUE,
+  warn = TRUE,
+  arrange_by = "process"
+)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}

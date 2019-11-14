@@ -4,9 +4,16 @@
 \alias{import_trend_summaries}
 \title{Function to import trend summaries from an \strong{smonitor} database.}
 \usage{
-import_trend_summaries(con, site = NA, variable = NA,
-  aggregation = "monthly_mean", date_insert = FALSE, spread = FALSE,
-  tz = "UTC", print_query = FALSE)
+import_trend_summaries(
+  con,
+  site = NA,
+  variable = NA,
+  aggregation = "monthly_mean",
+  date_insert = FALSE,
+  spread = FALSE,
+  tz = "UTC",
+  print_query = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection.}

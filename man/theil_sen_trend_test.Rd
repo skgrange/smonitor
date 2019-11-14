@@ -4,8 +4,13 @@
 \alias{theil_sen_trend_test}
 \title{Function to test a time series with the Theil-Sen estimator.}
 \usage{
-theil_sen_trend_test(df, variable = "value", deseason = FALSE,
-  alpha = 0.05, auto_correlation = FALSE)
+theil_sen_trend_test(
+  df,
+  variable = "value",
+  deseason = FALSE,
+  alpha = 0.05,
+  auto_correlation = FALSE
+)
 }
 \arguments{
 \item{df}{Input data frame, containing time series observations.}

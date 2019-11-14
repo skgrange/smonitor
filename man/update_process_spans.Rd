@@ -6,8 +6,13 @@
 \code{observation_count} for processes and then update the \code{`processes`}
 table for an \strong{smonitor} database.}
 \usage{
-update_process_spans(con, process = NA, by_process = FALSE,
-  na.rm = TRUE, verbose = FALSE)
+update_process_spans(
+  con,
+  process = NA,
+  by_process = FALSE,
+  na.rm = TRUE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection.}

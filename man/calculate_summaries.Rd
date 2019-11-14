@@ -6,11 +6,25 @@
 \title{Function to calculate time series summaries for data stored in a 
 \strong{smonitor} database.}
 \usage{
-calculate_summaries(con, df, start = NA, end = NA, tz = "UTC",
-  insert = TRUE, verbose = FALSE)
+calculate_summaries(
+  con,
+  df,
+  start = NA,
+  end = NA,
+  tz = "UTC",
+  insert = TRUE,
+  verbose = FALSE
+)
 
-calculate_summaries_efficently(con, df, start = NA, end = NA,
-  tz = "UTC", insert = TRUE, verbose = FALSE)
+calculate_summaries_efficently(
+  con,
+  df,
+  start = NA,
+  end = NA,
+  tz = "UTC",
+  insert = TRUE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection.}

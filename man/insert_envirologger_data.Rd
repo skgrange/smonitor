@@ -5,8 +5,16 @@
 \title{Function to get observations from the Envirologger API and insert them into a 
 \strong{smonitor} database.}
 \usage{
-insert_envirologger_data(con, user, key, station, start, end = NA,
-  api_version = 3.5, verbose = FALSE)
+insert_envirologger_data(
+  con,
+  user,
+  key,
+  station,
+  start,
+  end = NA,
+  api_version = 3.5,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection.}

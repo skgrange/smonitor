@@ -5,9 +5,20 @@
 \title{Function to import data from an \strong{smonitor} database based on zones/
 spatial polygons.}
 \usage{
-import_by_zone(con, zone, variable = NA, sp_other = NA, start = 1969,
-  end = NA, period = "hour", pad = TRUE, spread = TRUE,
-  tz = "UTC", valid_only = TRUE, site_name = FALSE)
+import_by_zone(
+  con,
+  zone,
+  variable = NA,
+  sp_other = NA,
+  start = 1969,
+  end = NA,
+  period = "hour",
+  pad = TRUE,
+  spread = TRUE,
+  tz = "UTC",
+  valid_only = TRUE,
+  site_name = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection.}

@@ -5,8 +5,14 @@
 \title{Function to insert observations into the \code{`observations`} in a 
 \strong{smonitor} database.}
 \usage{
-insert_observations(con, df, check_processes = TRUE,
-  check_validity = TRUE, batch_size = NA, verbose = FALSE)
+insert_observations(
+  con,
+  df,
+  check_processes = TRUE,
+  check_validity = TRUE,
+  batch_size = NA,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection.}

@@ -8,28 +8,30 @@
 #' 
 #' @param con Database connection. 
 #' 
+#' @param process A vector of processes. 
+#' 
 #' @param by_process Should the function use multiple SQL statements to delete 
 #' processes? This is useuful if there are many to delete and a progress bar
 #' is desired. 
 #' 
-#' @param process A vector of processes. 
+#' @param progress If \code{by_process}, should a progress bar be displayed? 
+#' 
+#' @return Invisible \code{con}. 
 #' 
 #' @export
-delete_process <- function(con, process, by_process = FALSE) {
+delete_process <- function(con, process, by_process = FALSE, progress = FALSE) {
   
   if (by_process) {
     
     # Build many statements
     sql <- stringr::str_c(
       "DELETE FROM observations
-     WHERE process=", process, ""
-    )
+       WHERE process=", process, ""
+    ) %>% 
+      stringr::str_squish()
     
-    # Clean
-    sql <- threadr::str_trim_many_spaces(sql)
-    
-    # Use statements an show progress
-    databaser::db_execute(con, sql, progress = "time")
+    # Use statements and show progress
+    databaser::db_execute(con, sql, progress = if_else(progress, "time", "none"))
     
   } else {
     
@@ -39,17 +41,15 @@ delete_process <- function(con, process, by_process = FALSE) {
     # Build statement
     sql <- stringr::str_c(
       "DELETE FROM observations
-     WHERE process IN (", process, ")"
-    )
-    
-    # Clean
-    sql <- threadr::str_trim_many_spaces(sql)
+       WHERE process IN (", process, ")"
+    ) %>% 
+      stringr::str_squish()
     
     # Use statement to kill observations
     databaser::db_execute(con, sql)
     
   }
   
-  # No return
+  return(invisible(con))
   
 }
