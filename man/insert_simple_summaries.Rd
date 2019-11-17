@@ -4,14 +4,14 @@
 \alias{insert_simple_summaries}
 \title{Function to insert simple summaries into a \strong{smonitor} database.}
 \usage{
-insert_simple_summaries(con, df, .progress = FALSE)
+insert_simple_summaries(con, df, progress = FALSE)
 }
 \arguments{
 \item{con}{Database connection to a \strong{smonitor} database.}
 
 \item{df}{Tibble from \code{calculate_simple_summaries}.}
 
-\item{.progress}{Should a progress bar be displayed?}
+\item{progress}{Should a progress bar be displayed?}
 }
 \value{
 Invisible \code{con}.

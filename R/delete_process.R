@@ -26,7 +26,7 @@ delete_process <- function(con, process, by_process = FALSE, progress = FALSE) {
     # Build many statements
     sql <- stringr::str_c(
       "DELETE FROM observations
-       WHERE process=", process, ""
+       WHERE process=", process
     ) %>% 
       stringr::str_squish()
     

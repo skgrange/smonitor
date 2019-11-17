@@ -17,7 +17,7 @@
 #' 
 #' @param verbose Should the function give messages? 
 #' 
-#' @param .progress Should a progress bar be displayed? A \strong{dplyr} progress
+#' @param progress Should a progress bar be displayed? A \strong{dplyr} progress
 #' bar named \code{progress_bar} must be initialised first. 
 #' 
 #' @return Tibble. 
@@ -27,7 +27,7 @@
 #' @export
 calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
                                        period = c("month", "year"), 
-                                       verbose = FALSE, .progress = FALSE) {
+                                       verbose = FALSE, progress = FALSE) {
   
   # Check inputs
   period <- stringr::str_to_lower(period)
@@ -77,7 +77,7 @@ calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
   
   # For progress bar
   # .progress = FALSE
-  if (.progress) progress_bar$tick()$print()
+  if (progress) progress_bar$tick()$print()
   
   return(df)
   

@@ -6,14 +6,14 @@
 #' 
 #' @param df Tibble from \code{calculate_simple_summaries}. 
 #' 
-#' @param .progress Should a progress bar be displayed? 
+#' @param progress Should a progress bar be displayed? 
 #' 
 #' @author Stuart K. Grange. 
 #' 
 #' @return Invisible \code{con}. 
 #' 
 #' @export
-insert_simple_summaries <- function(con, df, .progress = FALSE) {
+insert_simple_summaries <- function(con, df, progress = FALSE) {
   
   # Check database for table
   stopifnot(databaser::db_table_exists(con, "observations_simple_summaries"))
@@ -28,13 +28,12 @@ insert_simple_summaries <- function(con, df, .progress = FALSE) {
                        summary_source,
                        summary)
   
-  if (.progress) {
-    # Set-up progress bar
-    .progress <- dplyr::progress_estimated(length(list_df))
+  # Set-up progress bar
+  if (progress) {
+    progress <- dplyr::progress_estimated(length(list_df))
   } else {
-    .progress <- NULL
+    progress <- NULL
   }
-  
   
   # Delete then insert every data frame
   purrr::walk(
@@ -42,7 +41,7 @@ insert_simple_summaries <- function(con, df, .progress = FALSE) {
     ~insert_simple_summaries_worker(
       con = con, 
       df = .x, 
-      .progress = .progress
+      progress = progress
     )
   )
   
@@ -51,7 +50,7 @@ insert_simple_summaries <- function(con, df, .progress = FALSE) {
 }
 
 
-insert_simple_summaries_worker <- function(con, df, delete = TRUE, .progress) {
+insert_simple_summaries_worker <- function(con, df, delete = TRUE, progress) {
   
   # Delete old summaries
   if (delete) {
@@ -67,7 +66,7 @@ insert_simple_summaries_worker <- function(con, df, delete = TRUE, .progress) {
     databaser::db_insert(con, "observations_simple_summaries", ., replace = FALSE)
   
   # Update progress bar
-  if (!is.null(.progress)) .progress$tick()$print()
+  if (!is.null(progress)) progress$tick()$print()
   
   return(invisible(con))
   
