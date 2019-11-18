@@ -40,7 +40,7 @@ calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
   if (verbose) {
     message(
       threadr::date_message(), 
-      "Importing observations for ", length(processes), " processes..."
+      "Importing observations for `", length(processes), "` processes..."
     )
   }
   
