@@ -5,8 +5,8 @@
 #' @param site A vector of sites to import. If not used, all sites are selected
 #' and returned. 
 #' 
-#' @param summary Summaries to import, can either be \code{"month"} or 
-#' \code{"year"}.
+#' @param summary Summaries to import, can either be \code{"monthly_means"} or 
+#' \code{"annual_means"}.
 #' 
 #' @param date_insert Should the \code{date_insert} variable be imported? 
 #' 
@@ -17,16 +17,30 @@
 #' @author Stuart K. Grange
 #' 
 #' @export
-import_simple_summaries <- function(con, site = NA, summary = "month",
+import_simple_summaries <- function(con, site = NA, summary = "monthly_means",
                                     date_insert = FALSE, tz = "UTC") {
   
-  # Check and parse inputs
-  summary <- stringr::str_to_lower(summary)
-  stopifnot(summary %in% c("month", "monthly", "year", "annual"))
+  # To-do: add variable argument? 
+  
+  # Check if database table exists
+  databaser::db_table_exists(con, "observations_simple_summaries")
+  
+  # Check and constrain summary
+  summary <- summary %>% 
+    stringr::str_trim() %>% 
+    stringr::str_to_lower() %>% 
+    stringr::str_replace("_mean$", "_means") %>% 
+    if_else(. == "yearly_means", "annual_means", .)
+  
+  stopifnot(summary %in% c("annual_means", "monthly_means"))
+  stopifnot(length(summary) == 1L)
   
   # For database's integer keys
-  summary_smonitor <- if_else(summary %in% c("month", "monthly"), 92L, NA_integer_)
-  summary_smonitor <- if_else(summary %in% c("year", "annual"), 102L, summary_smonitor)
+  if (summary == "monthly_means") {
+    summary_integer <- 92L
+  } else if (summary == "annual_means") {
+    summary_integer <- 102L
+  }
   
   # Build sql
   sql <- stringr::str_c(
@@ -39,7 +53,7 @@ import_simple_summaries <- function(con, site = NA, summary = "month",
     count,
     value 
     FROM observations_simple_summaries
-    WHERE summary = ", summary_smonitor, " 
+    WHERE summary=", summary_integer, " 
     ORDER BY site, 
     variable"
   )
@@ -61,16 +75,15 @@ import_simple_summaries <- function(con, site = NA, summary = "month",
     
   }
   
-  # Add variable to statement
+  # Add date_insert to statement
   if (date_insert) {
     sql <- stringr::str_replace(sql, "date,", "date_insert, date,")
   }
   
-  # Clean statement
-  sql <- stringr::str_squish(sql)
-  
   # Query database
-  df <- databaser::db_get(con, sql) %>% 
+  df <- sql %>% 
+    stringr::str_squish() %>% 
+    databaser::db_get(con, .) %>% 
     mutate(date = threadr::parse_unix_time(date, tz = tz),
            date_end = threadr::parse_unix_time(date_end, tz = tz))
   

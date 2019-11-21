@@ -7,7 +7,7 @@
 import_simple_summaries(
   con,
   site = NA,
-  summary = "month",
+  summary = "monthly_means",
   date_insert = FALSE,
   tz = "UTC"
 )
@@ -18,8 +18,8 @@ import_simple_summaries(
 \item{site}{A vector of sites to import. If not used, all sites are selected
 and returned.}
 
-\item{summary}{Summaries to import, can either be \code{"month"} or 
-\code{"year"}.}
+\item{summary}{Summaries to import, can either be \code{"monthly_means"} or 
+\code{"annual_means"}.}
 
 \item{date_insert}{Should the \code{date_insert} variable be imported?}
 
