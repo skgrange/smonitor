@@ -22,11 +22,11 @@ import_simple_summaries <- function(con, site = NA, summary = "month",
   
   # Check and parse inputs
   summary <- stringr::str_to_lower(summary)
-  stopifnot(summary %in% c("month", "year"))
+  stopifnot(summary %in% c("month", "monthly", "year", "annual"))
   
   # For database's integer keys
-  summary_smonitor <- if_else(summary == "month", 92L, NA_integer_)
-  summary_smonitor <- if_else(summary == "year", 102L, summary_smonitor)
+  summary_smonitor <- if_else(summary %in% c("month", "monthly"), 92L, NA_integer_)
+  summary_smonitor <- if_else(summary %in% c("year", "annual"), 102L, summary_smonitor)
   
   # Build sql
   sql <- stringr::str_c(
