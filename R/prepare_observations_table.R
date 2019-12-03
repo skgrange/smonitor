@@ -1,4 +1,4 @@
-#' Function to prepare a data frame for insert into the \code{`observation`} 
+#' Function to prepare a data frame for insert into the \code{`observations`} 
 #' table in a \strong{smonitor} database. 
 #' 
 #' @param df Data frame.
@@ -8,12 +8,15 @@
 #' 
 #' @param convert Should the variables be coerced into the correct data types? 
 #' 
+#' @param as_tibble Should the return be a tibble? 
+#' 
 #' @author Stuart K. Grange
 #' 
-#' @return Data frame. 
+#' @return Data frame or tibble. 
 #'
 #' @export
-prepare_observations_table <- function(df, drop = FALSE, convert = FALSE) {
+prepare_observations_table <- function(df, drop = FALSE, convert = FALSE,
+                                       as_tibble = FALSE) {
   
   # Build template data frame
   names <- c(
@@ -23,10 +26,8 @@ prepare_observations_table <- function(df, drop = FALSE, convert = FALSE) {
   
   # Only the variables which are in `observations`, do this before binding
   if (drop) {
-    
     index <- which(names(df) %in% names)
     df <- df[, index]
-     
   }
     
   # Make data frame
@@ -52,6 +53,8 @@ prepare_observations_table <- function(df, drop = FALSE, convert = FALSE) {
     # value? 
     
   }
+  
+  if (as_tibble) df <- as_tibble(df)
   
   return(df)
   

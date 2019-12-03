@@ -17,7 +17,7 @@
 #' @author Stuart K. Grange
 #' 
 #' @export
-import_simple_summaries <- function(con, site = NA, summary = "monthly_means",
+import_simple_summaries <- function(con, site = NA, summary = "monthly_means", 
                                     date_insert = FALSE, tz = "UTC") {
   
   # To-do: add variable argument? 
@@ -91,6 +91,17 @@ import_simple_summaries <- function(con, site = NA, summary = "monthly_means",
   if (date_insert) {
     df <- mutate(df, date_insert = threadr::parse_unix_time(date_insert, tz = tz))
   }
+  
+  # if (site_name) {
+  #   
+  #   df <- df %>% 
+  #     left_join(databaser::db_get(con, "SELECT site, site_name FROM sites"), by = "site") %>% 
+  #     select(date,
+  #            date_end,
+  #            site,
+  #            site_name,
+  #            everything())
+  # }
   
   return(df)
   

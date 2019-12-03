@@ -2,10 +2,15 @@
 % Please edit documentation in R/prepare_observations_table.R
 \name{prepare_observations_table}
 \alias{prepare_observations_table}
-\title{Function to prepare a data frame for insert into the \code{`observation`} 
+\title{Function to prepare a data frame for insert into the \code{`observations`} 
 table in a \strong{smonitor} database.}
 \usage{
-prepare_observations_table(df, drop = FALSE, convert = FALSE)
+prepare_observations_table(
+  df,
+  drop = FALSE,
+  convert = FALSE,
+  as_tibble = FALSE
+)
 }
 \arguments{
 \item{df}{Data frame.}
@@ -14,12 +19,14 @@ prepare_observations_table(df, drop = FALSE, convert = FALSE)
 be dropped?}
 
 \item{convert}{Should the variables be coerced into the correct data types?}
+
+\item{as_tibble}{Should the return be a tibble?}
 }
 \value{
-Data frame.
+Data frame or tibble.
 }
 \description{
-Function to prepare a data frame for insert into the \code{`observation`} 
+Function to prepare a data frame for insert into the \code{`observations`} 
 table in a \strong{smonitor} database.
 }
 \author{
