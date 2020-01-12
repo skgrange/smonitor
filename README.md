@@ -1,8 +1,7 @@
-# **smonitor**
+# **smonitor** <a href='https://github.com/skgrange/smonitor'><img src='man/figures/logo.png' align="right" height="131.5" /></a>
 
 [![Build Status](https://travis-ci.org/skgrange/smonitor.svg?branch=master)](https://travis-ci.org/skgrange/smonitor)
-
-![](inst/extdata/images/icon_small.png)
+[![Lifecycle Status](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/)
 
 ## Introduction
 
