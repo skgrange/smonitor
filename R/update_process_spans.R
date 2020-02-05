@@ -181,6 +181,7 @@ calculate_process_spans <- function(con, process, by_process, na.rm) {
   df <- df_processes %>%
     left_join(df, by = "process") %>%
     mutate(
+      observation_count = as.numeric(observation_count),
       observation_count = if_else(
         is.na(observation_count),
         0,
