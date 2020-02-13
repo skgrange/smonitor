@@ -9,7 +9,8 @@ theil_sen_trend_test(
   variable = "value",
   deseason = FALSE,
   alpha = 0.05,
-  auto_correlation = FALSE
+  auto_correlation = FALSE,
+  period = "month"
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ confidence intervals.}
 
 \item{auto_correlation}{Should auto correlation be considered in the 
 estimates?}
+
+\item{period}{Period of input time series. Default is \code{"month"} but can
+also be \code{"year"}.}
 }
 \value{
 Tibble with one observation/row.

@@ -13,6 +13,9 @@
 #' @param auto_correlation Should auto correlation be considered in the 
 #' estimates?
 #' 
+#' @param period Period of input time series. Default is \code{"month"} but can
+#' also be \code{"year"}.
+#' 
 #' @seealso \code{\link{TheilSen}}
 #' 
 #' @return Tibble with one observation/row. 
@@ -21,7 +24,11 @@
 #' 
 #' @export
 theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE, 
-                                 alpha = 0.05, auto_correlation = FALSE) {
+                                 alpha = 0.05, auto_correlation = FALSE,
+                                 period = "month") {
+  
+  # Check period
+  stopifnot(period %in% c("month", "year"))
   
   # Trend test errors when one observation is passed
   # Less than three observations results in no p-values and is not a valid procedure
@@ -58,7 +65,7 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
       pollutant = variable,
       deseason = deseason,
       autocor = auto_correlation,
-      avg.time = "month", 
+      avg.time = period, 
       statistic = "mean",
       alpha = alpha,
       plot = FALSE,
