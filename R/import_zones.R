@@ -27,7 +27,7 @@ import_zones <- function(con, zone = NA) {
                            FROM zones 
                            WHERE zone IN (", zone, ")")
     
-    sql <- threadr::str_trim_many_spaces(sql)
+    sql <- stringr::str_squish(sql)
     
     # Query
     df <- databaser::db_get(con, sql)

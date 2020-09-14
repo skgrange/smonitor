@@ -221,7 +221,7 @@ import_by_process_process_table <- function(con, process, site_name, unit) {
   )
   
   # Clean
-  sql_processes <- threadr::str_trim_many_spaces(sql_processes)
+  sql_processes <- stringr::str_squish(sql_processes)
   
   # Get data
   df <- databaser::db_get(con, sql_processes)

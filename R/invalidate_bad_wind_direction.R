@@ -40,7 +40,7 @@ invalidate_bad_wind_direction <- function(con, print_query = FALSE) {
   sql <- c(sql_low, sql_high)
   
   # Clean
-  sql <- threadr::str_trim_many_spaces(sql)
+  sql <- stringr::str_squish(sql)
   
   # Print
   if (print_query) message(sql)

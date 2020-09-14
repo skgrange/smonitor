@@ -167,7 +167,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   }
   
   # Clean statement
-  sql_processes <- threadr::str_trim_many_spaces(sql_processes)
+  sql_processes <- stringr::str_squish(sql_processes)
   
   # Get process keys
   df_processes <- databaser::db_get(con, sql_processes)

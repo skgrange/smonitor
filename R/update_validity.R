@@ -33,7 +33,7 @@ update_validity <- function(con, process, summary = 0, tz = "UTC",
            date_end = as.numeric(date_end),
            summary = summary)
   
-  # Filter
+  # Filter invalidations table
   df <- filter(df, process %in% !!process)
   
   # Check again
@@ -53,12 +53,10 @@ update_validity <- function(con, process, summary = 0, tz = "UTC",
   } else {
     
     if (verbose) {
-      
       message(
         threadr::date_message(), 
         "`invalidations` table contains no entires for given processes..."
       )
-      
     }
     
   }
@@ -68,7 +66,6 @@ update_validity <- function(con, process, summary = 0, tz = "UTC",
 }
 
 
-# No export needed
 update_validity_worker <- function(con, df, verbose) {
   
   # Get keys, will be single values from split input
@@ -77,6 +74,7 @@ update_validity_worker <- function(con, df, verbose) {
   
   # Get observations
   if (verbose) message(threadr::date_message(), "Importing observations...")
+  
   df_observations <- import_by_process(
     con, 
     process, 
@@ -96,6 +94,7 @@ update_validity_worker <- function(con, df, verbose) {
     
     # Update validity, look up table is filtered in function
     if (verbose) message(threadr::date_message(), "Applying invalidation...")
+    
     df_observations <- smonitor_observation_validity_test(df_observations, df)
     
     # Delete old observations
@@ -105,10 +104,10 @@ update_validity_worker <- function(con, df, verbose) {
     insert_observations(con, df_observations, verbose = verbose)
     
   } else {
-    
     if (verbose) message(threadr::date_message(), "No observations to invalidate...")
-    
   }
+  
+  return(invisible(con))
   
 }
 
@@ -131,7 +130,7 @@ update_validity_worker <- function(con, df, verbose) {
 #' 
 #' @export
 smonitor_observation_validity_test <- function(df_observations, df, 
-                                               valid_value = as.integer(NA)) {
+                                               valid_value = NA_integer_) {
   
   # Get keys from table
   # Get identifier
@@ -145,13 +144,11 @@ smonitor_observation_validity_test <- function(df_observations, df,
     # Apply invalidation
     df_observations <- df_observations %>% 
       mutate(test = threadr::within_range(date, df$date_start, df$date_end),
-             validity = if_else(test, as.integer(0), valid_value)) %>% 
+             validity = if_else(test, 0L, valid_value)) %>% 
       select(-test)
     
   } else {
-    
     df_observations$validity <- valid_value
-    
   }
   
   return(df_observations)

@@ -7,7 +7,7 @@
 smonitor_observation_validity_test(
   df_observations,
   df,
-  valid_value = as.integer(NA)
+  valid_value = NA_integer_
 )
 }
 \arguments{
