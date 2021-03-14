@@ -12,7 +12,7 @@ calculate_simple_summaries(
   end = NA,
   period = c("month", "year"),
   verbose = FALSE,
-  progress = FALSE
+  progress_bar = NULL
 )
 }
 \arguments{
@@ -29,8 +29,8 @@ calculate_simple_summaries(
 
 \item{verbose}{Should the function give messages?}
 
-\item{progress}{Should a progress bar be displayed? A \strong{dplyr} progress
-bar named \code{progress_bar} must be initialised first.}
+\item{progress_bar}{A \strong{progressr::progressor} progress bar for a 
+progress bar.}
 }
 \value{
 Tibble.

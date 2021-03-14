@@ -17,8 +17,8 @@
 #' 
 #' @param verbose Should the function give messages? 
 #' 
-#' @param progress Should a progress bar be displayed? A \strong{dplyr} progress
-#' bar named \code{progress_bar} must be initialised first. 
+#' @param progress_bar A \strong{progressr::progressor} progress bar for a 
+#' progress bar. 
 #' 
 #' @return Tibble. 
 #' 
@@ -27,7 +27,7 @@
 #' @export
 calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
                                        period = c("month", "year"), 
-                                       verbose = FALSE, progress = FALSE) {
+                                       verbose = FALSE, progress_bar = NULL) {
   
   # Check inputs
   period <- stringr::str_to_lower(period)
@@ -39,8 +39,7 @@ calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
   # Get observations
   if (verbose) {
     message(
-      threadr::date_message(), 
-      "Importing observations for `", length(processes), "` processes..."
+      threadr::date_message(), "Summarising `", length(processes), "` processes..."
     )
   }
   
@@ -64,59 +63,50 @@ calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
     # Calculate the summaries
     df <- purrr::map_dfr(
       period,
-      ~calculate_simple_summaries_aggregator(
+      ~calculate_simple_summaries_worker(
         df = df, 
         period = .x,
         verbose = verbose
       )
-    )
+    ) %>% 
+      arrange(site,
+              summary,
+              variable,
+              date)
     
   } else {
     df <- tibble()
   }
   
-  # For progress bar
-  # .progress = FALSE
-  if (progress) progress_bar$tick()$print()
+  # Update progress bar
+  if (!is.null(progress_bar)) progress_bar()
   
   return(df)
   
 }
 
 
-calculate_simple_summaries_aggregator <- function(df, period, verbose = TRUE) {
+calculate_simple_summaries_worker <- function(df, period, verbose) {
   
   # Use smonitor integers here
   summary_result <- if_else(period == "month", 92L, NA_integer_)
   summary_result <- if_else(period == "year", 102L, summary_result)
   
-  # For messages
-  period_message <- if_else(period == "month", "monthly", NA_character_)
-  period_message <- if_else(period == "year", "annual", period_message)
-  
-  # Calculate means
-  if (verbose) {
-    message(threadr::date_message(), "Calculating ", period_message, " summaries...")
-  }
-  
-  quiet(
-    df_means <- threadr::aggregate_by_date(
-      df,
-      interval = period, 
-      by = c("site", "variable", "summary_source"),
-      summary = "mean"
-    )
+  # Two calls here
+  df_means <- threadr::aggregate_by_date(
+    df,
+    interval = period, 
+    by = c("site", "variable", "summary_source"),
+    summary = "mean"
   )
   
-  quiet(
-    df_counts <- threadr::aggregate_by_date(
-      df,
-      interval = period, 
-      by = c("site", "variable", "summary_source"),
-      summary = "count"
-    ) %>% 
-      rename(count = value)
-  )
+  df_counts <- threadr::aggregate_by_date(
+    df,
+    interval = period, 
+    by = c("site", "variable", "summary_source"),
+    summary = "count"
+  ) %>% 
+    rename(count = value)
   
   # Join aggregations and format return
   df_summaries <- df_means %>% 
@@ -124,7 +114,7 @@ calculate_simple_summaries_aggregator <- function(df, period, verbose = TRUE) {
       df_counts, 
       by = c("date", "date_end", "site", "variable", "summary_source")
     ) %>% 
-    mutate(summary = summary_result) %>% 
+    mutate(summary = !!summary_result) %>% 
     select(date,
            date_end,
            site,
@@ -132,11 +122,7 @@ calculate_simple_summaries_aggregator <- function(df, period, verbose = TRUE) {
            summary_source,
            summary,
            count,
-           value) %>% 
-    arrange(site,
-            summary,
-            variable,
-            date)
+           value)
   
   return(df_summaries)
   
