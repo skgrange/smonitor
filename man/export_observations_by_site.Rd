@@ -15,6 +15,7 @@ export_observations_by_site(
   file_name_prefix = NA_character_,
   file_type = ".csv.gz",
   by_year = FALSE,
+  progress_bar = NULL,
   verbose = FALSE
 )
 }
@@ -40,6 +41,9 @@ is \code{"air_quality_data_site_"}.}
 
 \item{by_year}{Should files be exported for the site-year combinations? This 
 will create directories for each year too.}
+
+\item{progress_bar}{A \strong{progressr::progressor} progress bar for a 
+progress bar.}
 
 \item{verbose}{Should the function give messages?}
 }

@@ -29,6 +29,9 @@
 #' 
 #' @param verbose Should the function give messages? 
 #' 
+#' @param progress_bar A \strong{progressr::progressor} progress bar for a 
+#' progress bar. 
+#' 
 #' @return Invisible \code{con} and exported files.
 #' 
 #' @export
@@ -36,6 +39,7 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
                                         site_name = FALSE, directory_output, 
                                         file_name_prefix = NA_character_,
                                         file_type = ".csv.gz", by_year = FALSE, 
+                                        progress_bar = NULL,
                                         verbose = FALSE) {
   
   # Check data frame input
@@ -59,13 +63,22 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
   if (is.na(end)) end <- lubridate::year(lubridate::now())
   end <- threadr::parse_date_arguments(end, "end")
   
-  # Do by site
-  df %>% 
-    split(.$site, drop = TRUE) %>% 
+  # Split tibble into a list by site
+  list_df <- dplyr::group_split(df, site)
+  
+  # Apply the exporter to the list's elements
+  progressr::with_progress({
+    
+    # Initialise progress bar
+    if (!is.null(progress_bar)) {
+      progress_bar <- progressr::progressor(along = list_df)
+    }
+    
     purrr::walk(
+      list_df,
       ~export_observations_by_site_worker(
         con, 
-        df = .x,
+        df = .,
         start = format(start),
         end = format(end), 
         site_name = site_name,
@@ -73,9 +86,12 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
         file_name_prefix = file_name_prefix,
         file_type = file_type,
         by_year = by_year,
+        progress_bar = progress_bar,
         verbose = verbose
       )
     )
+    
+  })
   
   return(invisible(con))
   
@@ -85,7 +101,8 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
 # Define the worker
 export_observations_by_site_worker <- function(con, df, start, end, site_name,
                                                directory_output, file_name_prefix, 
-                                               file_type, by_year, verbose) {
+                                               file_type, by_year, progress_bar,
+                                               verbose) {
   
   # Query database for observations
   if (verbose) {
@@ -151,12 +168,13 @@ export_observations_by_site_worker <- function(con, df, start, end, site_name,
     }
     
   } else{
-    
     if (verbose) {
       message(threadr::date_message(), "No data returned from database, not exporting...")
     }
-    
   }
+  
+  # Update progress bar
+  if (!is.null(progress_bar)) progress_bar()
   
   return(invisible(con))
   
@@ -171,7 +189,7 @@ export_observations_by_site_and_year_worker <- function(df, directory_output,
   year <- df$year[1]
   file_output <- stringr::str_c(file_name_prefix, df$site[1], "_", year)
   file_output <- fs::path(directory_output, year, file_output)
-  # Add file extention
+  # Add file extension
   file_output <- stringr::str_c(file_output, file_type)
   # Ensure directory is there
   fs::dir_create(fs::path_dir(file_output))
