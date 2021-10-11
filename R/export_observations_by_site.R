@@ -153,7 +153,7 @@ export_observations_by_site_worker <- function(con, df, start, end, site_name,
       # Build output file name
       file_output <- stringr::str_c(file_name_prefix, df$site[1])
       file_output <- fs::path(directory_output, file_output) 
-      # Add file extention
+      # Add file extension
       file_output <- stringr::str_c(file_output, file_type)
       # Ensure directory is there
       fs::dir_create(fs::path_dir(file_output))
@@ -162,7 +162,7 @@ export_observations_by_site_worker <- function(con, df, start, end, site_name,
       if (file_type == ".rds") {
         saveRDS(df, file_output)
       } else if (file_type == ".csv.gz") {
-        readr::write_csv(df, file_output)
+        readr::write_csv(df, file_output, progress = FALSE)
       }
       
     }
@@ -201,7 +201,7 @@ export_observations_by_site_and_year_worker <- function(df, directory_output,
   if (file_type == ".rds") {
     saveRDS(df, file_output)
   } else if (file_type == ".csv.gz") {
-    readr::write_csv(df, file_output)
+    readr::write_csv(df, file_output, progress = FALSE)
   }
   
   return(invisible(df))
