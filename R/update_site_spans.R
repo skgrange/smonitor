@@ -21,6 +21,7 @@
 #' @examples 
 #' 
 #' \dontrun{
+#' 
 #' # Update variables in `sites` table
 #' update_site_spans(con)
 #' 
@@ -40,7 +41,8 @@ update_site_spans <- function(con, site = NA, verbose = FALSE) {
     "SELECT site,
     date_start, 
     date_end
-    FROM processes"
+    FROM processes
+    WHERE site IS NOT NULL"
   ) %>% 
     mutate(date_start = suppressWarnings(as.numeric(date_start)),
            date_end = suppressWarnings(as.numeric(date_end)))
@@ -104,28 +106,22 @@ update_site_spans <- function(con, site = NA, verbose = FALSE) {
   
   # Update observation counts
   if ("observation_count" %in% databaser::db_list_variables(con, "sites")) {
-    
     if (verbose) message(threadr::date_message(), "Updating observation counts...")
     update_sites_observation_counts(con, site = site)
-    
   }
   
   # Update variables monitored
   if ("variables_monitored" %in% databaser::db_list_variables(con, "sites") && 
       "observation_count" %in% databaser::db_list_variables(con, "sites")) {
-    
     if (verbose) message(threadr::date_message(), "Updating variables monitored...")
     update_variables_monitored(con, site = site)
-    
   }
   
   # Update data sources
   if ("data_source" %in% databaser::db_list_variables(con, "sites") &&
       "data_source" %in% databaser::db_list_variables(con, "processes")) {
-    
     if (verbose) message(threadr::date_message(), "Updating data sources...")
     update_sites_data_sources(con, site = site)
-    
   }
   
   return(invisible(con))

@@ -25,6 +25,7 @@ it queries the \code{`processes`} table rather than \code{`observations`}.
 \examples{
 
 \dontrun{
+
 # Update variables in `sites` table
 update_site_spans(con)
 
