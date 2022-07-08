@@ -30,7 +30,7 @@
 #' @export
 delete_observations <- function(con, df, match = "between", verbose = FALSE) {
   
-  # Return immediatelly when input contains no observations
+  # Return immediately when input contains no observations
   if (nrow(df) == 0) {
     message(threadr::date_message(), "Input data has no observations, not continuing...")
     return(invisible(con))
@@ -38,18 +38,20 @@ delete_observations <- function(con, df, match = "between", verbose = FALSE) {
   
   # May need to use the argument
   if (any(is.na(df$process))) {
-    stop("Input data frame must not contain missing processes...", call. = FALSE)
+    stop("Input data frame must not contain missing processes.", call. = FALSE)
   }
   
   if (any(is.na(df$date))) {
-    stop("Input data frame must not contain missing dates...", call. = FALSE)
+    stop("Input data frame must not contain missing dates.", call. = FALSE)
   }
   
   if (match == "between") {
     
     # Delete observations by groups
     df %>% 
-      split(.$process, .$summary) %>% 
+      dplyr::group_split(process,
+                         summary,
+                         .keep = TRUE) %>% 
       purrr::walk(
         ~delete_observations_worker(
           con, 
