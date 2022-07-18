@@ -30,7 +30,7 @@ update_process_spans <- function(con, process = NA, by_process = FALSE,
       sort()
   }
   
-  if (is.na(process) && verbose) {
+  if (is.na(process[1]) && verbose) {
     message(
       threadr::date_message(), 
       "All processes will be updated, this can be a slow process..."
