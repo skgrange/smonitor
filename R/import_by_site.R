@@ -87,7 +87,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
                            warn = TRUE) {
   
   # Check inputs
-  if (is.na(site[1]) || site == "") {
+  if (is.na(site[1]) || site[1] == "") {
     stop("The `site` argument must be used...", call. = FALSE)
   }
   
