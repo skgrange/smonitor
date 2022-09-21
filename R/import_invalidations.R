@@ -8,7 +8,7 @@
 #' 
 #' @author Stuart K. Grange
 #' 
-#' @return Data frame. 
+#' @return Tibble. 
 #' 
 #' @examples 
 #' \dontrun{
@@ -21,8 +21,33 @@
 #' @export
 import_invalidations <- function(con, tz = "UTC") {
   
-  databaser::db_read_table(con, "invalidations") %>%
-    mutate(date_start = lubridate::ymd_hms(date_start, tz = tz, truncated = 4),
-           date_end = lubridate::ymd_hms(date_end, tz = tz, truncated = 4))
+  stopifnot(databaser::db_table_exists(con, "invalidations"))
+  
+  # Get data
+  df <- databaser::db_get(
+    con, 
+    "SELECT * 
+    FROM invalidations
+    ORDER BY process,
+    date_start"
+  )
+  
+  # Older databases used strings for dates, but they should be integers like
+  # all other dates
+  if (inherits(df$date_start, "integer")) {
+    df <- df %>% 
+      mutate(
+        across(c("date_start", "date_end"), threadr::parse_unix_time, tz = tz)
+      )
+  } else {
+    df <- df %>% 
+      mutate(
+        across(
+          c("date_start", "date_end"), lubridate::ymd_hms, truncated = 4, tz = tz
+        )
+      )
+  }
+  
+  return(df)
   
 }

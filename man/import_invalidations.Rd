@@ -14,7 +14,7 @@ import_invalidations(con, tz = "UTC")
 variables be represented as?}
 }
 \value{
-Data frame.
+Tibble.
 }
 \description{
 Function to import \code{`invalidations`} table from a \strong{smonitor} 
