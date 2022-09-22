@@ -14,6 +14,11 @@
 #' 
 #' @param tz Time zone to conduct invalidations in. 
 #' 
+#' @param validity_action What action to be taken for the \code{validity} 
+#' variable. \code{validity_action} can take the form of \code{"replace"} or 
+#' \code{"update"}. See \code{\link{smonitor_observation_validity_test}} for
+#' details.
+#' 
 #' @param verbose Should the function give messages? 
 #' 
 #' @author Stuart K. Grange
@@ -22,10 +27,12 @@
 #' 
 #' @export
 update_validity <- function(con, process, summary = 0, tz = "UTC", 
-                            verbose = FALSE) {
+                            validity_action = "replace", verbose = FALSE) {
   
   # Check input
-  if (!length(summary) == 1) stop("Only one summary can be used.", call. = FALSE)
+  if (length(summary) != 1) {
+    stop("Only one summary can be used.", call. = FALSE)
+  }
   
   # Get look-up table
   df <- import_invalidations(con, tz = tz) %>% 
@@ -46,6 +53,7 @@ update_validity <- function(con, process, summary = 0, tz = "UTC",
         ~update_validity_worker(
           con,
           df = .x,
+          validity_action = validity_action,
           verbose = verbose
         )
       )
@@ -66,7 +74,7 @@ update_validity <- function(con, process, summary = 0, tz = "UTC",
 }
 
 
-update_validity_worker <- function(con, df, verbose) {
+update_validity_worker <- function(con, df, validity_action, verbose) {
   
   # Get keys, will be single values from split input
   process <- df$process[1]
@@ -94,13 +102,12 @@ update_validity_worker <- function(con, df, verbose) {
     
     # Update validity, look up table is filtered in function
     if (verbose) message(threadr::date_message(), "Applying invalidation...")
-    
-    df_observations <- smonitor_observation_validity_test(df_observations, df)
-    
-    # Delete old observations
-    delete_observations(con, df_observations, match = "between", verbose = verbose)
+    df_observations <- smonitor_observation_validity_test(
+      df_observations, df, validity_action = validity_action
+    )
     
     # Insert new observations
+    delete_observations(con, df_observations, match = "between", verbose = verbose)
     insert_observations(con, df_observations, verbose = verbose)
     
   } else {
@@ -124,13 +131,27 @@ update_validity_worker <- function(con, df, verbose) {
 #' the date range test, what value should they take? Default is \code{NA}, but
 #' \code{1} could be appropriate too.  
 #' 
+#' @param validity_action What action to be taken for the \code{validity} 
+#' variable. \code{validity_action} can take the form of \code{"replace"} or 
+#' \code{"update"}. \code{"replace"} will replace the \code{validity} variable 
+#' while \code{"update"} will preserve the current values of the \code{validity}
+#' variable.
+#' 
 #' @seealso \code{\link{within_range}}
 #' 
 #' @author Stuart K. Grange. 
 #' 
+#' @return Tibble. 
+#' 
 #' @export
 smonitor_observation_validity_test <- function(df_observations, df, 
-                                               valid_value = NA_integer_) {
+                                               valid_value = NA_integer_,
+                                               validity_action = "replace") {
+  
+  # Check validity_action argument
+  if (length(validity_action) == 0L || !validity_action %in% c("replace", "update")) {
+    stop("`validity_action` must be `replace` or `update`.", call. = FALSE)
+  }
   
   # Get keys from table
   # Get identifier
@@ -141,11 +162,29 @@ smonitor_observation_validity_test <- function(df_observations, df,
   
   if (nrow(df) != 0) {
     
-    # Apply invalidation
+    # Do the range tests
     df_observations <- df_observations %>% 
-      mutate(test = threadr::within_range(date, df$date_start, df$date_end),
-             validity = if_else(test, 0L, valid_value)) %>% 
-      select(-test)
+      mutate(test = threadr::within_range(date, df$date_start, df$date_end))
+    
+    if (validity_action == "replace") {
+      
+      # Replace the entire vector
+      df_observations <- df_observations %>% 
+        mutate(validity = if_else(test, 0L, valid_value)) %>% 
+        select(-test)
+      
+    } else if (validity_action == "update") {
+      
+      # Only update the vector, do not overwrite the current validity variable
+      # TODO: might need to preserve any value that validity could have? 
+      df_observations <- df_observations %>% 
+        mutate(test_current = !is.na(validity) | validity == 1L,
+               test_current = if_else(is.na(test_current), FALSE, test_current),
+               validity = if_else(test | test_current, 0L, valid_value)) %>% 
+        select(-test,
+               -test_current)
+      
+    }
     
   } else {
     df_observations$validity <- valid_value

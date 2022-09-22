@@ -5,7 +5,14 @@
 \title{Function to update validity variable in a \code{`observations`} table in a 
 \strong{smonitor} database.}
 \usage{
-update_validity(con, process, summary = 0, tz = "UTC", verbose = FALSE)
+update_validity(
+  con,
+  process,
+  summary = 0,
+  tz = "UTC",
+  validity_action = "replace",
+  verbose = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection.}
@@ -16,6 +23,11 @@ update_validity(con, process, summary = 0, tz = "UTC", verbose = FALSE)
 data and can only take one value.}
 
 \item{tz}{Time zone to conduct invalidations in.}
+
+\item{validity_action}{What action to be taken for the \code{validity} 
+variable. \code{validity_action} can take the form of \code{"replace"} or 
+\code{"update"}. See \code{\link{smonitor_observation_validity_test}} for
+details.}
 
 \item{verbose}{Should the function give messages?}
 }

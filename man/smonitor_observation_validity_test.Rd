@@ -7,7 +7,8 @@
 smonitor_observation_validity_test(
   df_observations,
   df,
-  valid_value = NA_integer_
+  valid_value = NA_integer_,
+  validity_action = "replace"
 )
 }
 \arguments{
@@ -20,6 +21,15 @@ and \code{date_end} variables.}
 \item{valid_value}{For values which are not invalid, \emph{i.e.} they fail 
 the date range test, what value should they take? Default is \code{NA}, but
 \code{1} could be appropriate too.}
+
+\item{validity_action}{What action to be taken for the \code{validity} 
+variable. \code{validity_action} can take the form of \code{"replace"} or 
+\code{"update"}. \code{"replace"} will replace the \code{validity} variable 
+while \code{"update"} will preserve the current values of the \code{validity}
+variable.}
+}
+\value{
+Tibble.
 }
 \description{
 Function to add a validity variable to a data frame based on date ranges.
