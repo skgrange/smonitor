@@ -12,20 +12,55 @@
 #' @export
 smonitor_details <- function(con, task = NA_character_) {
   
-  # Check if tables exist
-  stopifnot(databaser::db_table_exists(con, c("sites", "processes", "observations")))
+  # Get all tables
+  tables <- databaser::db_list_tables(con)
   
-  tibble(
+  # Check if tables exist
+  stopifnot(c("sites", "processes", "observations") %in% tables)
+  
+  # Get high level database and details
+  df <- tibble(
     system = threadr::hostname(),
     date = round(as.numeric(lubridate::now())),
     db_name = databaser::db_name(con),
     db_class = databaser::db_class(con),
     task = task,
     db_size = databaser::db_size(con, unit = "mb"),
-    n_tables = length(databaser::db_list_tables(con)),
-    n_sites = databaser::db_get(con, "SELECT COUNT(*) AS n FROM sites")$n,
-    n_processes = databaser::db_get(con, "SELECT COUNT(*) AS n FROM processes")$n,
-    n_observations = databaser::db_get(con, "SELECT COUNT(*) AS n FROM observations")$n
+    n_tables = length(tables)
   )
+  
+  # Get row counts of various tables
+  tables_to_count <- c(
+    "sites", "processes", "observations", "sensors", "calibration_summaries", 
+    "deployments_sensors", "deployments_cylinders", "r_objects"
+  )
+  
+  # Get row counts
+  df_counts <- tables_to_count %>% 
+    purrr::set_names(stringr::str_c("n_", .)) %>% 
+    purrr::map_int(~get_db_row_count(con, ., tables)) %>% 
+    t() %>% 
+    as_tibble()
+  
+  # Bind the two tibbles together
+  df <- dplyr::bind_cols(df, df_counts)
+  
+  return(df)
+  
+}
+
+
+# Also used in the sactivtyr package, could put this in databaser too
+get_db_row_count <- function(con, table, tables) {
+  
+  if (table %in% tables) {
+    x <- glue::glue("SELECT COUNT(*) AS n FROM {table}") %>% 
+      databaser::db_get(con, .) %>% 
+      pull(n)
+  } else {
+    x <- NA_integer_
+  }
+  
+  return(x)
   
 }
