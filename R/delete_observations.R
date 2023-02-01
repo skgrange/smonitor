@@ -32,7 +32,12 @@ delete_observations <- function(con, df, match = "between", verbose = FALSE) {
   
   # Return immediately when input contains no observations
   if (nrow(df) == 0) {
-    message(threadr::date_message(), "Input data has no observations, not continuing...")
+    if (verbose) {
+      message(
+        threadr::date_message(), 
+        "Input data has no observations, database has not been touched..."
+      )
+    }
     return(invisible(con))
   }
   
