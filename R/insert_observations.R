@@ -13,7 +13,7 @@
 #' @param df Data frame containing observations to be inserted. 
 #' 
 #' @param check_processes Should the processes in \code{df} be tested for their
-#' existance in the `processes` table before insert?
+#' existence in the `processes` table before insert?
 #' 
 #' @param check_validity Should the validity in \code{df} be tested before 
 #' insert? 
@@ -44,9 +44,14 @@ insert_observations <- function(con, df, check_processes = TRUE,
   # Get system date
   date_system <- round(lubridate::now())
   
-  # Return immediatelly when input contains no observations
+  # Return immediately when input contains no observations
   if (nrow(df) == 0) {
-    message(threadr::date_message(), "Input data has no observations, not continuing...")
+    if (verbose) {
+      message(
+        threadr::date_message(), 
+        "Input data has no observations, database has not been touched..."
+      )
+    }
     return(invisible(con))
   }
   
@@ -80,7 +85,7 @@ insert_observations <- function(con, df, check_processes = TRUE,
   }
   
   if (anyNA(df$process)) {
-    stop("Missing processes detected, no data inserted...", call. = FALSE)
+    stop("Missing processes detected, no data inserted.", call. = FALSE)
   }
   
   # Check process keys for presence in `processes`
@@ -92,7 +97,7 @@ insert_observations <- function(con, df, check_processes = TRUE,
     # Error if they do not exist
     if (length(processes_not_in_processes) != 0) {
       stop(
-        "Processes to be inserted do not exist in `processes` table...", 
+        "Processes to be inserted do not exist in `processes` table.", 
         call. = FALSE
       )
     }
@@ -100,11 +105,11 @@ insert_observations <- function(con, df, check_processes = TRUE,
   }
   
   if (anyNA(df$summary)) {
-    stop("Missing summaries detected, no data inserted...", call. = FALSE)
+    stop("Missing summaries detected, no data inserted.", call. = FALSE)
   }
   
   if (anyNA(df$date)) {
-    stop("Missing dates detected, no data inserted...", call. = FALSE)
+    stop("Missing dates detected, no data inserted.", call. = FALSE)
   }
   
   # Check validity
@@ -115,7 +120,7 @@ insert_observations <- function(con, df, check_processes = TRUE,
     
     # Test
     if (!any(validity_values %in% c(NA, -1:3))) {
-      stop("Validity contains incorrect values...", call. = FALSE)
+      stop("Validity contains incorrect values.", call. = FALSE)
     }
     
   }

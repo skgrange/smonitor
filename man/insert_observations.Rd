@@ -20,7 +20,7 @@ insert_observations(
 \item{df}{Data frame containing observations to be inserted.}
 
 \item{check_processes}{Should the processes in \code{df} be tested for their
-existance in the `processes` table before insert?}
+existence in the `processes` table before insert?}
 
 \item{check_validity}{Should the validity in \code{df} be tested before 
 insert?}
