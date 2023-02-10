@@ -23,18 +23,24 @@ update_date_span_variables <- function(con, na.rm = FALSE, row_counts = FALSE,
                                        verbose = FALSE) {
   
   # Processes table
-  if (verbose) message(threadr::date_message(), "Updating `processes` table...")
+  if (verbose) {
+    cli::cli_alert_info("{threadr::cli_date()} Updating `processes` table...")
+  }
   update_process_spans(con, na.rm = na.rm)
   
   # Sites table
-  if (verbose) message(threadr::date_message(), "Updating `sites` table...")
+  if (verbose) {
+    cli::cli_alert_info("{threadr::cli_date()} Updating `sites` table...")
+  }
   update_site_spans(con)
   
   # Also row counts
   if (row_counts) {
     
     # Message text logic
-    if (verbose) message(threadr::date_message(), "Updating `row_counts` table...")
+    if (verbose) {
+      cli::cli_alert_info("{threadr::cli_date()} Updating `row_counts` table...")
+    }
     
     # Do the updating or replacing
     databaser::db_count_rows_insert(con, table = "row_counts")
