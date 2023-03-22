@@ -21,6 +21,7 @@
 #' @export
 import_invalidations <- function(con, tz = "UTC") {
   
+  # Check if the database contains the table
   stopifnot(databaser::db_table_exists(con, "invalidations"))
   
   # Get data
@@ -32,18 +33,18 @@ import_invalidations <- function(con, tz = "UTC") {
     date_start"
   )
   
-  # Older databases used strings for dates, but they should be integers like
-  # all other dates
-  if (inherits(df$date_start, "integer")) {
+  # Older databases used strings for dates, but they should be integers or 
+  # numeric like all other dates
+  if (inherits(df$date_start, c("integer", "numeric"))) {
     df <- df %>% 
       mutate(
-        across(c("date_start", "date_end"), threadr::parse_unix_time, tz = tz)
+        across(c(date_start, date_end), threadr::parse_unix_time, tz = tz)
       )
   } else {
     df <- df %>% 
       mutate(
         across(
-          c("date_start", "date_end"), lubridate::ymd_hms, truncated = 4, tz = tz
+          c(date_start, date_end), ~lubridate::ymd_hms(., truncated = 4, tz = tz)
         )
       )
   }
