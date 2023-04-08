@@ -31,7 +31,7 @@ smonitor_details <- function(con, task = NA_character_) {
   
   # Get row counts of various tables
   tables_to_count <- c(
-    "sites", "processes", "observations", "sensors", "calibration_summaries", 
+    "sites", "processes", "observations", "sensors", "cylinder_test_summaries", 
     "deployments_sensors", "deployments_cylinders", "r_objects"
   )
   
@@ -50,7 +50,7 @@ smonitor_details <- function(con, task = NA_character_) {
 }
 
 
-# Also used in the sactivtyr package, could put this in databaser too
+# Also used in the sactivtyr package, could put this in databaser
 get_db_row_count <- function(con, table, tables) {
   
   if (table %in% tables) {
