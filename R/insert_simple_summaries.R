@@ -18,7 +18,7 @@ insert_simple_summaries <- function(con, df, progress = FALSE) {
   # Check database for table
   stopifnot(databaser::db_table_exists(con, "observations_simple_summaries"))
   
-  # Make dates numeric and split df into pieces 
+  # Make dates numeric and split df into a list 
   list_df <- df %>% 
     mutate(date = as.numeric(date),
            date_end = as.numeric(date_end)) %>% 
@@ -28,21 +28,14 @@ insert_simple_summaries <- function(con, df, progress = FALSE) {
                        summary_source,
                        summary)
   
-  # Set-up progress bar
-  if (progress) {
-    progress <- dplyr::progress_estimated(length(list_df))
-  } else {
-    progress <- NULL
-  }
-  
-  # Delete then insert every data frame
+  # Delete and insert every element in list
   purrr::walk(
     list_df,
     ~insert_simple_summaries_worker(
       con = con, 
-      df = .x, 
-      progress = progress
-    )
+      df = .x
+    ),
+    .progress = progress
   )
   
   return(invisible(con))
@@ -50,23 +43,27 @@ insert_simple_summaries <- function(con, df, progress = FALSE) {
 }
 
 
-insert_simple_summaries_worker <- function(con, df, delete = TRUE, progress) {
+insert_simple_summaries_worker <- function(con, df) {
   
-  # Delete old summaries
-  if (delete) {
-    df %>% 
-      build_simple_summaries_delete_sql() %>% 
-      databaser::db_execute(con, .)
-  }
-
-  df %>% 
-    mutate(date_insert = lubridate::now(), 
-           date_insert = as.numeric(date_insert),
-           date_insert = round(date_insert)) %>% 
-    databaser::db_insert(con, "observations_simple_summaries", ., replace = FALSE)
-  
-  # Update progress bar
-  if (!is.null(progress)) progress$tick()$print()
+  # Delete and insert witin a transaction
+  databaser::db_with_transaction(
+    con, 
+    {
+      
+      # Delete old summaries based on input tibble
+      df %>% 
+        build_simple_summaries_delete_sql() %>% 
+        databaser::db_execute(con, .)
+      
+      # Insert into database
+      df %>% 
+        mutate(date_insert = lubridate::now(), 
+               date_insert = as.numeric(date_insert),
+               date_insert = round(date_insert)) %>% 
+        databaser::db_insert(con, "observations_simple_summaries", ., replace = FALSE)
+      
+    }
+  )
   
   return(invisible(con))
   
@@ -75,7 +72,7 @@ insert_simple_summaries_worker <- function(con, df, delete = TRUE, progress) {
 
 build_simple_summaries_delete_sql <- function(df) {
   
-  # Get date range for where clause
+  # Get date range for WHERE clause
   date_range <- range(df$date)
   
   # Build delete statement
