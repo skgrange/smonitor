@@ -29,8 +29,7 @@
 #' 
 #' @param verbose Should the function give messages? 
 #' 
-#' @param progress_bar A \strong{progressr::progressor} progress bar for a 
-#' progress bar. 
+#' @param progress Should a progress bar be displayed? 
 #' 
 #' @return Invisible \code{con} and exported files.
 #' 
@@ -39,7 +38,7 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
                                         site_name = FALSE, directory_output, 
                                         file_name_prefix = NA_character_,
                                         file_type = ".csv.gz", by_year = FALSE, 
-                                        progress_bar = NULL,
+                                        progress = FALSE,
                                         verbose = FALSE) {
   
   # Check data frame input
@@ -66,32 +65,23 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
   # Split tibble into a list by site
   list_df <- dplyr::group_split(df, site)
   
-  # Apply the exporter to the list's elements
-  progressr::with_progress({
-    
-    # Initialise progress bar
-    if (!is.null(progress_bar)) {
-      progress_bar <- progressr::progressor(along = list_df)
-    }
-    
-    purrr::walk(
-      list_df,
-      ~export_observations_by_site_worker(
-        con, 
-        df = .,
-        start = format(start),
-        end = format(end), 
-        site_name = site_name,
-        directory_output = directory_output,
-        file_name_prefix = file_name_prefix,
-        file_type = file_type,
-        by_year = by_year,
-        progress_bar = progress_bar,
-        verbose = verbose
-      )
-    )
-    
-  })
+  # Do
+  purrr::walk(
+    list_df,
+    ~export_observations_by_site_worker(
+      con, 
+      df = .,
+      start = format(start),
+      end = format(end), 
+      site_name = site_name,
+      directory_output = directory_output,
+      file_name_prefix = file_name_prefix,
+      file_type = file_type,
+      by_year = by_year,
+      verbose = verbose
+    ),
+    .progress = progress
+  )
   
   return(invisible(con))
   
@@ -101,8 +91,7 @@ export_observations_by_site <- function(con, df, start = 1960, end = NA,
 # Define the worker
 export_observations_by_site_worker <- function(con, df, start, end, site_name,
                                                directory_output, file_name_prefix, 
-                                               file_type, by_year, progress_bar,
-                                               verbose) {
+                                               file_type, by_year, verbose) {
   
   # Query database for observations
   if (verbose) {
@@ -172,9 +161,6 @@ export_observations_by_site_worker <- function(con, df, start, end, site_name,
       message(threadr::date_message(), "No data returned from database, not exporting...")
     }
   }
-  
-  # Update progress bar
-  if (!is.null(progress_bar)) progress_bar()
   
   return(invisible(con))
   
