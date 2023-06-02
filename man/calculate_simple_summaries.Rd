@@ -11,8 +11,7 @@ calculate_simple_summaries(
   start = NA,
   end = NA,
   period = c("month", "year"),
-  verbose = FALSE,
-  progress_bar = NULL
+  verbose = FALSE
 )
 }
 \arguments{
@@ -28,9 +27,6 @@ calculate_simple_summaries(
 \code{"month"} or \code{"year"}.}
 
 \item{verbose}{Should the function give messages?}
-
-\item{progress_bar}{A \strong{progressr::progressor} progress bar for a 
-progress bar.}
 }
 \value{
 Tibble.
@@ -40,5 +36,5 @@ The summaries created by \code{calculate_simple_summaries} are generally of
 use for trend analysis.
 }
 \author{
-Stuart K. Grange
+Stuart K. Grange.
 }

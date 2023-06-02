@@ -18,6 +18,9 @@
 #' @export
 import_aggregations <- function(con) {
   
+  # Check if table exists
+  stopifnot(databaser::db_table_exists(con, "aggregations"))
+  
   # Get look-up table
   df <- databaser::db_get(
     con, 

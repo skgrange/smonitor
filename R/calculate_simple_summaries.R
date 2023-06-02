@@ -4,6 +4,8 @@
 #' The summaries created by \code{calculate_simple_summaries} are generally of
 #' use for trend analysis. 
 #' 
+#' @author Stuart K. Grange.
+#' 
 #' @param con A \strong{smonitor} database connection. 
 #' 
 #' @param processes A vector of processes. 
@@ -17,17 +19,12 @@
 #' 
 #' @param verbose Should the function give messages? 
 #' 
-#' @param progress_bar A \strong{progressr::progressor} progress bar for a 
-#' progress bar. 
-#' 
 #' @return Tibble. 
-#' 
-#' @author Stuart K. Grange
 #'
 #' @export
 calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
                                        period = c("month", "year"), 
-                                       verbose = FALSE, progress_bar = NULL) {
+                                       verbose = FALSE) {
   
   # Check inputs
   period <- stringr::str_to_lower(period)
@@ -77,9 +74,6 @@ calculate_simple_summaries <- function(con, processes, start = NA, end = NA,
   } else {
     df <- tibble()
   }
-  
-  # Update progress bar
-  if (!is.null(progress_bar)) progress_bar()
   
   return(df)
   
