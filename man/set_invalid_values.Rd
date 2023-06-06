@@ -5,13 +5,18 @@
 \title{Function to set invalid values to missing (\code{NA}) based on 
 \strong{smonitor}'s convention for validity.}
 \usage{
-set_invalid_values(value, validity)
+set_invalid_values(value, validity, include_zero = TRUE)
 }
 \arguments{
 \item{value}{A numeric vector representing values (usually 
 measurements/observations).}
 
 \item{validity}{An integer vector representing validity.}
+
+\item{include_zero}{Should validities of \code{0} be considered invalid and
+the corresponding values be set to \code{NA}? \code{0} is used for calibration
+activities and sometimes these observations are needed, but other invalidity
+types are not.}
 }
 \description{
 Validity integers less-than and equal to zero are considered invalid and will
