@@ -10,8 +10,8 @@
 #' @param by_process Should the database observations spans be calculated 
 #' individually for each process? 
 #' 
-#' @param na.rm Should missing values (\code{NA}/\code{NULL}) be omited from the
-#' aggregation functions? 
+#' @param na.rm Should missing values (\code{NA}/\code{NULL}) be omitted from 
+#' the aggregation functions? 
 #' 
 #' @param verbose Should the function give messages? 
 #' 
@@ -164,7 +164,9 @@ calculate_process_spans <- function(con, process, by_process, na.rm) {
   if (length(sql) == 1) {
     df <- databaser::db_get(con, sql)
   } else{
-    df <- purrr::map_dfr(sql, ~databaser::db_get(con, .x))
+    df <- sql %>% 
+      purrr::map(~databaser::db_get(con, .x)) %>% 
+      purrr::list_rbind()
   }
   
   # sql group by will not return groups with no data
@@ -188,7 +190,9 @@ calculate_process_spans <- function(con, process, by_process, na.rm) {
         observation_count)
     )
   
-  if (!is.na(process[1])) df <- filter(df, process %in% !!process)
+  if (!is.na(process[1])) {
+    df <- filter(df, process %in% !!process)
+  }
     
   return(df)
   
