@@ -23,8 +23,8 @@ cause the database to update all process keys.}
 \item{by_process}{Should the database observations spans be calculated 
 individually for each process?}
 
-\item{na.rm}{Should missing values (\code{NA}/\code{NULL}) be omited from the
-aggregation functions?}
+\item{na.rm}{Should missing values (\code{NA}/\code{NULL}) be omitted from 
+the aggregation functions?}
 
 \item{verbose}{Should the function give messages?}
 }
