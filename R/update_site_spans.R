@@ -53,10 +53,11 @@ update_site_spans <- function(con, site = NA, verbose = FALSE) {
   # Summarise by site
   if (verbose) message(threadr::date_message(), "Summarising sites' data...")
   
+  # Warning suppression is for when all elements are NA
   df <- df %>% 
     group_by(site) %>% 
-    summarise(date_start = min(date_start, na.rm = TRUE),
-              date_end = max(date_end, na.rm = TRUE)) %>% 
+    summarise(date_start = suppressWarnings(min(date_start, na.rm = TRUE)),
+              date_end = suppressWarnings(max(date_end, na.rm = TRUE))) %>% 
     ungroup() %>% 
     mutate(date_start = ifelse(is.infinite(date_start), NA, date_start),
            date_end = ifelse(is.infinite(date_end), NA, date_end),
