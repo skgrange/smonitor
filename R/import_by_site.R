@@ -23,7 +23,14 @@
 #' useful for variables such as rainfall, snow, and precipitation where normally
 #' the aggregations do not take the form of the mean. Default is \code{TRUE}. 
 #' 
-#' @param valid_only Should only valid data be returned? Default is \code{TRUE}. 
+#' @param valid_only Should invalid observations be filtered out? Default is 
+#' \code{TRUE}. Valid observations are considered to be those with the validity
+#' variable being \code{1} or missing (\code{NULL} or \code{NA}). This argument
+#' will be set to \code{FALSE} if \code{set_invalid_values} is used.
+#' 
+#' @param set_invalid_values Should invalid observations be set to \code{NA}? 
+#' See \code{\link{set_invalid_values}} for details and this argument will set
+#' the \code{valid_only} argument to \code{FALSE}. 
 #' 
 #' @param pad Should the time-series be padded to ensure all dates in the 
 #' observation period are present? Default is \code{TRUE}. 
@@ -81,8 +88,9 @@
 #' @export
 import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA, 
                            period = "hour", include_sums = TRUE, 
-                           valid_only = TRUE, pad = TRUE, tz = "UTC", 
-                           spread = FALSE, date_end = TRUE, date_insert = FALSE, 
+                           valid_only = TRUE, set_invalid_values = FALSE, 
+                           pad = TRUE, tz = "UTC", spread = FALSE, 
+                           date_end = TRUE, date_insert = FALSE, 
                            site_name = TRUE, unit = TRUE, arrange_by = "process",
                            warn = TRUE) {
   

@@ -12,6 +12,7 @@ import_by_process(
   end = NA,
   tz = "UTC",
   valid_only = TRUE,
+  set_invalid_values = FALSE,
   date_end = TRUE,
   date_insert = FALSE,
   site_name = TRUE,
@@ -42,7 +43,12 @@ will be ceiling-rounded.}
 
 \item{valid_only}{Should invalid observations be filtered out? Default is 
 \code{TRUE}. Valid observations are considered to be those with the validity
-variable being \code{1} or missing (\code{NULL} or \code{NA}).}
+variable being \code{1} or missing (\code{NULL} or \code{NA}). This argument
+will be set to \code{FALSE} if \code{set_invalid_values} is used.}
+
+\item{set_invalid_values}{Should invalid observations be set to \code{NA}? 
+See \code{\link{set_invalid_values}} for details and this argument will set
+the \code{valid_only} argument to \code{FALSE}.}
 
 \item{date_end}{Should the return include the \code{date_end} variable? 
 Default is \code{TRUE}.}

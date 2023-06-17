@@ -24,7 +24,12 @@
 #' 
 #' @param valid_only Should invalid observations be filtered out? Default is 
 #' \code{TRUE}. Valid observations are considered to be those with the validity
-#' variable being \code{1} or missing (\code{NULL} or \code{NA}).  
+#' variable being \code{1} or missing (\code{NULL} or \code{NA}). This argument
+#' will be set to \code{FALSE} if \code{set_invalid_values} is used.
+#' 
+#' @param set_invalid_values Should invalid observations be set to \code{NA}? 
+#' See \code{\link{set_invalid_values}} for details and this argument will set
+#' the \code{valid_only} argument to \code{FALSE}. 
 #' 
 #' @param date_end Should the return include the \code{date_end} variable? 
 #' Default is \code{TRUE}. 
@@ -65,13 +70,13 @@
 #' @export
 import_by_process <- function(con, process = NA, summary = NA, start = 1969, 
                               end = NA, tz = "UTC", valid_only = TRUE, 
-                              date_end = TRUE, date_insert = FALSE, 
-                              site_name = TRUE, unit = TRUE, warn = TRUE, 
-                              arrange_by = "process") {
+                              set_invalid_values = FALSE, date_end = TRUE, 
+                              date_insert = FALSE, site_name = TRUE, 
+                              unit = TRUE, warn = TRUE, arrange_by = "process") {
   
   # Check inputs
   if (is.na(process[1])) {
-    stop("The `process` argument must be used...", call. = FALSE)
+    stop("The `process` argument must be used.", call. = FALSE)
   }
   
   # Can only be one of two things
@@ -105,17 +110,14 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   
   # Check for data
   if (nrow(df_processes) == 0) {
-    
     if (warn) {
       warning(
         "Process(s) not found in database, no data has been returned...", 
         call. = FALSE
       )
     }
-    
-    # Return empty data frame here
+    # Return empty tibble
     return(tibble())
-    
   }
   
   # Get observations
@@ -131,38 +133,50 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   
   # Check for data
   if (nrow(df) == 0) {
-    
     if (warn) {
       warning(
         "Database has been queried but no data has been returned...", 
         call. = FALSE
       )
     }
-    
-    # Return empty data frame here
+    # Return empty tibble
     return(tibble())
-    
   }
   
-  # Filter invalid observations, may move to sql at some point
+  # Switch logic
+  if (valid_only & set_invalid_values) {
+    if (warn) {
+      warning(
+        "Both `valid_only` and `set_invalid_values` are `TRUE`, only `set_invalid_values` will be honoured..."
+      )
+    }
+    valid_only <- FALSE
+  }
+  
+  # Remove invalid observations, may move to sql at some point
   if (valid_only) {
-    df <- filter(df, validity %in% 1:3 | is.na(validity))
+    df <- filter(df, validity %in% 1L:3L | is.na(validity))
+  }
+  
+  # Probably better to set invalid value to missing rather than to use 
+  # `valid_only`
+  if (set_invalid_values) {
+    df <- mutate(
+      df, value = set_invalid_values(value, validity, include_zero = TRUE)
+    )
   }
   
   # Check for data
   if (nrow(df) == 0) {
-    
     if (warn) {
       warning("Database contains no valid observations...", call. = FALSE)
     }
-    
-    # Return empty data frame here
+    # Return empty tibble
     return(tibble())
-    
   }
   
   # Join process and site data
-  df <- left_join(df, df_processes, by = "process")
+  df <- left_join(df, df_processes, by = join_by(process))
   
   # Parse dates
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
@@ -171,7 +185,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   }
   
-  # As numeric force is for 64 bit integers issues
+  # As numeric force is for 64 bit integer issues
   if (date_end) {
     df$date_end <- threadr::parse_unix_time(as.numeric(df$date_end), tz = tz)
   }
@@ -273,22 +287,18 @@ import_by_process_observation_table <- function(con, process, summary, start,
   
   # Drop date_end from query
   if (!date_end) {
-    
     sql_observations <- stringr::str_remove(
       sql_observations, 
       "observations.date_end,"
     )
-    
   }
 
   # Drop date_insert from query
   if (!date_insert) {
-    
     sql_observations <- stringr::str_remove(
       sql_observations, 
       "observations.date_insert,"
     )
-    
   }
     
   # Clean sql
