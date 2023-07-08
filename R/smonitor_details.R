@@ -18,12 +18,20 @@ smonitor_details <- function(con, task = NA_character_) {
   # Check if tables exist
   stopifnot(c("sites", "processes", "observations") %in% tables)
   
+  # Get package versions as a single string
+  package_versions <- threadr::get_package_version(
+    c("R", "dplyr", "threadr", "icostoolr", "databaser", "smonitor", "ssensors"), 
+    as_vector = TRUE
+  ) %>% 
+    stringr::str_c(collapse = "; ")
+  
   # Get high level database and details
   df <- tibble(
     system = threadr::hostname(),
     date = round(as.numeric(lubridate::now())),
     db_name = databaser::db_name(con),
     db_class = databaser::db_class(con),
+    package_versions = package_versions,
     task = task,
     db_size = databaser::db_size(con, unit = "mb"),
     n_tables = length(tables)
