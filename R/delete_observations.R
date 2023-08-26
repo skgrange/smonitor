@@ -6,16 +6,14 @@
 #' inserted. This process avoids duplicate observations which are almost always
 #' undesirable. 
 #' 
-#' \code{delete_observations} allows the use of groups based on the input data
-#' frame.
-#' 
 #' @author Stuart K. Grange
 #' 
 #' @param con Database connection.
 #' 
-#' @param df Data frame; usually an object which is about to be inserted into 
-#' a database table. \code{delete_observations} uses this as a mapping table to
-#' know what to send the database in the delete statement.
+#' @param df Input tibble of observations. Usually an object which is about to 
+#' be inserted into the \code{`observations`} database table. 
+#' \code{delete_observations} uses this as a mapping table to know what to send
+#' the database in the delete statement.
 #' 
 #' @param match Type of match to use for dates. \code{"between"} and 
 #' \code{"all"} are supported. Beware that \code{"all"} will remove all 
@@ -23,35 +21,35 @@
 #' 
 #' @param verbose Should the function give messages? 
 #' 
+#' @param progress Should a progress bar be displayed? 
+#' 
 #' @return Invisible \code{con}.
 #' 
 #' @seealso \code{\link{db_execute}}, \code{\link{insert_observations}}
 #' 
 #' @export
-delete_observations <- function(con, df, match = "between", verbose = FALSE) {
+delete_observations <- function(con, df, match = "between", verbose = FALSE,
+                                progress = FALSE) {
   
   # Return immediately when input contains no observations
   if (nrow(df) == 0) {
     if (verbose) {
-      message(
-        threadr::date_message(), 
-        "Input data has no observations, database has not been touched..."
+      cli::cli_alert_info(
+        "{threadr::cli_date()} Input data has no observations, the database has not been touched..."
       )
     }
     return(invisible(con))
   }
   
-  # May need to use the argument
   if (any(is.na(df$process))) {
-    stop("Input data frame must not contain missing processes.", call. = FALSE)
+    cli::cli_abort("Input data must not contain missing processes.")
   }
   
   if (any(is.na(df$date))) {
-    stop("Input data frame must not contain missing dates.", call. = FALSE)
+    cli::cli_abort("Input data must not contain missing dates.")
   }
   
   if (match == "between") {
-    
     # Delete observations by groups
     df %>% 
       dplyr::group_split(process,
@@ -62,17 +60,12 @@ delete_observations <- function(con, df, match = "between", verbose = FALSE) {
           con, 
           df = .x,
           verbose = verbose
-        )
+        ),
+        .progress = progress
       )
-    
   } else if (match == "all") {
-    
-    # Get processes
-    keys <- unique(df$process)
-    
     # Delete all observations associated with a process
-    delete_process(con, keys)
-    
+    delete_process(con, unique(df$process))
   }
   
   return(invisible(con))
@@ -80,7 +73,6 @@ delete_observations <- function(con, df, match = "between", verbose = FALSE) {
 }
 
 
-# No export
 delete_observations_worker <- function(con, df, verbose) {
   
   # Get keys
@@ -88,15 +80,15 @@ delete_observations_worker <- function(con, df, verbose) {
   summary <- df$summary[1]
   
   # Get dates
-  date_min <- min(df$date, na.rm = TRUE)
-  date_max <- max(df$date, na.rm = TRUE)
+  date_min <- min(df$date)
+  date_max <- max(df$date)
   
   # Convert if needed
   if (lubridate::is.POSIXt(date_min)) date_min <- as.numeric(date_min)
   if (lubridate::is.POSIXt(date_max)) date_max <- as.numeric(date_max)
   
   # Build statement
-  sql <- stringr::str_c(
+  sql_delete <- stringr::str_c(
     "DELETE FROM observations 
       WHERE process = ", process, 
     " AND summary = ", summary, 
@@ -105,10 +97,14 @@ delete_observations_worker <- function(con, df, verbose) {
     stringr::str_squish()
   
   # Message sql to user
-  if (verbose) message(threadr::date_message(), sql)
+  if (verbose) {
+    cli::cli_alert_info(
+      "{threadr::cli_date()} {sql_delete}"
+    )
+  }
   
   # Use statement
-  databaser::db_execute(con, sql)
+  databaser::db_execute(con, sql_delete)
   
   return(invisible(con))
   

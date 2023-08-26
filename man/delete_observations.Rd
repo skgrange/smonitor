@@ -5,20 +5,29 @@
 \title{Function to delete observations from the \code{`observations`} table in a
 \strong{smonitor} database.}
 \usage{
-delete_observations(con, df, match = "between", verbose = FALSE)
+delete_observations(
+  con,
+  df,
+  match = "between",
+  verbose = FALSE,
+  progress = FALSE
+)
 }
 \arguments{
 \item{con}{Database connection.}
 
-\item{df}{Data frame; usually an object which is about to be inserted into 
-a database table. \code{delete_observations} uses this as a mapping table to
-know what to send the database in the delete statement.}
+\item{df}{Input tibble of observations. Usually an object which is about to 
+be inserted into the \code{`observations`} database table. 
+\code{delete_observations} uses this as a mapping table to know what to send
+the database in the delete statement.}
 
 \item{match}{Type of match to use for dates. \code{"between"} and 
 \code{"all"} are supported. Beware that \code{"all"} will remove all 
 observations associated with a process.}
 
 \item{verbose}{Should the function give messages?}
+
+\item{progress}{Should a progress bar be displayed?}
 }
 \value{
 Invisible \code{con}.
@@ -28,10 +37,6 @@ Invisible \code{con}.
 insert so old observations are deleted before a new set of observations are 
 inserted. This process avoids duplicate observations which are almost always
 undesirable.
-}
-\details{
-\code{delete_observations} allows the use of groups based on the input data
-frame.
 }
 \seealso{
 \code{\link{db_execute}}, \code{\link{insert_observations}}

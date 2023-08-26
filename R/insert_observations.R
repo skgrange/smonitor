@@ -23,15 +23,20 @@
 #' 
 #' @param verbose Should the function give messages? 
 #' 
-#' @return Invisible \code{con}.  
+#' @param progress If \code{batch_size} is not \code{NA}, should a progress bar 
+#' be displayed? 
+#' 
+#' @return Invisible \code{con}.
+#' 
+#' @seealso \code{\link{delete_observations}}
 #' 
 #' @examples 
 #' \dontrun{
 #' 
-#' # Insert some data
+#' # Insert observations data
 #' insert_observations(con, data_test)
 #' 
-#' # Insert some data, with some messages
+#' # Insert observations, this time with some messages
 #' insert_observations(con, data_test, verbose = TRUE)
 #' 
 #' }
@@ -39,7 +44,7 @@
 #' @export
 insert_observations <- function(con, df, check_processes = TRUE, 
                                 check_validity = TRUE, batch_size = NA, 
-                                verbose = FALSE) {
+                                verbose = FALSE, progress = FALSE) {
   
   # Get system date
   date_system <- round(lubridate::now())
@@ -47,16 +52,15 @@ insert_observations <- function(con, df, check_processes = TRUE,
   # Return immediately when input contains no observations
   if (nrow(df) == 0) {
     if (verbose) {
-      message(
-        threadr::date_message(), 
-        "Input data has no observations, database has not been touched..."
+      cli::cli_alert_info(
+        "{threadr::cli_date()} Input data has no observations, the database has not been touched..."
       )
     }
     return(invisible(con))
   }
   
   if (verbose) {
-    message(threadr::date_message(), "Formatting input for smonitor insert...")
+    cli::cli_alert_info("{threadr::cli_date()} Formatting input for smonitor insert...")
   }
   
   # Get variables in database table
@@ -66,7 +70,8 @@ insert_observations <- function(con, df, check_processes = TRUE,
   index <- if_else(names(df) %in% names(df_template), TRUE, FALSE)
   df <- df[, index]
   
-  # Convert dates to unix time, before binding otherwise conversion occurs
+  # Convert dates to unix time, before the row binding, otherwise conversion
+  # occurs
   if (lubridate::is.POSIXt(df$date)) df$date <- as.numeric(df$date)
   if (lubridate::is.POSIXt(df$date_end)) df$date_end <- as.numeric(df$date_end)
   
@@ -78,14 +83,13 @@ insert_observations <- function(con, df, check_processes = TRUE,
   
   # Do some checking
   if (verbose) {
-    message(
-      threadr::date_message(), 
-      "Checking smonitor's constraints before insert..."
+    cli::cli_alert_info(
+      "{threadr::cli_date()} Checking smonitor's constraints before insert..."
     )
   }
   
   if (anyNA(df$process)) {
-    stop("Missing processes detected, no data inserted.", call. = FALSE)
+    cli::cli_abort("Missing processes detected, no data inserted.")
   }
   
   # Check process keys for presence in `processes`
@@ -96,20 +100,17 @@ insert_observations <- function(con, df, check_processes = TRUE,
     
     # Error if they do not exist
     if (length(processes_not_in_processes) != 0) {
-      stop(
-        "Processes to be inserted do not exist in `processes` table.", 
-        call. = FALSE
-      )
+      cli::cli_abort("Processes to be inserted do not exist in `processes` table.")
     }
     
   }
   
   if (anyNA(df$summary)) {
-    stop("Missing summaries detected, no data inserted.", call. = FALSE)
+    cli::cli_abort("Missing summaries detected, no data inserted.")
   }
   
   if (anyNA(df$date)) {
-    stop("Missing dates detected, no data inserted.", call. = FALSE)
+    cli::cli_abort("Missing dates detected, no data inserted.")
   }
   
   # Check validity
@@ -120,49 +121,39 @@ insert_observations <- function(con, df, check_processes = TRUE,
     
     # Test
     if (!any(validity_values %in% c(NA, -1:3))) {
-      stop("Validity contains incorrect values.", call. = FALSE)
+      cli::cli_abort("Validity contains incorrect values, no data inserted.")
     }
     
+  }
+  
+  if (verbose) {
+    cli::cli_alert_info(
+      "{threadr::cli_date()} Inserting `{threadr::str_thousands_separator(nrow(df))}` observations into `observations`..."
+    )
   }
   
   # Insert into `observations`
   if (!is.na(batch_size) && nrow(df) >= batch_size) {
     
     if (verbose) {
-      message(threadr::date_message(), "Splitting input...")
+      cli::cli_alert_info(
+        "{threadr::cli_date()} Splitting input and inserting in batches..."
+      )
     }
     
-    # Split
+    # Split into certain sizes
     list_df <- threadr::split_nrow(df, batch_size)
     
-    if (verbose) {
-      message(
-        threadr::date_message(), 
-        "Inserting ", 
-        threadr::str_thousands_separator(nrow(df)), 
-        " observations into `observations` in ", 
-        length(list_df), 
-        " batches..."
-      )
-    }
-    
     # Insert in pieces
-    purrr::walk(list_df, ~databaser::db_insert(con, "observations", .))
+    purrr::walk(
+      list_df,
+      ~databaser::db_insert(con, "observations", .), 
+      .progress = progress
+    )
     
   } else {
-    
-    if (verbose) {
-      message(
-        threadr::date_message(), 
-        "Inserting ", 
-        threadr::str_thousands_separator(nrow(df)), 
-        " observations into `observations`..."
-      )
-    }
-    
     # Insert
-    databaser::db_insert(con, "observations", df)
-    
+    databaser::db_insert(con, "observations", df, replace = FALSE)
   }
   
   return(invisible(con))

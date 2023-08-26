@@ -11,7 +11,8 @@ insert_observations(
   check_processes = TRUE,
   check_validity = TRUE,
   batch_size = NA,
-  verbose = FALSE
+  verbose = FALSE,
+  progress = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ insert?}
 inserts.}
 
 \item{verbose}{Should the function give messages?}
+
+\item{progress}{If \code{batch_size} is not \code{NA}, should a progress bar 
+be displayed?}
 }
 \value{
 Invisible \code{con}.
@@ -42,14 +46,17 @@ is attempted.
 \examples{
 \dontrun{
 
-# Insert some data
+# Insert observations data
 insert_observations(con, data_test)
 
-# Insert some data, with some messages
+# Insert observations, this time with some messages
 insert_observations(con, data_test, verbose = TRUE)
 
 }
 
+}
+\seealso{
+\code{\link{delete_observations}}
 }
 \author{
 Stuart K. Grange.

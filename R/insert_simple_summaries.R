@@ -45,7 +45,7 @@ insert_simple_summaries <- function(con, df, progress = FALSE) {
 
 insert_simple_summaries_worker <- function(con, df) {
   
-  # Delete and insert witin a transaction
+  # Delete and insert with a transaction
   databaser::db_with_transaction(
     con, 
     {
