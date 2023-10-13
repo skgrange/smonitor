@@ -10,7 +10,7 @@
 #' 
 #' @param con Database connection.
 #' 
-#' @param df Data frame containing observations to be inserted. 
+#' @param df Tibble/data frame containing observations to be inserted. 
 #' 
 #' @param check_processes Should the processes in \code{df} be tested for their
 #' existence in the `processes` table before insert?
@@ -47,13 +47,13 @@ insert_observations <- function(con, df, check_processes = TRUE,
                                 verbose = FALSE, progress = FALSE) {
   
   # Get system date
-  date_system <- round(lubridate::now())
+  date_system <- lubridate::floor_date(lubridate::now(), "second")
   
   # Return immediately when input contains no observations
   if (nrow(df) == 0) {
     if (verbose) {
       cli::cli_alert_info(
-        "{threadr::cli_date()} Input data has no observations, the database has not been touched..."
+        "{threadr::cli_date()} Input data has no observations, the database has not been altered..."
       )
     }
     return(invisible(con))
@@ -78,8 +78,10 @@ insert_observations <- function(con, df, check_processes = TRUE,
   # Order variables and also add variables which do not exist
   df <- bind_rows(df_template, df)
   
-  # Add date insert variable
-  df$date_insert <- as.numeric(date_system)
+  # Add date insert variable if it exists in `observations`
+  if ("date_insert" %in% names(df_template)) {
+    df$date_insert <- as.numeric(date_system)
+  }
   
   # Do some checking
   if (verbose) {

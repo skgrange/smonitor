@@ -1,7 +1,7 @@
 #' Function to prepare a data frame for insert into the \code{`observations`} 
 #' table in a \strong{smonitor} database. 
 #' 
-#' @param df Data frame.
+#' @param df Data frame or tibble. 
 #' 
 #' @param drop Should variables not contained in an \code{`observations`} table 
 #' be dropped? 
@@ -10,13 +10,16 @@
 #' 
 #' @param as_tibble Should the return be a tibble? 
 #' 
+#' @param include_date_insert Should the \code{date_insert} variable be included? 
+#' 
 #' @author Stuart K. Grange
 #' 
 #' @return Data frame or tibble. 
 #'
 #' @export
 prepare_observations_table <- function(df, drop = FALSE, convert = FALSE,
-                                       as_tibble = FALSE) {
+                                       as_tibble = FALSE, 
+                                       include_date_insert = TRUE) {
   
   # Build template data frame
   names <- c(
@@ -43,18 +46,21 @@ prepare_observations_table <- function(df, drop = FALSE, convert = FALSE,
   
   # Correct data types
   if (convert) {
-    
     df$date_insert <- as.numeric(df$date_insert)
     df$date <- as.numeric(df$date)
     df$date_end <- as.numeric(df$date_end)
     df$process <- as.integer(df$process)
     df$summary <- as.integer(df$summary)
     df$validity <- as.integer(df$validity)
-    # value? 
-    
   }
   
+  # To tibble
   if (as_tibble) df <- as_tibble(df)
+  
+  # Drop date_insert if not needed
+  if (!include_date_insert) {
+    df <- select(df, -date_insert)
+  }
   
   return(df)
   

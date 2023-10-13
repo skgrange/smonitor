@@ -18,7 +18,7 @@ insert_observations(
 \arguments{
 \item{con}{Database connection.}
 
-\item{df}{Data frame containing observations to be inserted.}
+\item{df}{Tibble/data frame containing observations to be inserted.}
 
 \item{check_processes}{Should the processes in \code{df} be tested for their
 existence in the `processes` table before insert?}

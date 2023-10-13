@@ -9,11 +9,12 @@ prepare_observations_table(
   df,
   drop = FALSE,
   convert = FALSE,
-  as_tibble = FALSE
+  as_tibble = FALSE,
+  include_date_insert = TRUE
 )
 }
 \arguments{
-\item{df}{Data frame.}
+\item{df}{Data frame or tibble.}
 
 \item{drop}{Should variables not contained in an \code{`observations`} table 
 be dropped?}
@@ -21,6 +22,8 @@ be dropped?}
 \item{convert}{Should the variables be coerced into the correct data types?}
 
 \item{as_tibble}{Should the return be a tibble?}
+
+\item{include_date_insert}{Should the \code{date_insert} variable be included?}
 }
 \value{
 Data frame or tibble.
