@@ -206,7 +206,7 @@ update_sites_data_sources <- function(con, site = NA) {
       stringr::str_c(collapse = ",")
     
     sql_where <- stringr::str_c(
-      "WHERE site IN (", site, ")"
+      " WHERE site IN (", site, ")"
     )
     
     # Add where clause
@@ -220,15 +220,20 @@ update_sites_data_sources <- function(con, site = NA) {
     stringr::str_squish() %>% 
     databaser::db_get(con, .)
   
-  # Summarise data sources
-  df <- df %>% 
+  # Summarise data sources, omit all missing data sources
+  df_summaries <- df %>% 
+    filter(!is.na(data_source)) %>% 
     group_by(site) %>% 
-    summarise(data_source = stringr::str_c(unique(data_source), collapse = "; ")) %>% 
+    summarise(
+      data_source = stringr::str_c(sort(unique(data_source)), collapse = "; ")
+    ) %>% 
     ungroup()
   
   # Build update statements and use
-  df %>%
-    databaser::build_update_statements("sites", ., where = "site", squish = TRUE) %>%
+  df_summaries %>%
+    databaser::build_update_statements(
+      "sites", ., where = "site", squish = TRUE
+    ) %>%
     databaser::db_execute(con, .)
   
   return(invisible(con))
