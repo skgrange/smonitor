@@ -15,7 +15,8 @@ if (getRversion() >= "2.15.1") {
     "upper", "summary_source", "auto_correlation", "deseason", "envirologger_sensor_id",
     "year", "data_source", "progress_bar", "intercept_lower", "intercept_upper",
     "envirologger_api_version", "envirologger_sensor_label", "sensor_label",
-    "test_current", "n", "current", "n_all"
+    "test_current", "n", "current", "n_all", "sensor_id", "sensing_element_id",
+    "sensor_type"
   )
   
   # Squash the notes

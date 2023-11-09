@@ -76,7 +76,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   
   # Check inputs
   if (is.na(process[1])) {
-    stop("The `process` argument must be used.", call. = FALSE)
+    cli::cli_abort("The `process` argument must be used.")
   }
   
   # Can only be one of two things
@@ -111,9 +111,8 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   # Check for data
   if (nrow(df_processes) == 0) {
     if (warn) {
-      warning(
-        "Process(s) not found in database, no data has been returned...", 
-        call. = FALSE
+      cli::cli_warn(
+        "Process(s) not found in the database, no data has been returned..."
       )
     }
     # Return empty tibble
@@ -134,9 +133,8 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   # Check for data
   if (nrow(df) == 0) {
     if (warn) {
-      warning(
-        "Database has been queried but no data has been returned...", 
-        call. = FALSE
+      cli::cli_warn(
+        "The database has been queried but no data has been returned..."
       )
     }
     # Return empty tibble
@@ -146,7 +144,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   # Switch logic
   if (valid_only & set_invalid_values) {
     if (warn) {
-      warning(
+      cli::cli_warn(
         "Both `valid_only` and `set_invalid_values` are `TRUE`, only `set_invalid_values` will be honoured..."
       )
     }
@@ -169,7 +167,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   # Check for data
   if (nrow(df) == 0) {
     if (warn) {
-      warning("Database contains no valid observations...", call. = FALSE)
+      cli::cli_warn("The database contains no valid observations...")
     }
     # Return empty tibble
     return(tibble())
@@ -198,7 +196,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   }
   
   # And make a nice variable order
-  df <- select(
+  df <- relocate(
     df, 
     dplyr::matches("date_insert"),
     dplyr::matches("date"), 
@@ -210,8 +208,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
     dplyr::matches("summary"),
     dplyr::matches("validity"),
     dplyr::matches("unit"),
-    dplyr::matches("value"),
-    dplyr::everything()
+    dplyr::matches("value")
   )
   
   return(df)

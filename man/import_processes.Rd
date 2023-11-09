@@ -2,12 +2,17 @@
 % Please edit documentation in R/import_processes.R
 \name{import_processes}
 \alias{import_processes}
-\title{Function to import \code{`processes`} table from a \strong{smonitor} database.}
+\title{Function to import \code{`processes`} table from a \strong{smonitor} 
+database.}
 \usage{
-import_processes(con, tz = "UTC")
+import_processes(con, with_sensors = TRUE, tz = "UTC")
 }
 \arguments{
-\item{con}{Database connection to an \strong{smonitor} database.}
+\item{con}{Database connection to a \strong{smonitor} database.}
+
+\item{with_sensors}{If the \strong{smonitor} data model contains a 
+\code{`sensors`} table, should additional information be joined to the 
+\code{`processes`} return?}
 
 \item{tz}{What time zone should the \code{date_start} and \code{date_end}
 variables be represented as?}
@@ -16,7 +21,8 @@ variables be represented as?}
 Tibble.
 }
 \description{
-Function to import \code{`processes`} table from a \strong{smonitor} database.
+Function to import \code{`processes`} table from a \strong{smonitor} 
+database.
 }
 \examples{
 \dontrun{
@@ -26,6 +32,9 @@ data_processes <- import_processes(con)
 
 }
 
+}
+\seealso{
+\code{\link{import_sites}},  \code{\link{import_by_process}}
 }
 \author{
 Stuart K. Grange

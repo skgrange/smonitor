@@ -96,7 +96,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   
   # Check inputs
   if (is.na(site[1]) || site[1] == "") {
-    stop("The `site` argument must be used...", call. = FALSE)
+    cli::cli_abort("The `site` argument must be used.")
   }
   
   # Parse arguments
@@ -111,20 +111,13 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   
   # Check period
   if (!length(period) == 1) {
-    stop("Only one `period` can be specified...", call. = FALSE)
+    cli::cli_abort("Only one `period` can be specified.")
   }
   
   if (!period %in% valid_periods) {
-    
-    stop(
-      stringr::str_c(
-        "Invalid `period`. Valid options are: ", 
-        stringr::str_c(valid_periods, collapse = ", "),
-        "..."
-      ), 
-      call. = FALSE
+    cli::cli_abort(
+      "Invalid `period`, the valid options are: {stringr::str_c(na.omit(valid_periods), collapse = ', ')}."
     )
-    
   }
   
   # Switch period to integer, the summary integer used in smonitor
@@ -166,12 +159,10 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   
   # Add variable as where clause too
   if (!is.na(variable[1])) {
-    
     sql_processes <- stringr::str_c(
       sql_processes, 
       " AND variable IN (", variable, ")"
     )
-    
   }
   
   # Clean statement
@@ -184,9 +175,8 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
   if (nrow(df_processes) == 0) {
     
     if (warn) {
-      warning(
-        "Check the `site` and `period` arguments, processes are not available...", 
-        call. = FALSE
+      cli::cli_warn(
+        "Check the `site` and `period` arguments, processes are not available..."
       )
     }
     
@@ -231,20 +221,17 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
     
     # Spread data
     df <- tryCatch({
-      
       df %>%
         select(-process,
                -summary,
                -validity) %>%
-        tidyr::spread(variable, value)
-      
+        tidyr::pivot_wider(names_from = variable)
     }, error = function(e) {
       
-      # Raise warning
+      # Raise warning because observations must be removed
       if (warn) {
-        warning(
-          "Data has been removed to honour `spread` argument...", 
-          call. = FALSE
+        cli::cli_warn(
+          "Observations have been removed to honour `spread` argument..."
         )
       }
       
@@ -256,7 +243,7 @@ import_by_site <- function(con, site = NA, variable = NA, start = 1970, end = NA
         select(-process,
                -summary,
                -validity) %>%
-        tidyr::spread(variable, value)
+        tidyr::pivot_wider(names_from = variable)
       
     })
     
