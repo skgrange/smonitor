@@ -49,6 +49,11 @@ import_processes <- function(con, with_sensors = TRUE, tz = "UTC") {
              site,
              site_name)
   
+  # `date_insert` is not present very often so only parse if it exists
+  if ("date_insert" %in% names(df)) {
+    df <- mutate(df, date_insert = parse_numeric_dates(date_insert, tz = tz))
+  }
+  
   # Join some additional sensor things to table too
   if (with_sensors && databaser::db_table_exists(con, "sensors")) {
     
