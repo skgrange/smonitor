@@ -4,12 +4,21 @@
 \alias{summarise_process_entiries}
 \title{Function to calculate process summaries in a \strong{smonitor} database.}
 \usage{
-summarise_process_entiries(con, process, tz = "UTC", progress = FALSE)
+summarise_process_entiries(
+  con,
+  process,
+  batch_size = NA,
+  tz = "UTC",
+  progress = FALSE
+)
 }
 \arguments{
 \item{con}{A \strong{smonitor} database connection.}
 
 \item{process}{A vector of processes.}
+
+\item{batch_size}{Number of processes to summarise per batch. This can be 
+useful when large numbers of processes are to be summaried.}
 
 \item{tz}{Time zone for the dates to be parsed into.}
 
