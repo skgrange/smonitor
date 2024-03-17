@@ -11,7 +11,7 @@
 #' @param process A vector of processes. 
 #' 
 #' @param batch_size Number of processes to summarise per batch. This can be 
-#' useful when large numbers of processes are to be summaried. 
+#' useful when large numbers of processes are to be summarised. 
 #' 
 #' @param tz Time zone for the dates to be parsed into. 
 #' 
@@ -78,7 +78,8 @@ summarise_process_entiries <- function(con, process, batch_size = NA, tz = "UTC"
 
 summarise_process_entiries_worker <- function(con, process) {
   
-  # Build a sql statement that will
+  # Build a sql statement that will only evaluate a single process and the group
+  # by clause is not needed for sqlite
   sql <- stringr::str_glue(
     "SELECT process, 
     MIN(date) AS date_start,
@@ -86,7 +87,8 @@ summarise_process_entiries_worker <- function(con, process) {
     COUNT(*) AS n_all,
     SUM(CASE WHEN value IS NULL THEN 0 ELSE 1 END) AS n
     FROM observations
-    WHERE process = {process}"
+    WHERE process = {process}
+    GROUP BY process"
   )
   
   # Get data, if the process is truly empty, the process key needs to be added 

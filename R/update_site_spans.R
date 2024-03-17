@@ -34,7 +34,9 @@
 update_site_spans <- function(con, site = NA, verbose = FALSE) {
   
   # Get data and transform
-  if (verbose) message(threadr::date_message(), "Querying `processes` table...")
+  if (verbose) {
+    cli::cli_alert_info("{threadr::cli_date()} Querying `processes` table...")
+  }
   
   df <- databaser::db_get(
     con, 
@@ -48,10 +50,14 @@ update_site_spans <- function(con, site = NA, verbose = FALSE) {
            date_end = suppressWarnings(as.numeric(date_end)))
   
   # Filter to sites
-  if (!is.na(site[1])) df <- filter(df, site %in% !!site)
+  if (!is.na(site[1])) {
+    df <- filter(df, site %in% !!site)
+  }
   
   # Summarise by site
-  if (verbose) message(threadr::date_message(), "Summarising sites' data...")
+  if (verbose) {
+    cli::cli_alert_info("{threadr::cli_date()} Summarising sites' data...")
+  }
   
   # Warning suppression is for when all elements are NA
   df <- df %>% 
@@ -64,7 +70,11 @@ update_site_spans <- function(con, site = NA, verbose = FALSE) {
            date_start = stringr::str_replace_na(date_start),
            date_end = stringr::str_replace_na(date_end))
   
-  # Update variables to be null before insert
+  # Update date variables
+  if (verbose) {
+    cli::cli_alert_info("{threadr::cli_date()} Updating sites' date variables...")
+  }
+  
   if (!is.na(site[1])) {
     
     site_collapsed <- site %>% 
@@ -89,9 +99,7 @@ update_site_spans <- function(con, site = NA, verbose = FALSE) {
     
   }
   
-  # Build update statements
-  if (verbose) message(threadr::date_message(), "Updating date variables...")
-  
+  # Build sql statments
   sql_update <- stringr::str_c(
     "UPDATE sites
      SET date_start = ", df$date_start, 
@@ -107,21 +115,27 @@ update_site_spans <- function(con, site = NA, verbose = FALSE) {
   
   # Update observation counts
   if ("observation_count" %in% databaser::db_list_variables(con, "sites")) {
-    if (verbose) message(threadr::date_message(), "Updating observation counts...")
+    if (verbose) {
+      cli::cli_alert_info("{threadr::cli_date()} Updating observation counts...")
+    }
     update_sites_observation_counts(con, site = site)
   }
   
   # Update variables monitored
   if ("variables_monitored" %in% databaser::db_list_variables(con, "sites") && 
       "observation_count" %in% databaser::db_list_variables(con, "sites")) {
-    if (verbose) message(threadr::date_message(), "Updating variables monitored...")
+    if (verbose) {
+      cli::cli_alert_info("{threadr::cli_date()} Updating variables monitored...")
+    }
     update_variables_monitored(con, site = site)
   }
   
   # Update data sources
   if ("data_source" %in% databaser::db_list_variables(con, "sites") &&
       "data_source" %in% databaser::db_list_variables(con, "processes")) {
-    if (verbose) message(threadr::date_message(), "Updating data sources...")
+    if (verbose) {
+      cli::cli_alert_info("{threadr::cli_date()} Updating data sources...")
+    }
     update_sites_data_sources(con, site = site)
   }
   
@@ -143,7 +157,9 @@ update_sites_observation_counts <- function(con, site = NA) {
   )
   
   # Filter to sites
-  if (!is.na(site[1])) df <- filter(df, site %in% !!site)
+  if (!is.na(site[1])) {
+    df <- filter(df, site %in% !!site)
+  }
   
   # Summarise
   df <- df %>% 
@@ -181,7 +197,9 @@ update_sites_observation_counts <- function(con, site = NA) {
   
   # Update variable
   df %>% 
-    databaser::build_update_statements("sites", ., where = "site", squish = TRUE) %>% 
+    databaser::build_update_statements(
+      "sites", ., where = "site", squish = TRUE
+    ) %>% 
     databaser::db_execute(con, .)
   
   return(invisible(con))

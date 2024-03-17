@@ -18,7 +18,7 @@ summarise_process_entiries(
 \item{process}{A vector of processes.}
 
 \item{batch_size}{Number of processes to summarise per batch. This can be 
-useful when large numbers of processes are to be summaried.}
+useful when large numbers of processes are to be summarised.}
 
 \item{tz}{Time zone for the dates to be parsed into.}
 
