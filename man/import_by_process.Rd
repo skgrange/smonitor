@@ -17,8 +17,10 @@ import_by_process(
   date_insert = FALSE,
   site_name = TRUE,
   unit = TRUE,
+  query_by_process = FALSE,
   warn = TRUE,
-  arrange_by = "process"
+  arrange_by = "process",
+  progress = FALSE
 )
 }
 \arguments{
@@ -61,10 +63,17 @@ Default is \code{TRUE}.}
 
 \item{unit}{Should the processes' units be included in the return?}
 
+\item{query_by_process}{Should observations be queried process by process? 
+This will avoid sending large numbers of processes to the database within 
+\code{IN} clauses.}
+
 \item{warn}{Should the functions raise warnings?}
 
 \item{arrange_by}{How should the returned table be arranged? Can be either
 \code{"process"} or \code{"date"}.}
+
+\item{progress}{If \code{query_by_process} is \code{TRUE}, should a progress
+bar be displayed?}
 }
 \value{
 Tibble containing decoded observational data with correct data types.

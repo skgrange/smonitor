@@ -42,10 +42,17 @@
 #' 
 #' @param unit Should the processes' units be included in the return? 
 #' 
+#' @param query_by_process Should observations be queried process by process? 
+#' This will avoid sending large numbers of processes to the database within 
+#' \code{IN} clauses. 
+#' 
 #' @param warn Should the functions raise warnings? 
 #' 
 #' @param arrange_by How should the returned table be arranged? Can be either
 #' \code{"process"} or \code{"date"}. 
+#' 
+#' @param progress If \code{query_by_process} is \code{TRUE}, should a progress
+#' bar be displayed? 
 #' 
 #' @return Tibble containing decoded observational data with correct data types. 
 #' 
@@ -72,7 +79,9 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
                               end = NA, tz = "UTC", valid_only = TRUE, 
                               set_invalid_values = FALSE, date_end = TRUE, 
                               date_insert = FALSE, site_name = TRUE, 
-                              unit = TRUE, warn = TRUE, arrange_by = "process") {
+                              unit = TRUE, query_by_process = FALSE,
+                              warn = TRUE, arrange_by = "process",
+                              progress = FALSE) {
   
   # Check inputs
   if (is.na(process[1])) {
@@ -97,13 +106,13 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   # For sql
   start <- as.numeric(start)
   end <- as.numeric(end)
-  process <- stringr::str_c(process, collapse = ",")
-  summary <- stringr::str_c(summary, collapse = ",")
+  process_collapsed <- stringr::str_c(process, collapse = ",")
+  summary_collapsed <- stringr::str_c(summary, collapse = ",")
   
   # Get table to link processes with sites
   df_processes <- import_by_process_process_table(
     con, 
-    process = process, 
+    process = process_collapsed, 
     site_name = site_name, 
     unit = unit
   )
@@ -120,15 +129,29 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   }
   
   # Get observations
-  df <- import_by_process_observation_table(
-    con, 
-    process = process, 
-    summary = summary, 
-    start = start,
-    end = end,
-    date_end = date_end, 
-    date_insert = date_insert
-  )
+  if (!query_by_process) {
+    # Use collapsed vectors here
+    df <- import_by_process_observation_table(
+      con, 
+      process = process_collapsed, 
+      summary = summary_collapsed, 
+      start = start,
+      end = end,
+      date_end = date_end, 
+      date_insert = date_insert
+    )
+  } else {
+    df <- import_by_process_observation_table_by_process(
+      con, 
+      process = process, 
+      summary = summary, 
+      start = start,
+      end = end,
+      date_end = date_end, 
+      date_insert = date_insert,
+      progress = progress
+    )
+  }
   
   # Check for data
   if (nrow(df) == 0) {
@@ -179,6 +202,7 @@ import_by_process <- function(con, process = NA, summary = NA, start = 1969,
   # Parse dates
   df$date <- threadr::parse_unix_time(df$date, tz = tz)
   
+  # Often not returned
   if (date_insert) {
     df$date_insert <- threadr::parse_unix_time(df$date_insert, tz = tz)
   }
@@ -232,10 +256,9 @@ import_by_process_process_table <- function(con, process, site_name, unit) {
   )
   
   # Clean
-  sql_processes <- stringr::str_squish(sql_processes)
-  
-  # Get data
-  df <- databaser::db_get(con, sql_processes)
+  df <- sql_processes %>% 
+    stringr::str_squish() %>% 
+    databaser::db_get(con, .)
   
   # Drop variables
   if (!site_name) df$site_name <- NULL
@@ -305,5 +328,91 @@ import_by_process_observation_table <- function(con, process, summary, start,
   df <- databaser::db_get(con, sql_observations)
   
   return(df)
+  
+}
+
+
+import_by_process_observation_table_by_process <- function(con, process, 
+                                                           summary, start, 
+                                                           end, date_end, 
+                                                           date_insert,
+                                                           progress) {
+  
+  # Build select sql statements for each process and summary pair
+  sql <- build_granular_select_observation_sql(
+    process, summary, start, end, date_end = date_end, date_insert = date_insert
+  )
+  
+  # Query database n times
+  df <- sql %>% 
+    purrr::map(~databaser::db_get(con, .), .progress = progress) %>% 
+    purrr::list_rbind()
+  
+  return(df)
+  
+}
+
+
+build_granular_select_observation_sql <- function(process, summary, start, end,
+                                                  date_end, date_insert) {
+  
+  # Check length of date filters
+  stopifnot(length(start) == 1L, length(end) == 1L)
+  
+  # Build a mapping table
+  df_map <- tidyr::expand_grid(
+    process,
+    summary,
+    start,
+    end
+  )
+  
+  # Build the many sql statements
+  sql <- purrr::pmap(df_map, build_granular_select_observation_sql_worker) %>% 
+    purrr::flatten_chr()
+  
+  # Drop date_end if desired
+  if (!date_end) {
+    sql <- stringr::str_remove(sql, "observations.date_end,")
+  }
+  
+  # Dop date_insert if desired
+  if (!date_insert) {
+    sql <- stringr::str_remove(sql, "observations.date_insert,")
+  }
+  
+  # Clean the statements a bit
+  sql <- stringr::str_squish(sql)
+  
+  return(sql)
+  
+}
+
+
+build_granular_select_observation_sql_worker <- function(process, summary, start, 
+                                                         end) {
+  
+  sql <- stringr::str_glue(
+    "SELECT observations.date_insert,
+    observations.date,
+     observations.date_end,
+     observations.value,
+     observations.process,
+     observations.summary,
+     observations.validity
+     FROM observations
+     WHERE observations.process = {process}
+     AND observations.date BETWEEN {start} AND {end}"
+  )
+  
+  # Add summary if passed
+  if (!is.na(summary)) {
+    sql <- stringr::str_glue(
+      "{sql}
+      AND summary = {summary}"
+    )
+  }
+  
+  return(sql)
   
 }
