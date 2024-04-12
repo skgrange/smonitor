@@ -85,7 +85,7 @@ summarise_process_entiries_worker <- function(con, process) {
     MIN(date) AS date_start,
     MAX(date) AS date_end,
     COUNT(*) AS n_all,
-    SUM(CASE WHEN value IS NULL THEN 0 ELSE 1 END) AS n
+    COUNT(value) AS n
     FROM observations
     WHERE process = {process}
     GROUP BY process"
@@ -112,7 +112,7 @@ summarise_process_entiries_multiple_worker <- function(con, process) {
     MIN(date) AS date_start,
     MAX(date) AS date_end,
     COUNT(*) AS n_all,
-    SUM(CASE WHEN value IS NULL THEN 0 ELSE 1 END) AS n
+    COUNT(value) AS n
     FROM observations
     WHERE process IN ({stringr::str_c(process, collapse = ',')})
     GROUP BY process"
