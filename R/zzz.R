@@ -16,7 +16,7 @@ if (getRversion() >= "2.15.1") {
     "year", "data_source", "progress_bar", "intercept_lower", "intercept_upper",
     "envirologger_api_version", "envirologger_sensor_label", "sensor_label",
     "test_current", "n", "current", "n_all", "sensor_id", "sensing_element_id",
-    "sensor_type", "db_size"
+    "sensor_type", "db_size", "ip_mobile"
   )
   
   # Squash the notes

@@ -23,6 +23,7 @@ import_smonitor_details <- function(con, tz = "UTC") {
     ORDER BY date"
   ) %>% 
     mutate(date = threadr::parse_unix_time(date, tz = tz),
-           db_size = fs::as_fs_bytes(db_size * 1e6))
+           db_size = fs::as_fs_bytes(db_size * 1e6),
+           ip_mobile = as.logical(ip_mobile))
   
 }
