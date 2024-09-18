@@ -20,7 +20,10 @@ smonitor_details <- function(con, task = NA_character_) {
   
   # Get package versions as a single string
   package_versions <- threadr::get_package_version(
-    c("R", "dplyr", "threadr", "icostoolr", "databaser", "smonitor", "ssensors"), 
+    c(
+      "R", "dplyr", "threadr", "icostoolr", "databaser", "smonitor", "ssensors", 
+      "decentlabr"
+    ), 
     as_vector = TRUE
   ) %>% 
     stringr::str_c(collapse = "; ")
@@ -28,6 +31,7 @@ smonitor_details <- function(con, task = NA_character_) {
   # Get high level database and details
   df <- tibble(
     system = threadr::hostname(),
+    operating_system = stringr::str_to_lower(Sys.info()["sysname"]),
     date = round(as.numeric(lubridate::now())),
     db_name = databaser::db_name(con),
     db_class = databaser::db_class(con),
