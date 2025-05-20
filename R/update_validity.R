@@ -137,7 +137,7 @@ update_validity_worker <- function(con, df, validity_action, verbose) {
 #' while \code{"update"} will preserve the current values of the \code{validity}
 #' variable.
 #' 
-#' @seealso \code{\link{within_range}}
+#' @seealso \code{\link[threadr]{within_range}}
 #' 
 #' @author Stuart K. Grange. 
 #' 

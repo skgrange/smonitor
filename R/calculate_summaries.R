@@ -28,9 +28,9 @@
 #' 
 #' @return Invisible database connection.
 #' 
-#' @seealso \code{\link{import_summaries}}, \code{\link{timeAverage}}, 
-#' \code{\link{summarise}}, \code{\link{time_pad}}, 
-#' \code{\link{aggregate_by_date}}
+#' @seealso \code{\link{import_summaries}}, \code{\link[openair]{timeAverage}}, 
+#' \code{\link[dplyr]{summarise}}, \code{\link[threadr]{time_pad}}, 
+#' \code{\link[threadr]{aggregate_by_date}}
 #' 
 #' @examples 
 #' \dontrun{

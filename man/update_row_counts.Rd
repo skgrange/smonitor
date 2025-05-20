@@ -19,7 +19,7 @@ Invisible, tibble.
 Function to get row counts and insert as a table in a database.
 }
 \seealso{
-\code{\link{db_count_rows}}
+\code{\link[databaser]{db_count_rows}}
 }
 \author{
 Stuart K. Grange

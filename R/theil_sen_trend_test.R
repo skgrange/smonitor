@@ -16,7 +16,7 @@
 #' @param period Period of input time series. Default is \code{"month"} but can
 #' also be \code{"year"}.
 #' 
-#' @seealso \code{\link{TheilSen}}
+#' @seealso \code{\link[openair]{TheilSen}}
 #' 
 #' @return Tibble with one observation/row. 
 #' 
@@ -123,7 +123,7 @@ theil_sen_trend_test <- function(df, variable = "value", deseason = FALSE,
 #' 
 #' @param variable Variable name to test. 
 #' 
-#' @seealso \code{\link{TheilSen}}
+#' @seealso \code{\link[openair]{TheilSen}}
 #' 
 #' @return Tibble. 
 #' 

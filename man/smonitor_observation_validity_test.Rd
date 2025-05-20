@@ -35,7 +35,7 @@ Tibble.
 Function to add a validity variable to a data frame based on date ranges.
 }
 \seealso{
-\code{\link{within_range}}
+\code{\link[threadr]{within_range}}
 }
 \author{
 Stuart K. Grange.

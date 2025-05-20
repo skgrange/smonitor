@@ -18,7 +18,7 @@ Tibble.
 Function to deseasonalise a time series with loess.
 }
 \seealso{
-\code{\link{TheilSen}}
+\code{\link[openair]{TheilSen}}
 }
 \author{
 Stuart K. Grange.

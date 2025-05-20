@@ -39,7 +39,8 @@ inserted. This process avoids duplicate observations which are almost always
 undesirable.
 }
 \seealso{
-\code{\link{db_execute}}, \code{\link{insert_observations}}
+\code{\link[databaser]{db_execute}}, 
+\code{\link{insert_observations}}
 }
 \author{
 Stuart K. Grange

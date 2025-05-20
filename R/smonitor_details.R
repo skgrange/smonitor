@@ -50,7 +50,7 @@ smonitor_details <- function(con, task = NA_character_) {
   # Get row counts
   df_counts <- tables_to_count %>% 
     purrr::set_names(stringr::str_c("n_", .)) %>% 
-    purrr::map_int(~get_db_row_count(con, ., tables)) %>% 
+    purrr::map_dbl(~get_db_row_count(con, ., tables)) %>% 
     t() %>% 
     as_tibble()
   
@@ -65,12 +65,14 @@ smonitor_details <- function(con, task = NA_character_) {
 # Also used in the sactivtyr package, could put this in databaser
 get_db_row_count <- function(con, table, tables) {
   
+  # Using numeric not integers to avoid 64-bit integer issues
   if (table %in% tables) {
     x <- glue::glue("SELECT COUNT(*) AS n FROM {table}") %>% 
       databaser::db_get(con, .) %>% 
-      pull(n)
+      pull(n) %>% 
+      as.numeric()
   } else {
-    x <- NA_integer_
+    x <- NA_real_
   }
   
   return(x)

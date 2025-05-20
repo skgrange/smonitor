@@ -7,7 +7,7 @@
 #' @param estimate Should the row counts be estimated rather than counted? Only
 #' works for PostgreSQL databases.
 #' 
-#' @seealso \code{\link{db_count_rows}}
+#' @seealso \code{\link[databaser]{db_count_rows}}
 #' 
 #' @return Invisible, tibble. 
 #' 

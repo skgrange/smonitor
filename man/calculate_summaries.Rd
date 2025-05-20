@@ -66,9 +66,9 @@ calculate_summaries(con, data_look_up, start = 2014, start = 2014)
 
 }
 \seealso{
-\code{\link{import_summaries}}, \code{\link{timeAverage}}, 
-\code{\link{summarise}}, \code{\link{time_pad}}, 
-\code{\link{aggregate_by_date}}
+\code{\link{import_summaries}}, \code{\link[openair]{timeAverage}}, 
+\code{\link[dplyr]{summarise}}, \code{\link[threadr]{time_pad}}, 
+\code{\link[threadr]{aggregate_by_date}}
 }
 \author{
 Stuart K. Grange

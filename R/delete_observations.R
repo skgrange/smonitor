@@ -25,7 +25,8 @@
 #' 
 #' @return Invisible \code{con}.
 #' 
-#' @seealso \code{\link{db_execute}}, \code{\link{insert_observations}}
+#' @seealso \code{\link[databaser]{db_execute}}, 
+#' \code{\link{insert_observations}}
 #' 
 #' @export
 delete_observations <- function(con, df, match = "between", verbose = FALSE,

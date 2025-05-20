@@ -37,7 +37,7 @@ Tibble with one observation/row.
 Function to test a time series with the Theil-Sen estimator.
 }
 \seealso{
-\code{\link{TheilSen}}
+\code{\link[openair]{TheilSen}}
 }
 \author{
 Stuart K. Grange.
